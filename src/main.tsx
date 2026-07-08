@@ -8,15 +8,15 @@ import { routeTree } from './routeTree.gen'
 
 const queryClient = new QueryClient()
 
+const router = createRouter({ 
+  routeTree,
+  context: { auth: undefined! as any }
+})
+
 export function AppRouter() {
   const auth = useAuth()
   
-  const router = createRouter({ 
-    routeTree,
-    context: { auth }
-  })
-
-  return <RouterProvider router={router as any} />
+  return <RouterProvider router={router as any} context={{ auth }} />
 }
 
 declare module '@tanstack/react-router' {

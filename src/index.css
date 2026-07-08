@@ -1,0 +1,42 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply bg-surface-muted text-text-primary antialiased font-sans text-sm;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-header tracking-tight text-primary font-bold;
+  }
+}
+
+@layer components {
+  /* The Signature LORYB Orbit Motif */
+  .orbit-divider {
+    @apply relative flex items-center justify-center my-6;
+  }
+  .orbit-divider::before {
+    content: '';
+    @apply absolute w-full h-[1px] bg-primary/20;
+  }
+  .orbit-divider::after {
+    content: '';
+    @apply absolute w-16 h-4 border border-primary/30 rounded-[50%] bg-surface-muted;
+    transform: rotate(-15deg);
+  }
+
+  .orbit-ring-icon {
+    @apply relative flex items-center justify-center rounded-full bg-primary/5 text-primary;
+  }
+  .orbit-ring-icon::before {
+    content: '';
+    @apply absolute w-[120%] h-[40%] border-2 border-primary/20 rounded-[50%];
+    transform: rotate(-20deg);
+  }
+  .orbit-ring-icon::after {
+    content: '';
+    @apply absolute w-[120%] h-[40%] border-2 border-accent/20 rounded-[50%];
+    transform: rotate(20deg);
+  }
+}

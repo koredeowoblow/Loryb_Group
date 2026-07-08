@@ -239,7 +239,7 @@ function TopNav({ role, toggleSidebar }: { role: Role, toggleSidebar: () => void
           <Menu size={20} />
         </button>
         <span className="hidden md:block w-2 h-4 bg-accent rounded-sm" />
-        <div className="text-sm font-semibold text-primary font-header truncate">Greenville LNG Site Operations</div>
+        <div className="text-sm font-semibold text-primary font-header truncate">Loryb Group of Companies</div>
       </div>
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold font-header shadow-sm border border-primary-light text-sm">

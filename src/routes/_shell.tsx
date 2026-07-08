@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, Link, useRouterState, redirect, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { LayoutDashboard, Shield, Warehouse, Truck, DollarSign, ChevronDown, ChevronRight, LogOut, Settings as SettingsIcon } from 'lucide-react'
+import { LayoutDashboard, Shield, Warehouse, Truck, DollarSign, ChevronDown, ChevronRight, LogOut, Settings as SettingsIcon, Menu, X } from 'lucide-react'
 import clsx from 'clsx'
 import { useAuth, Role } from '../auth'
 
@@ -33,21 +33,29 @@ export const Route = createFileRoute('/_shell')({
 
 function ShellLayout() {
   const { role } = useAuth()
+  const [isSidebarOpen, setSidebarOpen] = useState(false)
   
   return (
     <div className="flex h-screen bg-surface-muted text-text-primary overflow-hidden font-sans">
-      <Sidebar role={role} />
+      <Sidebar role={role} isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <TopNav role={role} />
-        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
+        <TopNav role={role} toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} />
+        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 relative">
           <Outlet />
         </main>
       </div>
+
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-20 md:hidden transition-opacity" 
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
     </div>
   )
 }
 
-function Sidebar({ role }: { role: Role }) {
+function Sidebar({ role, isOpen, setIsOpen }: { role: Role, isOpen: boolean, setIsOpen: (val: boolean) => void }) {
   const router = useRouterState()
   const navigate = useNavigate()
   const currentPath = router.location.pathname
@@ -132,9 +140,15 @@ function Sidebar({ role }: { role: Role }) {
   const navItems = allNavItems.filter(item => item.roles.includes(role))
 
   return (
-    <aside className="w-64 bg-white text-text-primary border-r border-surface-border flex flex-col z-10 shadow-sm overflow-y-auto">
-      <div className="h-20 flex flex-col justify-center px-6 border-b border-surface-border bg-white sticky top-0 z-20">
-          <img src="/logo.png" alt="Loryb Group of Companies" className="h-10 w-auto" />
+    <aside className={clsx(
+      "bg-white text-text-primary border-r border-surface-border flex flex-col z-30 shadow-sm overflow-y-auto transition-transform duration-300 md:translate-x-0 fixed md:static inset-y-0 left-0 w-64",
+      isOpen ? "translate-x-0" : "-translate-x-full"
+    )}>
+      <div className="h-16 md:h-20 flex flex-row items-center justify-between px-6 border-b border-surface-border bg-white sticky top-0 z-20 shrink-0">
+          <img src="/logo.png" alt="Loryb Group of Companies" className="h-8 md:h-10 w-auto" />
+          <button className="md:hidden p-1 text-text-secondary hover:text-primary" onClick={() => setIsOpen(false)}>
+            <X size={20} />
+          </button>
       </div>
       
       <div className="px-6 mt-4">
@@ -214,15 +228,21 @@ function Sidebar({ role }: { role: Role }) {
   )
 }
 
-function TopNav({ role }: { role: Role }) {
+function TopNav({ role, toggleSidebar }: { role: Role, toggleSidebar: () => void }) {
   return (
-    <header className="h-16 bg-white border-b border-surface-border flex items-center px-6 justify-between shrink-0 shadow-sm z-0">
-      <div className="flex items-center gap-2">
-        <span className="w-2 h-4 bg-accent rounded-sm" />
-        <div className="text-sm font-semibold text-primary font-header">Greenville LNG Site Operations</div>
+    <header className="h-16 bg-white border-b border-surface-border flex items-center px-4 md:px-6 justify-between shrink-0 shadow-sm z-10">
+      <div className="flex items-center gap-2 md:gap-4">
+        <button 
+          onClick={toggleSidebar}
+          className="p-1.5 md:hidden text-text-secondary hover:text-primary transition-colors"
+        >
+          <Menu size={20} />
+        </button>
+        <span className="hidden md:block w-2 h-4 bg-accent rounded-sm" />
+        <div className="text-sm font-semibold text-primary font-header truncate">Greenville LNG Site Operations</div>
       </div>
-      <div className="flex items-center gap-4">
-        <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold font-header shadow-sm border border-primary-light">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold font-header shadow-sm border border-primary-light text-sm">
           {role.charAt(0)}
         </div>
       </div>

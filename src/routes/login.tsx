@@ -124,7 +124,7 @@ function LoginPage() {
         </form>
         
         {USE_MOCK_DATA && (
-          <div className="mt-6 border border-surface-border rounded-md overflow-hidden bg-surface-muted">
+          <div className="mt-6 border border-surface-border rounded-md overflow-hidden overflow-x-auto bg-surface-muted">
             <button 
               onClick={() => setShowHint(!showHint)}
               className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-text-primary hover:bg-surface-active transition-colors"

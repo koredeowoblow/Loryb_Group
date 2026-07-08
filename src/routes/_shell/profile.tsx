@@ -41,10 +41,10 @@ function ProfilePage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden">
+      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden overflow-x-auto">
         <div className="p-6">
-          <div className="flex items-center gap-6 mb-8 pb-8 border-b border-surface-border">
-            <div className="w-24 h-24 rounded-full bg-primary text-white flex items-center justify-center font-bold font-header text-4xl shadow-sm border border-primary-light">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-8 pb-8 border-b border-surface-border text-center sm:text-left">
+            <div className="w-24 h-24 shrink-0 rounded-full bg-primary text-white flex items-center justify-center font-bold font-header text-4xl shadow-sm border border-primary-light">
               {formData.firstName[0]}{formData.lastName[0]}
             </div>
             <div>

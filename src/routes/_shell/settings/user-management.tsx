@@ -126,7 +126,7 @@ function UserManagementPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden">
+      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden overflow-x-auto">
         <table className="min-w-full divide-y divide-surface-border border-b border-surface-border">
           <thead className="bg-surface-muted">
             {table.getHeaderGroups().map(headerGroup => (

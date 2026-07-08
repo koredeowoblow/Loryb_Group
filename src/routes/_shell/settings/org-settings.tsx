@@ -53,7 +53,7 @@ function OrgSettingsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden">
+      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden overflow-x-auto">
         <div className="flex border-b border-surface-border">
           <button 
             onClick={() => setActiveTab('general')}

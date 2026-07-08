@@ -47,7 +47,7 @@ function SignupPage() {
             </div>
           )}
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-bold text-text-primary mb-1">First Name</label>
               <input
@@ -81,7 +81,7 @@ function SignupPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-bold text-text-primary mb-1">Password</label>
               <input

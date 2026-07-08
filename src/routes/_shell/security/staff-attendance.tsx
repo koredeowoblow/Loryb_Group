@@ -85,7 +85,7 @@ function StaffAttendancePage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden">
+      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden overflow-x-auto">
         {isLoading ? (
           <div className="p-8 text-center text-text-muted">Loading...</div>
         ) : (

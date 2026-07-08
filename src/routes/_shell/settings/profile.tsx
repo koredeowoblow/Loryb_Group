@@ -41,7 +41,7 @@ function ProfilePage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden">
+      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden overflow-x-auto">
         <div className="p-6 border-b border-surface-border flex items-center gap-6">
           <div className="w-24 h-24 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-3xl font-header border-2 border-primary/20">
             {formData.fullName.charAt(0)}

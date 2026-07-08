@@ -157,7 +157,7 @@ function DispatchPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden">
+      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden overflow-x-auto">
         {isLoading ? (
           <div className="p-12 flex flex-col items-center justify-center space-y-4">
             <div className="w-8 h-8 border-4 border-surface-border border-t-primary rounded-full animate-spin"></div>

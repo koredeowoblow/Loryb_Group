@@ -1,8 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { MotorcycleLog } from '../../../api'
+import { motorcycleLog } from '../../../api/security'
+import { MotorcycleLog } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -45,11 +46,11 @@ function MotorcycleLogPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['motorcycleLog'],
-    queryFn: api.motorcycleLog.list,
+    queryFn: motorcycleLog.list,
   })
 
   const mutation = useMutation({
-    mutationFn: api.motorcycleLog.create,
+    mutationFn: motorcycleLog.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['motorcycleLog'] })
       setIsModalOpen(false)
@@ -77,11 +78,11 @@ function MotorcycleLogPage() {
       timeOut: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

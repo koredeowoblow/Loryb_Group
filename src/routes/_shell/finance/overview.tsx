@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
+import { sales as salesApi, expenses as expensesApi, payroll as payrollApi, supplierPayments as supplierPaymentsApi } from '../../../api/finance'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, AreaChart, Area, Legend } from 'recharts'
 import { DollarSign, TrendingUp, Wallet, Receipt, CreditCard } from 'lucide-react'
 
@@ -9,10 +9,10 @@ export const Route = createFileRoute('/_shell/finance/overview')({
 })
 
 function FinancialOverviewPage() {
-  const { data: sales = [] } = useQuery({ queryKey: ['sales'], queryFn: api.sales.list })
-  const { data: expenses = [] } = useQuery({ queryKey: ['expenses'], queryFn: api.expenses.list })
-  const { data: payroll = [] } = useQuery({ queryKey: ['payroll'], queryFn: api.payroll.list })
-  const { data: supplierPayments = [] } = useQuery({ queryKey: ['supplierPayments'], queryFn: api.supplierPayments.list })
+  const { data: sales = [] } = useQuery({ queryKey: ['sales'], queryFn: salesApi.list })
+  const { data: expenses = [] } = useQuery({ queryKey: ['expenses'], queryFn: expensesApi.list })
+  const { data: payroll = [] } = useQuery({ queryKey: ['payroll'], queryFn: payrollApi.list })
+  const { data: supplierPayments = [] } = useQuery({ queryKey: ['supplierPayments'], queryFn: supplierPaymentsApi.list })
 
   const totalSales = sales.reduce((acc, s) => acc + s.amount, 0) || 12500000
   const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0) || 3400000

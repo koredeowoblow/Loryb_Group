@@ -1,7 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState, useMemo } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, Invoice } from '../../../api'
+import { invoices as invoicesApi, sales as salesApi, supplierPayments as supplierPaymentsApi } from '../../../api/finance'
+import { Invoice } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -49,17 +51,17 @@ function InvoicesPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['invoices'],
-    queryFn: api.invoices.list,
+    queryFn: invoicesApi.list,
   })
 
   const { data: sales } = useQuery({
     queryKey: ['sales'],
-    queryFn: api.sales.list,
+    queryFn: salesApi.list,
   })
 
   const { data: supplierPayments } = useQuery({
     queryKey: ['supplierPayments'],
-    queryFn: api.supplierPayments.list,
+    queryFn: supplierPaymentsApi.list,
   })
 
   const salesOptions = useMemo(() => {
@@ -88,7 +90,7 @@ function InvoicesPage() {
   const overdueAmount = filteredData.filter(r => r.status === 'overdue').reduce((acc, row) => acc + row.amount, 0)
 
   const mutation = useMutation({
-    mutationFn: (payload: Omit<Invoice, 'id'>) => api.invoices.create(payload),
+    mutationFn: (payload: Omit<Invoice, 'id'>) => invoicesApi.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] })
       setIsModalOpen(false)
@@ -113,14 +115,14 @@ function InvoicesPage() {
       amount: 0,
       issueDate: '',
       dueDate: '',
-      status: 'draft',
+      status: 'draft' as 'draft' | 'sent' | 'paid' | 'overdue',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

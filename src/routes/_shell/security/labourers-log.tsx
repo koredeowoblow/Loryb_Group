@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { LabourerLogEntry } from '../../../api'
+import { labourers } from '../../../api/security'
+import { LabourerLogEntry } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 export const Route = createFileRoute('/_shell/security/labourers-log')({
@@ -20,7 +20,7 @@ const columns = [
 function LabourersLogPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['labourers-log'],
-    queryFn: api.labourers.list,
+    queryFn: labourers.list,
   })
 
   const table = useReactTable({

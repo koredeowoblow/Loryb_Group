@@ -1,6 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
+import { sales as salesApi, expenses as expensesApi, payroll as payrollApi, supplierPayments as supplierPaymentsApi } from '../../../api/finance'
+import { trucks as trucksApi } from '../../../api/logistics'
+import { grn as grnApi } from '../../../api/warehouse'
+import { dispatchRecord as dispatchRecordApi, visitorLog as visitorLogApi, staffAttendance as staffAttendanceApi } from '../../../api/security'
 import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts'
 import { Download, FileText, TrendingUp, TrendingDown, DollarSign, Package, Truck, Shield, Calendar, Sparkles, Filter, PieChart as PieChartIcon } from 'lucide-react'
 
@@ -47,10 +50,10 @@ function ReportsPage() {
         grn, dispatch, trucks, sales, expenses, 
         payroll, supplierPayments, visitorLog, staff
       ] = await Promise.all([
-        api.grn.list(), api.dispatchRecord.list(), api.trucks.list(), 
-        api.sales.list(), api.expenses.list(), api.payroll.list(), 
-        api.supplierPayments.list(), api.visitorLog.list(), 
-        api.staffAttendance.list()
+        grnApi.list(), dispatchRecordApi.list(), trucksApi.list(), 
+        salesApi.list(), expensesApi.list(), payrollApi.list(), 
+        supplierPaymentsApi.list(), visitorLogApi.list(), 
+        staffAttendanceApi.list()
       ])
 
       // Financials

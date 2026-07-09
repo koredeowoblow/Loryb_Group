@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { Waybill } from '../../../api'
+import { waybills } from '../../../api/logistics'
+import { Waybill } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Badge } from '../../../components/ui/Badge'
 
@@ -30,7 +30,7 @@ function WaybillsPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['waybills'],
-    queryFn: api.waybills.list,
+    queryFn: waybills.list,
   })
 
   const filteredData = data?.filter(row => {

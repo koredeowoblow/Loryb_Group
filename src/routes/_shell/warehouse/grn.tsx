@@ -1,7 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, GoodsReceivedNote } from '../../../api'
+import { grn } from '../../../api/warehouse'
+import { GoodsReceivedNote } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -42,7 +44,7 @@ function GRNPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['grn'],
-    queryFn: api.grn.list,
+    queryFn: grn.list,
   })
 
   const filteredData = data?.filter(row => {
@@ -54,7 +56,7 @@ function GRNPage() {
   const totalIntake = filteredData.reduce((acc, row) => acc + row.netWeight, 0)
 
   const mutation = useMutation({
-    mutationFn: (data: Omit<GoodsReceivedNote, 'id'>) => api.grn.create ? api.grn.create(data) : Promise.resolve(data), // Using conditional because grn.create might need to be mocked if not fully there
+    mutationFn: (data: Omit<GoodsReceivedNote, 'id'>) => grn.create ? grn.create(data) : Promise.resolve(data), // Using conditional because grn.create might need to be mocked if not fully there
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['grn'] })
       setIsModalOpen(false)
@@ -79,11 +81,11 @@ function GRNPage() {
       date: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

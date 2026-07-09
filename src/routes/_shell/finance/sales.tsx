@@ -1,7 +1,10 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState, useMemo } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, Sale } from '../../../api'
+import { sales } from '../../../api/finance'
+import { dispatchRecord } from '../../../api/security'
+import { Sale } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -38,12 +41,12 @@ function SalesPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['sales'],
-    queryFn: api.sales.list,
+    queryFn: sales.list,
   })
 
   const { data: dispatchRecords } = useQuery({
     queryKey: ['dispatchRecord'],
-    queryFn: api.dispatchRecord.list,
+    queryFn: dispatchRecord.list,
   })
 
   const dispatchOptions = useMemo(() => {
@@ -60,7 +63,7 @@ function SalesPage() {
   const totalRevenue = filteredData.reduce((acc, row) => acc + row.amount, 0)
 
   const mutation = useMutation({
-    mutationFn: (payload: Omit<Sale, 'id'>) => api.sales.create(payload),
+    mutationFn: (payload: Omit<Sale, 'id'>) => sales.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sales'] })
       setIsModalOpen(false)
@@ -84,11 +87,11 @@ function SalesPage() {
       date: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

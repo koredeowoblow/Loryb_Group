@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
+import { binCard as binCardApi, grn as grnApi, inventoryAlerts } from '../../../api/warehouse'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { Warehouse, AlertTriangle, ArrowDownToLine, Activity } from 'lucide-react'
 
@@ -9,9 +9,9 @@ export const Route = createFileRoute('/_shell/warehouse/stock-overview')({
 })
 
 function StockOverviewPage() {
-  const { data: binCards = [] } = useQuery({ queryKey: ['binCards'], queryFn: api.binCard.list })
-  const { data: grn = [] } = useQuery({ queryKey: ['grn'], queryFn: api.grn.list })
-  const { data: alerts = [] } = useQuery({ queryKey: ['alerts'], queryFn: api.inventoryAlerts.list })
+  const { data: binCards = [] } = useQuery({ queryKey: ['binCards'], queryFn: binCardApi.list })
+  const { data: grn = [] } = useQuery({ queryKey: ['grn'], queryFn: grnApi.list })
+  const { data: alerts = [] } = useQuery({ queryKey: ['alerts'], queryFn: inventoryAlerts.list })
 
   const totalMaize = binCards.filter(b => b.grainType === 'Maize').reduce((acc, b) => acc + b.qtyIn - b.qtyOut, 0) || 45000
   const totalSorghum = binCards.filter(b => b.grainType === 'Sorghum').reduce((acc, b) => acc + b.qtyIn - b.qtyOut, 0) || 28000

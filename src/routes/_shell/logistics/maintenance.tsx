@@ -1,7 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState, useMemo } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, MaintenanceLogEntry } from '../../../api'
+import { maintenance, trucks as trucksApi } from '../../../api/logistics'
+import { MaintenanceLogEntry } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -43,12 +45,12 @@ function MaintenancePage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['maintenance'],
-    queryFn: api.maintenance.list,
+    queryFn: maintenance.list,
   })
 
   const { data: trucks } = useQuery({
     queryKey: ['trucks'],
-    queryFn: api.trucks.list,
+    queryFn: trucksApi.list,
   })
 
   const truckOptions = useMemo(() => {
@@ -69,7 +71,7 @@ function MaintenancePage() {
   const maintenanceCost = filteredData.filter(r => r.type === 'maintenance').reduce((acc, row) => acc + row.cost, 0)
 
   const mutation = useMutation({
-    mutationFn: (payload: Omit<MaintenanceLogEntry, 'id'>) => api.maintenance.create(payload),
+    mutationFn: (payload: Omit<MaintenanceLogEntry, 'id'>) => maintenance.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['maintenance'] })
       setIsModalOpen(false)
@@ -88,18 +90,18 @@ function MaintenancePage() {
   const form = useForm({
     defaultValues: {
       truckNo: '',
-      type: 'fuel',
+      type: 'fuel' as 'fuel' | 'maintenance',
       date: '',
       cost: 0,
       odometerReading: 0,
       notes: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

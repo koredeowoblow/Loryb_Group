@@ -1,267 +1,3 @@
-export const USE_MOCK_DATA = true // Forced to true to bypass Vite's dev server cache
-
-export type SupplierRecord = {
-  id: string
-  supplierName: string
-  driverName: string
-  refPhoneNo: string
-  truckNo: string
-  qtyOfGrains: number
-  confirmedQty: number
-  grainType: 'Maize' | 'Sorghum' | 'SoyaBeans'
-  storeLocation: string
-  weightNo: string
-  rejectNo: string
-  dateTimeIn: string
-  dateTimeOut: string
-}
-
-export type OrgSettings = {
-  id: string
-  companyName: string
-  siteName: string
-  address: string
-  contactEmail: string
-  contactPhone: string
-  grainTypes: string[]
-  logoUrl: string
-}
-
-export type User = {
-  id: string
-  name: string
-  email: string
-  role: 'CEO' | 'Admin' | 'Security' | 'Warehouse' | 'Logistics' | 'Finance'
-  password?: string
-}
-
-
-export type Invoice = {
-  id: string
-  invoiceNo: string
-  linkedSaleId?: string
-  linkedSupplierPaymentId?: string
-  partyName: string
-  amount: number
-  issueDate: string
-  dueDate: string
-  status: 'draft' | 'sent' | 'paid' | 'overdue'
-}
-
-export type Driver = {
-  id: string
-  driverName: string
-  phoneNo: string
-  licenseNo: string
-  licenseExpiry: string
-  assignedTruckNo: string
-  status: 'active' | 'inactive'
-}
-
-export type MaintenanceLogEntry = {
-  id: string
-  truckNo: string
-  type: 'fuel' | 'maintenance'
-  date: string
-  cost: number
-  odometerReading: number
-  notes: string
-}
-
-export type LightTokenEntry = {
-  id: string
-  tokenNo: string
-  issuedTo: string
-  purpose: string
-  timeIssued: string
-  timeReturned: string
-}
-
-export type LabourerLogEntry = {
-  id: string
-  labourerName: string
-  timeIn: string
-  timeOut: string
-  task: string
-}
-
-export type MaterialsHandoffEntry = {
-  id: string
-  vehicleNo: string
-  materialQuality: string
-  grainType: string
-  driverName: string
-  driverNo: string
-  dateTime: string
-}
-
-export type ItemBought = {
-  id: string
-  supplierName: string
-  truckNo: string
-  goodsType: string
-  goodsQty: number
-  dateTimeIn: string
-  dateTimeOut: string
-}
-
-export type VisitorLog = {
-  id: string
-  name: string
-  address: string
-  phoneNo: string
-  personVisiting: string
-  purpose: string
-  timeIn: string
-  timeOut: string
-  signature: string
-}
-
-export type MotorcycleLog = {
-  id: string
-  staffName: string
-  destination: string
-  purpose: string
-  bikeNo: string
-  date: string
-  signature: string
-  timeIn: string
-  timeOut: string
-}
-
-export type StaffMovementLog = {
-  id: string
-  staffName: string
-  destination: string
-  purpose: string
-  timeIn: string
-  timeOut: string
-}
-
-export type StaffAttendance = {
-  id: string
-  name: string
-  department: string
-  timeIn: string
-  timeOut: string
-}
-
-export type GoodsReceivedNote = {
-  id: string
-  grainType: string
-  noOfBagsReceived: number
-  netWeight: number
-  binCardRef: string
-  date: string
-}
-
-export type BinCardEntry = {
-  id: string
-  grainType: string
-  date: string
-  qtyIn: number
-  qtyOut: number
-  balance: number
-  reference: string
-}
-
-export type Truck = {
-  id: string
-  truckNo: string
-  capacity: number
-  status: 'idle' | 'in-transit' | 'maintenance'
-  assignedDriver: string
-}
-
-export type Trip = {
-  id: string
-  truckNo: string
-  driverName: string
-  origin: string
-  destination: string
-  status: 'pending' | 'in-transit' | 'delivered'
-  etaOrCompletedAt: string
-  continentalWaybillNo: string
-  lbWaybillNo: string
-  gatePassNo: string
-}
-
-export type SupplierPayment = {
-  id: string
-  supplierName: string
-  linkedSuppliersRecordId: string
-  amountOwed: number
-  amountPaid: number
-  status: string
-  date: string
-}
-
-export type Sale = {
-  id: string
-  linkedDispatchRecordId: string
-  transporterName: string
-  amount: number
-  date: string
-}
-
-export type PayrollEntry = {
-  id: string
-  staffName: string
-  department: string
-  daysPresent: number
-  amount: number
-  period: string
-}
-
-export type InventoryAlert = {
-  id: string
-  grainType: string
-  currentQty: number
-  thresholdQty: number
-  status: 'ok' | 'low' | 'critical'
-  lastUpdated: string
-}
-
-export type Waybill = {
-  id: string
-  continentalWaybillNo: string
-  lbWaybillNo: string
-  linkedTripId: string
-  truckNo: string
-  destination: string
-  dateIssued: string
-  status: 'active' | 'closed'
-}
-
-export type Expense = {
-  id: string
-  category: string
-  description: string
-  amount: number
-  date: string
-  paidBy: string
-  linkedTruckNo?: string
-}
-
-export type DispatchRecord = {
-  id: string
-  transporterName: string
-  driverName: string
-  truckNo: string
-  driverPhone: string
-  qtyOfGrains: number
-  confirmedQty: number
-  grainType: 'Maize' | 'Sorghum' | 'SoyaBeans'
-  weight: number
-  continentalWaybillNo: string
-  lbWaybillNo: string
-  destination: string
-  gatePassNo: string
-  driverSignature: string
-  dateTimeIn: string
-  dateTimeOut?: string
-}
-
 let mockState = {
   "users": [
     { "id": "USR-1", "name": "CEO User", "email": "ceo@lorybgroup.com", "password": "Ceo@12345", "role": "CEO" },
@@ -283,7 +19,7 @@ let mockState = {
       "grainType": "SoyaBeans",
       "storeLocation": "Ibadan Center",
       "weightNo": "WGT-9422",
-      "rejectNo": "1",
+      "rejectNo": 1,
       "dateTimeIn": "2026-07-06T20:28:36Z",
       "dateTimeOut": "2026-07-07T01:16:36Z"
     },
@@ -298,7 +34,7 @@ let mockState = {
       "grainType": "SoyaBeans",
       "storeLocation": "Oshodi Yard",
       "weightNo": "WGT-1960",
-      "rejectNo": "3",
+      "rejectNo": 3,
       "dateTimeIn": "2026-07-05T20:28:36Z",
       "dateTimeOut": "2026-07-06T01:16:36Z"
     },
@@ -313,7 +49,7 @@ let mockState = {
       "grainType": "Sorghum",
       "storeLocation": "Kaduna Plant",
       "weightNo": "WGT-5538",
-      "rejectNo": "0",
+      "rejectNo": 0,
       "dateTimeIn": "2026-07-04T20:28:36Z",
       "dateTimeOut": "2026-07-05T01:16:36Z"
     },
@@ -328,7 +64,7 @@ let mockState = {
       "grainType": "Sorghum",
       "storeLocation": "Lekki Port",
       "weightNo": "WGT-7279",
-      "rejectNo": "1",
+      "rejectNo": 1,
       "dateTimeIn": "2026-07-03T20:28:36Z",
       "dateTimeOut": "2026-07-04T01:16:36Z"
     },
@@ -343,7 +79,7 @@ let mockState = {
       "grainType": "SoyaBeans",
       "storeLocation": "Ibadan Center",
       "weightNo": "WGT-8837",
-      "rejectNo": "2",
+      "rejectNo": 2,
       "dateTimeIn": "2026-07-02T20:28:36Z",
       "dateTimeOut": "2026-07-03T01:16:36Z"
     },
@@ -358,7 +94,7 @@ let mockState = {
       "grainType": "SoyaBeans",
       "storeLocation": "Oshodi Yard",
       "weightNo": "WGT-8693",
-      "rejectNo": "0",
+      "rejectNo": 0,
       "dateTimeIn": "2026-07-01T20:28:36Z",
       "dateTimeOut": "2026-07-02T01:16:36Z"
     },
@@ -373,7 +109,7 @@ let mockState = {
       "grainType": "Sorghum",
       "storeLocation": "Kano Silo",
       "weightNo": "WGT-7528",
-      "rejectNo": "0",
+      "rejectNo": 0,
       "dateTimeIn": "2026-06-30T20:28:36Z",
       "dateTimeOut": "2026-07-01T01:16:36Z"
     },
@@ -388,7 +124,7 @@ let mockState = {
       "grainType": "Maize",
       "storeLocation": "Ibadan Center",
       "weightNo": "WGT-9006",
-      "rejectNo": "2",
+      "rejectNo": 2,
       "dateTimeIn": "2026-06-29T20:28:36Z",
       "dateTimeOut": "2026-06-30T01:16:36Z"
     },
@@ -403,7 +139,7 @@ let mockState = {
       "grainType": "SoyaBeans",
       "storeLocation": "Greenville LNG",
       "weightNo": "WGT-9817",
-      "rejectNo": "4",
+      "rejectNo": 4,
       "dateTimeIn": "2026-06-28T20:28:36Z",
       "dateTimeOut": "2026-06-29T01:16:36Z"
     },
@@ -418,7 +154,7 @@ let mockState = {
       "grainType": "Maize",
       "storeLocation": "Ikeja Hub",
       "weightNo": "WGT-6314",
-      "rejectNo": "3",
+      "rejectNo": 3,
       "dateTimeIn": "2026-06-27T20:28:36Z",
       "dateTimeOut": "2026-06-28T01:16:36Z"
     },
@@ -433,7 +169,7 @@ let mockState = {
       "grainType": "Sorghum",
       "storeLocation": "Ibadan Center",
       "weightNo": "WGT-7256",
-      "rejectNo": "4",
+      "rejectNo": 4,
       "dateTimeIn": "2026-06-26T20:28:36Z",
       "dateTimeOut": "2026-06-27T01:16:36Z"
     },
@@ -448,7 +184,7 @@ let mockState = {
       "grainType": "Sorghum",
       "storeLocation": "Kaduna Plant",
       "weightNo": "WGT-5128",
-      "rejectNo": "3",
+      "rejectNo": 3,
       "dateTimeIn": "2026-06-25T20:28:36Z",
       "dateTimeOut": "2026-06-26T01:16:36Z"
     },
@@ -463,7 +199,7 @@ let mockState = {
       "grainType": "Sorghum",
       "storeLocation": "Kano Silo",
       "weightNo": "WGT-2089",
-      "rejectNo": "2",
+      "rejectNo": 2,
       "dateTimeIn": "2026-06-24T20:28:36Z",
       "dateTimeOut": "2026-06-25T01:16:36Z"
     },
@@ -478,7 +214,7 @@ let mockState = {
       "grainType": "Maize",
       "storeLocation": "Ibadan Center",
       "weightNo": "WGT-8324",
-      "rejectNo": "5",
+      "rejectNo": 5,
       "dateTimeIn": "2026-06-23T20:28:36Z",
       "dateTimeOut": "2026-06-24T01:16:36Z"
     },
@@ -493,7 +229,7 @@ let mockState = {
       "grainType": "SoyaBeans",
       "storeLocation": "Kaduna Plant",
       "weightNo": "WGT-2764",
-      "rejectNo": "5",
+      "rejectNo": 5,
       "dateTimeIn": "2026-06-22T20:28:36Z",
       "dateTimeOut": "2026-06-23T01:16:36Z"
     },
@@ -508,7 +244,7 @@ let mockState = {
       "grainType": "Sorghum",
       "storeLocation": "Kano Silo",
       "weightNo": "WGT-1780",
-      "rejectNo": "1",
+      "rejectNo": 1,
       "dateTimeIn": "2026-06-21T20:28:36Z",
       "dateTimeOut": "2026-06-22T01:16:36Z"
     },
@@ -523,7 +259,7 @@ let mockState = {
       "grainType": "SoyaBeans",
       "storeLocation": "Ibadan Center",
       "weightNo": "WGT-9684",
-      "rejectNo": "3",
+      "rejectNo": 3,
       "dateTimeIn": "2026-06-20T20:28:36Z",
       "dateTimeOut": "2026-06-21T01:16:36Z"
     },
@@ -538,7 +274,7 @@ let mockState = {
       "grainType": "Maize",
       "storeLocation": "Port Harcourt Hub",
       "weightNo": "WGT-8410",
-      "rejectNo": "5",
+      "rejectNo": 5,
       "dateTimeIn": "2026-06-19T20:28:36Z",
       "dateTimeOut": "2026-06-20T01:16:36Z"
     },
@@ -553,7 +289,7 @@ let mockState = {
       "grainType": "Maize",
       "storeLocation": "Ikeja Hub",
       "weightNo": "WGT-9550",
-      "rejectNo": "3",
+      "rejectNo": 3,
       "dateTimeIn": "2026-06-18T20:28:36Z",
       "dateTimeOut": "2026-06-19T01:16:36Z"
     },
@@ -568,7 +304,7 @@ let mockState = {
       "grainType": "Sorghum",
       "storeLocation": "Kano Silo",
       "weightNo": "WGT-1868",
-      "rejectNo": "5",
+      "rejectNo": 5,
       "dateTimeIn": "2026-06-17T20:28:36Z",
       "dateTimeOut": "2026-06-18T01:16:36Z"
     }
@@ -4659,70 +4395,12 @@ let mockState = {
   ]
 };
 
-function getMock<T>(key: keyof typeof mockState): T[] {
+export function getMock<T>(key: keyof typeof mockState): T[] {
   return mockState[key] as unknown as T[];
 }
 
-function addMock<T extends {id: string}>(key: keyof typeof mockState, item: Omit<T, 'id'>): T {
+export function addMock<T extends {id: string}>(key: keyof typeof mockState, item: Omit<T, 'id'>): T {
   const newItem = { ...item, id: Math.random().toString(36).substring(7) } as T;
   mockState[key].unshift(newItem as any);
   return newItem;
-}
-
-async function handleApiCall<T>(mockData: () => T, endpoint: string): Promise<T> {
-  if (USE_MOCK_DATA) {
-    await new Promise(r => setTimeout(r, 500))
-    return mockData()
-  }
-  const response = await fetch(endpoint)
-  if (!response.ok) throw new Error('API Error')
-  return response.json()
-}
-
-export const api = {
-  suppliers: { list: () => handleApiCall(() => getMock<SupplierRecord>('suppliers'), '/api/suppliers'), create: (data: Omit<SupplierRecord, 'id'>) => handleApiCall(() => addMock('suppliers', data), '/api/suppliers') },
-  orgSettings: { get: () => handleApiCall(() => ({ id: '1', companyName: 'LORYB Group', siteName: 'Greenville Depot', address: 'Lagos', contactEmail: 'admin@loryb.com', contactPhone: '08000000000', grainTypes: ['Maize', 'Sorghum', 'SoyaBeans'], logoUrl: '' }), '/api/org-settings') },
-  invoices: { list: () => handleApiCall(() => getMock<Invoice>('invoices'), '/api/invoices'), create: (data: Omit<Invoice, 'id'>) => handleApiCall(() => addMock('invoices', data), '/api/invoices') },
-  drivers: { list: () => handleApiCall(() => getMock<Driver>('drivers'), '/api/drivers'), create: (data: Omit<Driver, 'id'>) => handleApiCall(() => addMock('drivers', data), '/api/drivers') },
-  maintenance: { list: () => handleApiCall(() => getMock<MaintenanceLogEntry>('maintenance'), '/api/maintenance'), create: (data: Omit<MaintenanceLogEntry, 'id'>) => handleApiCall(() => addMock('maintenance', data), '/api/maintenance') },
-  lightTokens: { list: () => handleApiCall(() => getMock<LightTokenEntry>('lightTokens'), '/api/light-tokens') },
-  labourers: { list: () => handleApiCall(() => getMock<LabourerLogEntry>('labourers'), '/api/labourers') },
-  materialsHandoff: { list: () => handleApiCall(() => getMock<MaterialsHandoffEntry>('materialsHandoff'), '/api/materials-handoff') },
-  dispatchRecord: { list: () => handleApiCall(() => getMock<DispatchRecord>('dispatchRecord'), '/api/dispatch-record'), create: (data: Omit<DispatchRecord, 'id'>) => handleApiCall(() => addMock('dispatchRecord', data), '/api/dispatch-record') },
-  itemBought: { list: () => handleApiCall(() => getMock<ItemBought>('itemBought'), '/api/item-bought'), create: (data: Omit<ItemBought, 'id'>) => handleApiCall(() => addMock('itemBought', data), '/api/item-bought') },
-  visitorLog: { list: () => handleApiCall(() => getMock<VisitorLog>('visitorLog'), '/api/visitor-log'), create: (data: Omit<VisitorLog, 'id'>) => handleApiCall(() => addMock('visitorLog', data), '/api/visitor-log') },
-  motorcycleLog: { list: () => handleApiCall(() => getMock<MotorcycleLog>('motorcycleLog'), '/api/motorcycle-log'), create: (data: Omit<MotorcycleLog, 'id'>) => handleApiCall(() => addMock('motorcycleLog', data), '/api/motorcycle-log') },
-  staffMovement: { list: () => handleApiCall(() => getMock<StaffMovementLog>('staffMovement'), '/api/staff-movement'), create: (data: Omit<StaffMovementLog, 'id'>) => handleApiCall(() => addMock('staffMovement', data), '/api/staff-movement') },
-  staffAttendance: { list: () => handleApiCall(() => getMock<StaffAttendance>('staffAttendance'), '/api/st  aff-attendance'), create: (data: Omit<StaffAttendance, 'id'>) => handleApiCall(() => addMock('staffAttendance', data), '/api/staff-attendance') },
-  grn: { list: () => handleApiCall(() => getMock<GoodsReceivedNote>('grn'), '/api/grn'), create: (data: Omit<GoodsReceivedNote, 'id'>) => handleApiCall(() => addMock('grn', data), '/api/grn') },
-  binCard: { list: () => handleApiCall(() => getMock<BinCardEntry>('binCard'), '/api/bin-card'), create: (data: Omit<BinCardEntry, 'id'>) => handleApiCall(() => addMock('binCard', data), '/api/bin-card') },
-  trucks: { list: () => handleApiCall(() => getMock<Truck>('trucks'), '/api/trucks'), create: (data: Omit<Truck, 'id'>) => handleApiCall(() => addMock('trucks', data), '/api/trucks') },
-  trips: { list: () => handleApiCall(() => getMock<Trip>('trips'), '/api/trips'), create: (data: Omit<Trip, 'id'>) => handleApiCall(() => addMock('trips', data), '/api/trips') },
-  supplierPayments: { list: () => handleApiCall(() => getMock<SupplierPayment>('supplierPayments'), '/api/supplier-payments'), create: (data: Omit<SupplierPayment, 'id'>) => handleApiCall(() => addMock('supplierPayments', data), '/api/supplier-payments') },
-  sales: { list: () => handleApiCall(() => getMock<Sale>('sales'), '/api/sales'), create: (data: Omit<Sale, 'id'>) => handleApiCall(() => addMock('sales', data), '/api/sales') },
-  payroll: { list: () => handleApiCall(() => getMock<PayrollEntry>('payroll'), '/api/payroll'), create: (data: Omit<PayrollEntry, 'id'>) => handleApiCall(() => addMock('payroll', data), '/api/payroll') },
-  inventoryAlerts: { list: () => handleApiCall(() => getMock<InventoryAlert>('inventoryAlerts'), '/api/inventory-alerts') },
-  waybills: { list: () => handleApiCall(() => getMock<Waybill>('waybills'), '/api/waybills') },
-  expenses: { list: () => handleApiCall(() => getMock<Expense>('expenses'), '/api/expenses'), create: (data: Omit<Expense, 'id'>) => handleApiCall(() => addMock('expenses', data), '/api/expenses') },
-  auth: {
-    login: async (credentials: any) => {
-      if (USE_MOCK_DATA) {
-        await new Promise(r => setTimeout(r, 500))
-        const users = getMock<User>('users')
-        const user = users.find(u => u.email === credentials.email && u.password === credentials.password)
-        if (user) {
-          const { password, ...userWithoutPassword } = user
-          return { user: userWithoutPassword, token: 'mock-jwt-token' }
-        }
-        throw new Error('Invalid email or password')
-      }
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
-      })
-      if (!response.ok) throw new Error('Invalid email or password')
-      return response.json()
-    }
-  }
 }

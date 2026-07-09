@@ -1,7 +1,10 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState, useMemo } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, Expense } from '../../../api'
+import { expenses as expensesApi } from '../../../api/finance'
+import { trucks as trucksApi } from '../../../api/logistics'
+import { Expense } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -43,12 +46,12 @@ function ExpensesPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['expenses'],
-    queryFn: api.expenses.list,
+    queryFn: expensesApi.list,
   })
 
   const { data: trucks } = useQuery({
     queryKey: ['trucks'],
-    queryFn: api.trucks.list,
+    queryFn: trucksApi.list,
   })
 
   const truckOptions = useMemo(() => {
@@ -74,7 +77,7 @@ function ExpensesPage() {
   const totalExpense = filteredData.reduce((acc, row) => acc + row.amount, 0)
 
   const mutation = useMutation({
-    mutationFn: (payload: Omit<Expense, 'id'>) => api.expenses.create(payload),
+    mutationFn: (payload: Omit<Expense, 'id'>) => expensesApi.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expenses'] })
       setIsModalOpen(false)
@@ -100,11 +103,11 @@ function ExpensesPage() {
       linkedTruckNo: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

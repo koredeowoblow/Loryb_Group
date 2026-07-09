@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { InventoryAlert } from '../../../api'
+import { inventoryAlerts } from '../../../api/warehouse'
+import { InventoryAlert } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Badge } from '../../../components/ui/Badge'
 
@@ -28,7 +28,7 @@ function AlertsPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['inventoryAlerts'],
-    queryFn: api.inventoryAlerts.list,
+    queryFn: inventoryAlerts.list,
   })
 
   const filteredData = data?.filter(row => 

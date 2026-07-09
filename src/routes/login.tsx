@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { api, USE_MOCK_DATA } from '../api'
+import { auth, USE_MOCK_DATA } from '../api/core'
 import { useAuth } from '../auth'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
@@ -29,7 +29,7 @@ function LoginPage() {
     setLoading(true)
     setError('')
     try {
-      const response = await api.auth.login(formData)
+      const response = await auth.login(formData)
       const { role } = response.user
       setRole(role)
       

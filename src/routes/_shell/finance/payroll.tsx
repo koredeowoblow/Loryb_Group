@@ -1,7 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState, useMemo } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, PayrollEntry } from '../../../api'
+import { payroll } from '../../../api/finance'
+import { PayrollEntry } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -40,7 +42,7 @@ function PayrollPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['payroll'],
-    queryFn: api.payroll.list,
+    queryFn: payroll.list,
   })
 
   const periods = useMemo(() => {
@@ -60,7 +62,7 @@ function PayrollPage() {
   const staffCount = filteredData.length
 
   const mutation = useMutation({
-    mutationFn: (payload: Omit<PayrollEntry, 'id'>) => api.payroll.create(payload),
+    mutationFn: (payload: Omit<PayrollEntry, 'id'>) => payroll.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payroll'] })
       setIsModalOpen(false)
@@ -85,11 +87,11 @@ function PayrollPage() {
       period: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

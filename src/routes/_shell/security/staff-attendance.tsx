@@ -1,8 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { StaffAttendance } from '../../../api'
+import { staffAttendance } from '../../../api/security'
+import { StaffAttendance } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -37,11 +38,11 @@ function StaffAttendancePage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['staffAttendance'],
-    queryFn: api.staffAttendance.list,
+    queryFn: staffAttendance.list,
   })
 
   const mutation = useMutation({
-    mutationFn: api.staffAttendance.create,
+    mutationFn: staffAttendance.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staffAttendance'] })
       setIsModalOpen(false)
@@ -65,11 +66,11 @@ function StaffAttendancePage() {
       timeOut: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

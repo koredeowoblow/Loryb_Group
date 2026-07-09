@@ -1,8 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { VisitorLog } from '../../../api'
+import { visitorLog } from '../../../api/security'
+import { VisitorLog } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -42,11 +43,11 @@ function VisitorLogPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['visitorLog'],
-    queryFn: api.visitorLog.list,
+    queryFn: visitorLog.list,
   })
 
   const mutation = useMutation({
-    mutationFn: api.visitorLog.create,
+    mutationFn: visitorLog.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['visitorLog'] })
       setIsModalOpen(false)
@@ -74,11 +75,11 @@ function VisitorLogPage() {
       signature: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

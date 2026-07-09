@@ -1,8 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { ItemBought } from '../../../api'
+import { itemBought } from '../../../api/security'
+import { ItemBought } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -41,11 +42,11 @@ function ItemBoughtPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['itemBought'],
-    queryFn: api.itemBought.list,
+    queryFn: itemBought.list,
   })
 
   const mutation = useMutation({
-    mutationFn: api.itemBought.create,
+    mutationFn: itemBought.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['itemBought'] })
       setIsModalOpen(false)
@@ -71,11 +72,11 @@ function ItemBoughtPage() {
       dateTimeOut: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

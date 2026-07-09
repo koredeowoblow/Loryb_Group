@@ -1,8 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { DispatchRecord } from '../../../api'
+import { dispatchRecord } from '../../../api/security'
+import { DispatchRecord } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -53,7 +54,7 @@ function DispatchPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['dispatchRecord'],
-    queryFn: api.dispatchRecord.list,
+    queryFn: dispatchRecord.list,
   })
 
   const filteredData = data?.filter(row => {
@@ -65,7 +66,7 @@ function DispatchPage() {
   const totalDispatched = filteredData.reduce((acc, row) => acc + row.qtyOfGrains, 0)
 
   const mutation = useMutation({
-    mutationFn: api.dispatchRecord.create,
+    mutationFn: dispatchRecord.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dispatchRecord'] })
       setIsModalOpen(false)
@@ -89,7 +90,7 @@ function DispatchPage() {
       driverPhone: '',
       qtyOfGrains: 0,
       confirmedQty: 0,
-      grainType: 'Maize',
+      grainType: 'Maize' as 'Maize' | 'Sorghum' | 'SoyaBeans',
       weight: 0,
       continentalWaybillNo: '',
       lbWaybillNo: '',
@@ -100,11 +101,11 @@ function DispatchPage() {
       dateTimeOut: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { MaterialsHandoffEntry } from '../../../api'
+import { materialsHandoff } from '../../../api/security'
+import { MaterialsHandoffEntry } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 export const Route = createFileRoute('/_shell/security/materials-handoff')({
@@ -21,7 +21,7 @@ const columns = [
 function MaterialsHandoffPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['materials-handoff'],
-    queryFn: api.materialsHandoff.list,
+    queryFn: materialsHandoff.list,
   })
 
   const table = useReactTable({

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
+import { orgSettings } from '../../../api/core'
 
 export const Route = createFileRoute('/_shell/settings/org-settings')({
   component: OrgSettingsPage,
@@ -9,7 +9,7 @@ export const Route = createFileRoute('/_shell/settings/org-settings')({
 function OrgSettingsPage() {
   const { isLoading } = useQuery({
     queryKey: ['org-settings'],
-    queryFn: api.orgSettings.get,
+    queryFn: orgSettings.get,
   })
   
   const [activeTab, setActiveTab] = useState<'general' | 'notifications' | 'security'>('general')

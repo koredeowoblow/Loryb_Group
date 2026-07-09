@@ -1,7 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState, useMemo } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, Driver } from '../../../api'
+import { drivers, trucks as trucksApi } from '../../../api/logistics'
+import { Driver } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -47,13 +49,13 @@ function DriversPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['drivers'],
-    queryFn: api.drivers.list,
+    queryFn: drivers.list,
   })
 
   // Pull trucks for the select field
   const { data: trucks } = useQuery({
     queryKey: ['trucks'],
-    queryFn: api.trucks.list,
+    queryFn: trucksApi.list,
   })
 
   const truckOptions = useMemo(() => {
@@ -76,7 +78,7 @@ function DriversPage() {
   const activeCount = filteredData.filter(d => d.status === 'active').length
 
   const mutation = useMutation({
-    mutationFn: (payload: Omit<Driver, 'id'>) => api.drivers.create(payload),
+    mutationFn: (payload: Omit<Driver, 'id'>) => drivers.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['drivers'] })
       setIsModalOpen(false)
@@ -99,14 +101,14 @@ function DriversPage() {
       licenseNo: '',
       licenseExpiry: '',
       assignedTruckNo: '',
-      status: 'active',
+      status: 'active' as 'active' | 'inactive',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

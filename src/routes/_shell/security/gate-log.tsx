@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
+import { visitorLog as visitorLogApi, dispatchRecord as dispatchRecordApi, staffAttendance as staffAttendanceApi, motorcycleLog as motorcycleLogApi, suppliers as suppliersApi } from '../../../api/security'
 import { Shield, Clock } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { Badge } from '../../../components/ui/Badge'
@@ -14,11 +14,11 @@ function GateLogDashboard() {
     queryKey: ['security-dashboard-detailed'],
     queryFn: async () => {
       const [visitors, dispatch, staff, motorcycles, suppliers] = await Promise.all([
-        api.visitorLog.list(),
-        api.dispatchRecord.list(),
-        api.staffAttendance.list(),
-        api.motorcycleLog.list(),
-        api.suppliers.list()
+        visitorLogApi.list(),
+        dispatchRecordApi.list(),
+        staffAttendanceApi.list(),
+        motorcycleLogApi.list(),
+        suppliersApi.list()
       ])
       
       const activeVisitors = visitors.filter(v => !v.timeOut).length
@@ -114,10 +114,10 @@ function GateLogDashboard() {
             <h3 className="font-header font-bold uppercase tracking-wide text-sm text-primary flex items-center gap-2"><Clock size={16}/> Live Activity Feed</h3>
           </div>
           <div className="p-0 flex-1 overflow-y-auto max-h-[300px]">
-             {data?.visitors.slice(0, 4).map((v: any, i) => (
+             {data?.visitors.slice(0, 4).map((v, i) => (
                 <div key={`v-${i}`} className="p-3 border-b border-surface-border hover:bg-surface-active transition-colors flex justify-between items-center">
                   <div>
-                    <div className="text-sm font-bold text-text-primary">Visitor: {v.visitorName}</div>
+                    <div className="text-sm font-bold text-text-primary">Visitor: {v.name}</div>
                     <div className="text-xs text-text-secondary">{v.purpose}</div>
                   </div>
                   <div className="text-right">
@@ -126,7 +126,7 @@ function GateLogDashboard() {
                   </div>
                 </div>
              ))}
-             {data?.dispatch.slice(0, 3).map((d: any, i) => (
+             {data?.dispatch.slice(0, 3).map((d, i) => (
                 <div key={`d-${i}`} className="p-3 border-b border-surface-border hover:bg-surface-active transition-colors flex justify-between items-center">
                   <div>
                     <div className="text-sm font-bold text-text-primary">Dispatch: {d.truckNo}</div>

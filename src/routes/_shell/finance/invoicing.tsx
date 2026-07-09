@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { Invoice } from '../../../api'
+import { invoices as invoicesApi } from '../../../api/finance'
+import { Invoice } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Badge } from '../../../components/ui/Badge'
 
@@ -24,7 +24,7 @@ const columns = [
 function InvoicingPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['invoicing'],
-    queryFn: api.invoices.list,
+    queryFn: invoicesApi.list,
   })
 
   const table = useReactTable({

@@ -1,7 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, BinCardEntry } from '../../../api'
+import { binCard } from '../../../api/warehouse'
+import { BinCardEntry } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -42,7 +44,7 @@ function BinCardPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['binCard'],
-    queryFn: api.binCard.list,
+    queryFn: binCard.list,
   })
 
   const filteredData = data?.filter(row => {
@@ -55,7 +57,7 @@ function BinCardPage() {
   const totalOut = filteredData.reduce((acc, row) => acc + row.qtyOut, 0)
 
   const mutation = useMutation({
-    mutationFn: (data: Omit<BinCardEntry, 'id'>) => api.binCard.create(data),
+    mutationFn: (data: Omit<BinCardEntry, 'id'>) => binCard.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['binCard'] })
       setIsModalOpen(false)
@@ -80,7 +82,7 @@ function BinCardPage() {
       reference: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')

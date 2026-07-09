@@ -1,8 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { SupplierRecord } from '../../../api'
+import { suppliers } from '../../../api/security'
+import { SupplierRecord } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -49,10 +50,10 @@ function SuppliersPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['suppliers'],
-    queryFn: api.suppliers.list,
+    queryFn: suppliers.list,
   })
 
-  const filteredData = data?.filter(row => {
+  const filteredData = (data || []).filter((row) => {
     const matchesSearch = row.supplierName.toLowerCase().includes(searchTerm.toLowerCase()) || row.truckNo.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesGrain = grainFilter === 'All' || row.grainType === grainFilter
     return matchesSearch && matchesGrain
@@ -61,7 +62,7 @@ function SuppliersPage() {
   const totalQty = filteredData.reduce((acc, row) => acc + row.qtyOfGrains, 0)
 
   const mutation = useMutation({
-    mutationFn: api.suppliers.create,
+    mutationFn: suppliers.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['suppliers'] })
       setIsModalOpen(false)
@@ -85,7 +86,7 @@ function SuppliersPage() {
       truckNo: '',
       qtyOfGrains: 0,
       confirmedQty: 0,
-      grainType: 'Maize',
+      grainType: 'Maize' as 'Maize' | 'Sorghum' | 'SoyaBeans',
       storeLocation: '',
       weightNo: '',
       rejectNo: 0,
@@ -93,11 +94,11 @@ function SuppliersPage() {
       dateTimeOut: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

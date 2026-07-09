@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
-import { LightTokenEntry } from '../../../api'
+import { lightTokens } from '../../../api/security'
+import { LightTokenEntry } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 export const Route = createFileRoute('/_shell/security/light-token')({
@@ -19,7 +19,7 @@ const columns = [
 function LightTokenPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['light-token'],
-    queryFn: api.lightTokens.list,
+    queryFn: lightTokens.list,
   })
 
   const table = useReactTable({

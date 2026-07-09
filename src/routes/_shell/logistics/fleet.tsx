@@ -1,7 +1,9 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, Truck } from '../../../api'
+import { trucks, trips as tripsApi } from '../../../api/logistics'
+import { Truck } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
@@ -42,12 +44,12 @@ function FleetPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['trucks'],
-    queryFn: api.trucks.list,
+    queryFn: trucks.list,
   })
 
   const { data: trips } = useQuery({
     queryKey: ['trips'],
-    queryFn: api.trips.list,
+    queryFn: tripsApi.list,
   })
 
   const activeTrucks = data?.filter(t => t.status === 'in-transit').length || 0
@@ -57,7 +59,7 @@ function FleetPage() {
   const activeTripsCount = activeTripsList.length
 
   const mutation = useMutation({
-    mutationFn: (payload: Omit<Truck, 'id'>) => api.trucks.create(payload),
+    mutationFn: (payload: Omit<Truck, 'id'>) => trucks.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trucks'] })
       setIsModalOpen(false)
@@ -77,11 +79,11 @@ function FleetPage() {
     defaultValues: {
       truckNo: '',
       capacity: 0,
-      status: 'idle',
+      status: 'idle' as 'idle' | 'in-transit' | 'maintenance',
       assignedDriver: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
@@ -89,7 +91,7 @@ function FleetPage() {
         setErrorMsg('Truck No must be unique')
         return
       }
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

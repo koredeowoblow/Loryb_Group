@@ -1,7 +1,10 @@
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState, useMemo } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, SupplierPayment } from '../../../api'
+import { supplierPayments } from '../../../api/finance'
+import { suppliers as suppliersApi } from '../../../api/security'
+import { SupplierPayment } from '../../../types'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
@@ -46,16 +49,16 @@ function SupplierPaymentsPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['supplierPayments'],
-    queryFn: api.supplierPayments.list,
+    queryFn: supplierPayments.list,
   })
 
   const { data: suppliers } = useQuery({
     queryKey: ['suppliers'],
-    queryFn: api.suppliers.list,
+    queryFn: suppliersApi.list,
   })
 
   const supplierRecordOptions = useMemo(() => {
-    return (suppliers || []).map(s => ({
+    return (suppliers || []).map((s) => ({
       label: `${s.supplierName} (${s.dateTimeIn})`,
       value: s.id,
     }))
@@ -72,7 +75,7 @@ function SupplierPaymentsPage() {
   const outstanding = totalOwed - totalPaid
 
   const mutation = useMutation({
-    mutationFn: (payload: Omit<SupplierPayment, 'id'>) => api.supplierPayments.create(payload),
+    mutationFn: (payload: Omit<SupplierPayment, 'id'>) => supplierPayments.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['supplierPayments'] })
       setIsModalOpen(false)
@@ -98,11 +101,11 @@ function SupplierPaymentsPage() {
       date: '',
     },
     validators: {
-      onChange: schema as any,
+      onChange: validateFormWithZod(schema),
     },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value as Omit<SupplierPayment, 'id'>)
     },
   })
 

@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, Trip } from '../../../api'
+import { trips, trucks as trucksApi, drivers as driversApi } from '../../../api/logistics'
+import { Trip } from '../../../types'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { Modal } from '../../../components/ui/Modal'
 import { FormField } from '../../../components/ui/FormField'
 import { SelectField } from '../../../components/ui/SelectField'
@@ -52,15 +54,15 @@ function TripsPage() {
 
   const [searchTerm, setSearchTerm] = useState('')
 
-  const { data, isLoading } = useQuery({ queryKey: ['trips'], queryFn: api.trips.list })
-  const { data: trucks } = useQuery({ queryKey: ['trucks'], queryFn: api.trucks.list })
-  const { data: drivers } = useQuery({ queryKey: ['drivers'], queryFn: api.drivers.list })
+  const { data, isLoading } = useQuery({ queryKey: ['trips'], queryFn: trips.list })
+  const { data: trucks } = useQuery({ queryKey: ['trucks'], queryFn: trucksApi.list })
+  const { data: drivers } = useQuery({ queryKey: ['drivers'], queryFn: driversApi.list })
 
   const truckOptions = useMemo(() => (trucks || []).map(t => ({ label: t.truckNo, value: t.truckNo })), [trucks])
   const driverOptions = useMemo(() => (drivers || []).map(d => ({ label: d.driverName, value: d.driverName })), [drivers])
 
   const mutation = useMutation({
-    mutationFn: (payload: Omit<Trip, 'id'>) => api.trips.create(payload),
+    mutationFn: (payload: Omit<Trip, 'id'>) => trips.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trips'] })
       setIsModalOpen(false)
@@ -69,11 +71,11 @@ function TripsPage() {
   })
 
   const form = useForm({
-    defaultValues: { truckNo: '', driverName: '', origin: '', destination: '', status: 'pending', etaOrCompletedAt: '', continentalWaybillNo: '', lbWaybillNo: '', gatePassNo: '' },
-    validators: { onChange: schema },
+    defaultValues: { truckNo: '', driverName: '', origin: '', destination: '', status: 'pending' as 'pending' | 'in-transit' | 'delivered', etaOrCompletedAt: '', continentalWaybillNo: '', lbWaybillNo: '', gatePassNo: '' },
+    validators: { onChange: validateFormWithZod(schema) },
     onSubmit: async ({ value }) => {
       setErrorMsg('')
-      await mutation.mutateAsync(value as any)
+      await mutation.mutateAsync(value)
     },
   })
 

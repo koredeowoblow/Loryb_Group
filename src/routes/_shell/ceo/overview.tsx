@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
+import { sales as salesApi, expenses as expensesApi, supplierPayments as supplierPaymentsApi, invoices as invoicesApi } from '../../../api/finance'
+import { trucks as trucksApi, trips as tripsApi } from '../../../api/logistics'
+import { grn as grnApi, inventoryAlerts as inventoryAlertsApi } from '../../../api/warehouse'
+import { suppliers as suppliersApi, dispatchRecord as dispatchRecordApi, visitorLog as visitorLogApi } from '../../../api/security'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts'
 import { Shield, Warehouse, Truck, DollarSign, ChevronRight, AlertTriangle } from 'lucide-react'
 
@@ -20,26 +23,26 @@ function StatCard({ title, value, subtitle }: { title: string; value: string | n
 
 function CEOOverviewPage() {
   // Top Level
-  const { data: sales = [] } = useQuery({ queryKey: ['sales'], queryFn: api.sales.list })
-  const { data: expenses = [] } = useQuery({ queryKey: ['expenses'], queryFn: api.expenses.list })
-  const { data: trucks = [] } = useQuery({ queryKey: ['trucks'], queryFn: api.trucks.list })
-  const { data: grn = [] } = useQuery({ queryKey: ['grn'], queryFn: api.grn.list })
+  const { data: sales = [] } = useQuery({ queryKey: ['sales'], queryFn: salesApi.list })
+  const { data: expenses = [] } = useQuery({ queryKey: ['expenses'], queryFn: expensesApi.list })
+  const { data: trucks = [] } = useQuery({ queryKey: ['trucks'], queryFn: trucksApi.list })
+  const { data: grn = [] } = useQuery({ queryKey: ['grn'], queryFn: grnApi.list })
 
   // Security
-  const { data: suppliers = [] } = useQuery({ queryKey: ['suppliers'], queryFn: api.suppliers.list })
-  const { data: dispatchRecord = [] } = useQuery({ queryKey: ['dispatchRecord'], queryFn: api.dispatchRecord.list })
-  const { data: visitorLog = [] } = useQuery({ queryKey: ['visitorLog'], queryFn: api.visitorLog.list })
+  const { data: suppliers = [] } = useQuery({ queryKey: ['suppliers'], queryFn: suppliersApi.list })
+  const { data: dispatchRecord = [] } = useQuery({ queryKey: ['dispatchRecord'], queryFn: dispatchRecordApi.list })
+  const { data: visitorLog = [] } = useQuery({ queryKey: ['visitorLog'], queryFn: visitorLogApi.list })
 
 
   // Warehouse
-  const { data: inventoryAlerts = [] } = useQuery({ queryKey: ['inventoryAlerts'], queryFn: api.inventoryAlerts.list })
+  const { data: inventoryAlerts = [] } = useQuery({ queryKey: ['inventoryAlerts'], queryFn: inventoryAlertsApi.list })
 
   // Logistics
-  const { data: trips = [] } = useQuery({ queryKey: ['trips'], queryFn: api.trips.list })
+  const { data: trips = [] } = useQuery({ queryKey: ['trips'], queryFn: tripsApi.list })
 
   // Finance
-  const { data: supplierPayments = [] } = useQuery({ queryKey: ['supplierPayments'], queryFn: api.supplierPayments.list })
-  const { data: invoices = [] } = useQuery({ queryKey: ['invoices'], queryFn: api.invoices.list })
+  const { data: supplierPayments = [] } = useQuery({ queryKey: ['supplierPayments'], queryFn: supplierPaymentsApi.list })
+  const { data: invoices = [] } = useQuery({ queryKey: ['invoices'], queryFn: invoicesApi.list })
 
   // Top Stats Calcs
   const totalRevenue = sales.reduce((acc, sale) => acc + sale.amount, 0)

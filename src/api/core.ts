@@ -9,8 +9,16 @@ export const USE_MOCK_DATA = true;
     return mockData()
   }
   const response = await fetch(endpoint)
-  if (!response.ok) throw new Error('API Error')
-  return response.json()
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'API Error');
+  }
+  const json = await response.json();
+  const data = json.data !== undefined ? json.data : json;
+  if (json.meta && typeof data === 'object') {
+    (data as any).meta = json.meta;
+  }
+  return data;
 }
 export { handleApiCall };
 
@@ -31,8 +39,12 @@ export const auth = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
       })
-      if (!response.ok) throw new Error('Invalid email or password')
-      return response.json()
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Invalid email or password');
+      }
+      const json = await response.json();
+      return json.data !== undefined ? json.data : json;
     }
   };
 

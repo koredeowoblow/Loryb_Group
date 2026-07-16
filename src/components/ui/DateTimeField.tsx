@@ -25,7 +25,7 @@ export function DateTimeField({
         onChange={(e: any) => field.handleChange(e.target.value)}
         aria-invalid={hasError}
         aria-describedby={hasError ? errorId : undefined}
-        className="w-full px-2.5 py-1.5 text-sm border border-surface-border bg-white rounded shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-shadow"
+        className="w-full px-2.5 py-1.5 text-sm border border-surface-border bg-surface rounded shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-shadow"
       />
       {hasError ? (
         <em id={errorId} className="text-status-error text-xs mt-1 block">

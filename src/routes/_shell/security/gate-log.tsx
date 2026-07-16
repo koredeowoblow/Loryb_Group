@@ -47,7 +47,7 @@ function GateLogDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white p-4 rounded-md shadow-sm border border-surface-border">
+      <div className="flex justify-between items-center bg-surface p-4 rounded-none shadow-none border-2 border-surface-border">
         <div>
           <h2 className="text-xl font-bold font-header tracking-tight text-primary flex items-center gap-2">
             <Shield size={24} /> Security Command Center
@@ -60,27 +60,27 @@ function GateLogDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-md shadow-sm border border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Today's Suppliers</div>
           <div className="text-3xl font-bold text-primary">{data?.todaySuppliers || 0}</div>
           <div className="text-xs text-status-success-dark mt-1">Processed</div>
         </div>
-        <div className="bg-white p-4 rounded-md shadow-sm border border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Dispatches Today</div>
           <div className="text-3xl font-bold text-primary">{data?.todayDispatch || 0}</div>
           <div className="text-xs text-status-success-dark mt-1">Cleared for exit</div>
         </div>
-        <div className="bg-white p-4 rounded-md shadow-sm border border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Active Visitors</div>
           <div className="text-3xl font-bold text-primary">{data?.activeVisitors || 0}</div>
           <div className="text-xs text-status-pending-dark mt-1">Currently on premises</div>
         </div>
-        <div className="bg-white p-4 rounded-md shadow-sm border border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Staff Present</div>
           <div className="text-3xl font-bold text-primary">{data?.staffPresent || 0}</div>
           <div className="text-xs text-text-secondary mt-1">Clocked in today</div>
         </div>
-        <div className="bg-white p-4 rounded-md shadow-sm border border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Active Bikes</div>
           <div className="text-3xl font-bold text-primary">{data?.activeBikes || 0}</div>
           <div className="text-xs text-text-secondary mt-1">Dispatched out</div>
@@ -90,7 +90,7 @@ function GateLogDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Volume Chart */}
-        <div className="bg-white rounded-md shadow-sm border border-surface-border lg:col-span-2 flex flex-col hover:border-primary/30 transition-all">
+        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border lg:col-span-2 flex flex-col hover:border-primary/30 transition-all">
           <div className="p-4 border-b border-surface-border">
             <h3 className="font-header font-bold uppercase tracking-wide text-sm text-primary">Traffic Volume (Last 7 Days)</h3>
           </div>
@@ -109,7 +109,7 @@ function GateLogDashboard() {
         </div>
 
         {/* Live Activity Feed */}
-        <div className="bg-white rounded-md shadow-sm border border-surface-border flex flex-col hover:border-primary/30 transition-all">
+        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border flex flex-col hover:border-primary/30 transition-all">
           <div className="p-4 border-b border-surface-border flex justify-between items-center bg-surface-muted/30">
             <h3 className="font-header font-bold uppercase tracking-wide text-sm text-primary flex items-center gap-2"><Clock size={16}/> Live Activity Feed</h3>
           </div>
@@ -144,3 +144,4 @@ function GateLogDashboard() {
     </div>
   )
 }
+

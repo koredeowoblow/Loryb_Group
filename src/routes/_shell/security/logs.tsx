@@ -17,7 +17,7 @@ function LogsPage() {
     <div className="space-y-4">
       <h2 className="text-xl font-bold font-header tracking-tight text-primary">Security Logs</h2>
       
-      <div className="bg-white rounded-md shadow-sm border border-surface-border">
+      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border">
         <div className="border-b border-surface-border px-6 pt-4">
           <nav className="-mb-px flex space-x-8">
             {tabs.map((tab) => (
@@ -44,3 +44,4 @@ function LogsPage() {
     </div>
   )
 }
+

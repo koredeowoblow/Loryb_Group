@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_shell/ceo/reports')({
 
 function ReportSection({ title, icon: Icon, children }: { title: string; icon: any; children: React.ReactNode }) {
   return (
-    <div className="mb-8 bg-white p-6 rounded-xl shadow-sm border border-surface-border">
+    <div className="mb-8 bg-surface p-6 rounded-xl shadow-sm border border-surface-border">
       <div className="flex items-center gap-2 mb-6 pb-3 border-b border-surface-border/50">
         <div className="bg-primary/10 p-2 rounded-lg text-primary">
           <Icon size={22} />
@@ -27,12 +27,12 @@ function ReportSection({ title, icon: Icon, children }: { title: string; icon: a
 
 function StatBox({ label, value, trend, trendValue, highlight = false }: { label: string; value: string | number; trend?: 'up' | 'down'; trendValue?: string; highlight?: boolean }) {
   return (
-    <div className={`p-5 rounded-xl border transition-all ${highlight ? 'bg-primary text-white border-primary shadow-md' : 'bg-surface-muted/30 border-surface-border hover:shadow-sm hover:bg-white'}`}>
+    <div className={`p-5 rounded-xl border transition-all ${highlight ? 'bg-primary text-white border-primary shadow-md' : 'bg-surface-muted/30 border-surface-border hover:shadow-sm hover:bg-surface'}`}>
       <p className={`text-xs uppercase tracking-wider font-bold mb-2 font-header ${highlight ? 'text-white/80' : 'text-text-muted'}`}>{label}</p>
       <h4 className="text-3xl font-bold tracking-tight">{value}</h4>
       {trend && trendValue && (
         <div className={`text-xs mt-3 font-semibold flex items-center gap-1.5 ${highlight ? 'text-white/90' : trend === 'up' ? 'text-status-success' : 'text-status-error'}`}>
-          <div className={`p-1 rounded-full ${highlight ? 'bg-white/20' : trend === 'up' ? 'bg-status-success/10' : 'bg-status-error/10'}`}>
+          <div className={`p-1 rounded-full ${highlight ? 'bg-surface/20' : trend === 'up' ? 'bg-status-success/10' : 'bg-status-error/10'}`}>
             {trend === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
           </div>
           {trendValue}
@@ -125,7 +125,7 @@ function ReportsPage() {
     <div className="space-y-6 pb-12 font-sans">
       
       {/* Header & Controls */}
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4 bg-white p-6 rounded-xl shadow-sm border border-surface-border relative overflow-hidden">
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4 bg-surface p-6 rounded-xl shadow-sm border border-surface-border relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         <div className="relative z-10">
           <div className="flex items-center gap-2 text-primary font-bold text-sm uppercase tracking-widest mb-2 font-header">
@@ -141,12 +141,12 @@ function ReportsPage() {
         
         <div className="flex flex-wrap items-center gap-3 relative z-10">
           <div className="flex items-center bg-surface-muted border border-surface-border rounded-lg p-1">
-            <button className="px-4 py-1.5 text-sm font-semibold rounded-md bg-white shadow-sm text-primary">Monthly</button>
+            <button className="px-4 py-1.5 text-sm font-semibold rounded-md bg-surface shadow-sm text-primary">Monthly</button>
             <button className="px-4 py-1.5 text-sm font-semibold rounded-md text-text-muted hover:text-text-primary transition-colors">Quarterly</button>
             <button className="px-4 py-1.5 text-sm font-semibold rounded-md text-text-muted hover:text-text-primary transition-colors">YTD</button>
           </div>
           
-          <button className="bg-white hover:bg-surface-muted text-text-primary border border-surface-border px-4 py-2 rounded-lg shadow-sm text-sm font-bold transition-colors flex items-center gap-2">
+          <button className="bg-surface hover:bg-surface-muted text-text-primary border border-surface-border px-4 py-2 rounded-lg shadow-sm text-sm font-bold transition-colors flex items-center gap-2">
             <Filter size={16} /> Filters
           </button>
           
@@ -300,13 +300,13 @@ function ReportsPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4 mt-2">
-                <div className="bg-white border border-surface-border p-4 rounded-lg shadow-sm">
+                <div className="bg-surface border border-surface-border p-4 rounded-lg shadow-sm">
                   <div className="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">Gate Incidents (30d)</div>
                   <div className="text-2xl font-bold text-status-warning flex items-center gap-2">
                     0 <span className="text-xs text-status-success flex items-center"><TrendingDown size={12} /> 100%</span>
                   </div>
                 </div>
-                <div className="bg-white border border-surface-border p-4 rounded-lg shadow-sm">
+                <div className="bg-surface border border-surface-border p-4 rounded-lg shadow-sm">
                   <div className="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">Clearances Issued</div>
                   <div className="text-2xl font-bold text-primary">1,248</div>
                 </div>
@@ -319,3 +319,4 @@ function ReportsPage() {
     </div>
   )
 }
+

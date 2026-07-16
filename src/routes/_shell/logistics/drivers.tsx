@@ -1,3 +1,4 @@
+import { UserCircle } from 'lucide-react'
 import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState, useMemo } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
@@ -128,7 +129,7 @@ function DriversPage() {
       </div>
 
       {/* Summary Strip & Filters */}
-      <div className="bg-white p-3 rounded-md shadow-sm border border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="bg-surface p-3 rounded-none shadow-none border-2 border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
             <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Drivers</div>
@@ -146,12 +147,12 @@ function DriversPage() {
             placeholder="Search name, phone, or truck..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
           />
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer"
+            className="px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer"
           >
             <option value="All">All Statuses</option>
             <option value="active">Active</option>
@@ -160,7 +161,7 @@ function DriversPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden overflow-x-auto">
+      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
         {isLoading ? (
           <div className="p-12 flex flex-col items-center justify-center space-y-4">
             <div className="w-8 h-8 border-4 border-surface-border border-t-primary rounded-full animate-spin"></div>
@@ -179,7 +180,7 @@ function DriversPage() {
                 </tr>
               ))}
             </thead>
-            <tbody className="bg-white divide-y divide-surface-border text-sm">
+            <tbody className="bg-surface divide-y divide-surface-border text-sm">
               {table.getRowModel().rows.map(row => (
                 <tr key={row.id} className="hover:bg-surface-active/60 transition-colors group cursor-pointer">
                   {row.getVisibleCells().map(cell => (
@@ -193,7 +194,7 @@ function DriversPage() {
                 <tr>
                   <td colSpan={columns.length} className="px-4 py-16 text-center">
                     <div className="flex flex-col items-center justify-center space-y-2">
-                      <div className="text-4xl text-surface-border mb-2">👤</div>
+                      <UserCircle size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />
                       <h3 className="text-base font-bold text-primary font-header">No drivers found</h3>
                       <p className="text-sm text-text-muted max-w-sm">
                         {searchTerm || statusFilter !== 'All' 
@@ -259,7 +260,7 @@ function DriversPage() {
                   disabled={!canSubmit || isSubmitting}
                   className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
                 >
-                  {isSubmitting ? 'Saving...' : 'Save Record'}
+                  {isSubmitting ? 'Adding...' : 'Add Driver'}
                 </button>
               )}
             />
@@ -269,3 +270,4 @@ function DriversPage() {
     </div>
   )
 }
+

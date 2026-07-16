@@ -97,7 +97,7 @@ function FleetPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white p-4 rounded-md shadow-sm border border-surface-border">
+      <div className="flex justify-between items-center bg-surface p-4 rounded-none shadow-none border-2 border-surface-border">
         <div>
           <h2 className="text-xl font-bold font-header tracking-tight text-primary flex items-center gap-2">
             <TruckIcon size={24} /> Fleet & Logistics Command Center
@@ -113,22 +113,22 @@ function FleetPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-md shadow-sm border border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Active Fleet</div>
           <div className="text-3xl font-bold text-primary">{activeTrucks}</div>
           <div className="text-xs text-text-secondary mt-1">Out of {data?.length || 0} Total</div>
         </div>
-        <div className="bg-white p-4 rounded-md shadow-sm border border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Total Capacity</div>
           <div className="text-3xl font-bold text-primary">{totalCapacity.toLocaleString()} kg</div>
           <div className="text-xs text-text-secondary mt-1">Combined fleet volume</div>
         </div>
-        <div className="bg-white p-4 rounded-md shadow-sm border border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">In Maintenance</div>
           <div className="text-3xl font-bold text-status-error-dark">{maintenanceTrucks}</div>
           <div className="text-xs text-status-error-dark mt-1">Currently unavailable</div>
         </div>
-        <div className="bg-white p-4 rounded-md shadow-sm border border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Active Trips</div>
           <div className="text-3xl font-bold text-status-intransit-dark">{activeTripsCount}</div>
           <div className="text-xs text-status-intransit-dark mt-1">Trips currently running</div>
@@ -139,7 +139,7 @@ function FleetPage() {
         
         {/* Left Col: Charts & Status */}
         <div className="space-y-6">
-          <div className="bg-white p-4 rounded-md shadow-sm border border-surface-border flex flex-col h-64 hover:border-primary/30 transition-all">
+          <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border flex flex-col h-64 hover:border-primary/30 transition-all">
             <div className="text-sm uppercase tracking-wider font-bold text-text-secondary mb-4 font-header border-b border-surface-border pb-2 flex items-center gap-2">
                <Activity size={16} /> Fleet Status
             </div>
@@ -169,7 +169,7 @@ function FleetPage() {
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         return (
-                          <div className="bg-white border border-surface-border shadow-lg rounded p-2 px-3">
+                          <div className="bg-surface border border-surface-border shadow-lg rounded p-2 px-3">
                             <div className="text-xs font-bold text-text-secondary uppercase mb-1">{payload[0].name}</div>
                             <div className="text-sm font-bold" style={{ color: payload[0].payload.fill }}>{payload[0].value} Trucks</div>
                           </div>
@@ -183,7 +183,7 @@ function FleetPage() {
             </div>
           </div>
           
-          <div className="bg-white rounded-md shadow-sm border border-surface-border flex flex-col h-80 hover:border-primary/30 transition-all">
+          <div className="bg-surface rounded-none shadow-none border-2 border-surface-border flex flex-col h-80 hover:border-primary/30 transition-all">
             <div className="p-4 border-b border-surface-border flex items-center gap-2 text-primary bg-surface-muted/30">
                <Navigation size={18} />
                <h3 className="font-header font-bold uppercase tracking-wide text-sm">Active Trips Tracking</h3>
@@ -198,11 +198,11 @@ function FleetPage() {
                    <div className="text-xs text-text-secondary mb-3">Driver: <span className="font-medium text-text-primary">{trip.driverName}</span></div>
                    <div className="flex justify-between items-center relative">
                      <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-surface-border -z-10"></div>
-                     <div className="flex flex-col items-center bg-white px-1">
+                     <div className="flex flex-col items-center bg-surface px-1">
                        <MapPin size={14} className="text-status-success-dark mb-1" />
                        <span className="text-[0.65rem] font-bold uppercase tracking-wider text-text-muted">{trip.origin}</span>
                      </div>
-                     <div className="flex flex-col items-center bg-white px-1">
+                     <div className="flex flex-col items-center bg-surface px-1">
                        <Navigation size={14} className="text-status-error-dark mb-1" />
                        <span className="text-[0.65rem] font-bold uppercase tracking-wider text-text-muted">{trip.destination}</span>
                      </div>
@@ -219,7 +219,7 @@ function FleetPage() {
         </div>
 
         {/* Right Col: Fleet Registry Table */}
-        <div className="xl:col-span-2 bg-white rounded-md shadow-sm border border-surface-border overflow-hidden flex flex-col h-full min-h-[500px] hover:border-primary/30 transition-all">
+        <div className="xl:col-span-2 bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden flex flex-col h-full min-h-[500px] hover:border-primary/30 transition-all">
           <div className="p-4 text-sm uppercase tracking-wider font-bold text-text-secondary font-header border-b border-surface-border shrink-0 bg-surface-muted/30">Fleet Registry Database</div>
           <div className="flex-1 overflow-auto">
             {isLoading ? (
@@ -237,7 +237,7 @@ function FleetPage() {
                     </tr>
                   ))}
                 </thead>
-                <tbody className="bg-white divide-y divide-surface-border text-sm">
+                <tbody className="bg-surface divide-y divide-surface-border text-sm">
                   {table.getRowModel().rows.map(row => (
                     <tr key={row.id} className="hover:bg-surface-active/60 transition-colors">
                       {row.getVisibleCells().map(cell => (
@@ -308,3 +308,4 @@ function FleetPage() {
     </div>
   )
 }
+

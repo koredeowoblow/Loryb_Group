@@ -30,7 +30,19 @@ export type User = {
   name: string
   email: string
   role: 'CEO' | 'Admin' | 'Security' | 'Warehouse' | 'Logistics' | 'Finance'
+  status?: 'Active' | 'Inactive' | 'Pending'
+  lastLogin?: string
   password?: string
+  fullName?: string
+  phone?: string
+}
+
+export type Role = {
+  id: string
+  name: string
+  description: string
+  permissions: string[]
+  isSystem: boolean
 }
 
 export type Invoice = {
@@ -257,4 +269,12 @@ export type DispatchRecord = {
   driverSignature: string
   dateTimeIn: string
   dateTimeOut?: string
+}
+
+export type Stock = {
+  id: string
+  grainType: string
+  totalQty: number
+  status: 'ok' | 'low' | 'critical'
+  lastUpdated: string
 }

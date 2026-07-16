@@ -4,42 +4,58 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'], // Legible data font
-        header: ['Montserrat', 'system-ui', 'sans-serif'], // Geometric, confident
+        sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
+        header: ['"Barlow Condensed"', 'system-ui', 'sans-serif'],
       },
       colors: {
         primary: {
-          DEFAULT: '#002B79',
-          hover: '#001E55',
-          light: '#335593',
-          lighter: '#E6EAF2',
+          DEFAULT: 'rgb(var(--color-primary) / <alpha-value>)',
+          hover: 'rgb(var(--color-primary-hover) / <alpha-value>)',
+          light: 'rgb(var(--color-primary-light) / <alpha-value>)',
+          lighter: 'rgb(var(--color-primary-lighter) / <alpha-value>)',
         },
         accent: {
-          DEFAULT: '#F59E0B', // Warm amber / wheat
-          hover: '#D97706',
-          light: '#FDE68A',
-          lighter: '#FFFBEB',
+          DEFAULT: 'rgb(var(--color-accent) / <alpha-value>)',
+          hover: 'rgb(var(--color-accent-hover) / <alpha-value>)',
+          light: 'rgb(var(--color-accent-light) / <alpha-value>)',
+          lighter: 'rgb(var(--color-accent-lighter) / <alpha-value>)',
         },
         surface: {
-          DEFAULT: '#FFFFFF',
-          muted: '#F8FAFC', // Slate 50 (cool undertone)
-          border: '#E2E8F0', // Slate 200
-          active: '#F1F5F9', // Slate 100
+          DEFAULT: 'rgb(var(--color-surface) / <alpha-value>)',
+          muted: 'rgb(var(--color-surface-muted) / <alpha-value>)',
+          border: 'rgb(var(--color-surface-border) / <alpha-value>)',
+          active: 'rgb(var(--color-surface-active) / <alpha-value>)',
         },
         text: {
-          primary: '#0F172A', // Slate 900 (near black, cool)
-          secondary: '#334155', // Slate 700
-          muted: '#64748B', // Slate 500
+          primary: 'rgb(var(--color-text-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--color-text-secondary) / <alpha-value>)',
+          muted: 'rgb(var(--color-text-muted) / <alpha-value>)',
         },
         status: {
-          pending: { DEFAULT: '#F59E0B', dark: '#B45309' }, // Amber 700
-          intransit: { DEFAULT: '#002B79', dark: '#001E55' }, // Primary hover
-          success: { DEFAULT: '#10B981', dark: '#047857' }, // Emerald 700
-          error: { DEFAULT: '#EF4444', dark: '#B91C1C' }, // Red 700
-          draft: { DEFAULT: '#64748B', dark: '#334155' }, // Slate 700
+          pending: { 
+            DEFAULT: 'rgb(var(--color-status-pending) / <alpha-value>)',
+            dark: 'rgb(var(--color-status-pending-dark) / <alpha-value>)' 
+          },
+          intransit: { 
+            DEFAULT: 'rgb(var(--color-status-intransit) / <alpha-value>)',
+            dark: 'rgb(var(--color-status-intransit-dark) / <alpha-value>)' 
+          },
+          success: { 
+            DEFAULT: 'rgb(var(--color-status-success) / <alpha-value>)',
+            dark: 'rgb(var(--color-status-success-dark) / <alpha-value>)' 
+          },
+          error: { 
+            DEFAULT: 'rgb(var(--color-status-error) / <alpha-value>)',
+            dark: 'rgb(var(--color-status-error-dark) / <alpha-value>)' 
+          },
+          draft: { 
+            DEFAULT: 'rgb(var(--color-status-draft) / <alpha-value>)',
+            dark: 'rgb(var(--color-status-draft-dark) / <alpha-value>)' 
+          },
         }
       },
       spacing: {

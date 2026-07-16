@@ -25,7 +25,7 @@ export function SelectField({
         onChange={(e: any) => field.handleChange(e.target.value)}
         aria-invalid={hasError}
         aria-describedby={hasError ? errorId : undefined}
-        className="w-full px-3 py-2 border border-surface-border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary bg-white"
+        className="w-full px-3 py-2 border border-surface-border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary bg-surface"
       >
         <option value="" disabled>Select {label}</option>
         {options.map((opt) => (

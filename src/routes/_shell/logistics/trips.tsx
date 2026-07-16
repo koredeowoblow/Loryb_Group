@@ -29,7 +29,7 @@ const schema = z.object({
 
 function TripCard({ trip }: { trip: Trip }) {
   return (
-    <div className="bg-white p-3 rounded shadow-sm border border-surface-border flex flex-col gap-2">
+    <div className="bg-surface p-3 rounded shadow-sm border border-surface-border flex flex-col gap-2">
       <div className="flex justify-between items-start">
         <div className="font-bold text-sm text-primary">{trip.truckNo}</div>
         <div className="text-[0.65rem] uppercase tracking-wider bg-surface-muted px-1.5 py-0.5 rounded text-text-secondary font-bold">
@@ -105,7 +105,7 @@ function TripsPage() {
       </div>
 
       {/* Summary Strip & Filters */}
-      <div className="bg-white p-3 rounded-md shadow-sm border border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="bg-surface p-3 rounded-none shadow-none border-2 border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
             <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Active Trips</div>
@@ -119,13 +119,13 @@ function TripsPage() {
             placeholder="Search truck, driver or destination..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
           />
         </div>
       </div>
 
       {isLoading ? (
-        <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden p-12 flex flex-col items-center justify-center space-y-4">
+        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden p-12 flex flex-col items-center justify-center space-y-4">
           <div className="w-8 h-8 border-4 border-surface-border border-t-primary rounded-full animate-spin"></div>
           <div className="text-sm font-medium text-text-muted">Loading trip board...</div>
         </div>
@@ -135,7 +135,7 @@ function TripsPage() {
           <div className="bg-surface-active rounded-md p-3 flex flex-col border border-surface-border">
             <div className="flex justify-between items-center mb-3">
               <h3 className="font-header font-bold text-sm uppercase tracking-wider text-text-secondary">Pending</h3>
-              <span className="bg-white text-xs font-bold px-2 py-0.5 rounded shadow-sm border border-surface-border">{pending.length}</span>
+              <span className="bg-surface text-xs font-bold px-2 py-0.5 rounded shadow-sm border border-surface-border">{pending.length}</span>
             </div>
             <div className="flex-1 overflow-y-auto space-y-3 min-h-[200px]">
               {pending.length === 0 ? (
@@ -153,7 +153,7 @@ function TripsPage() {
           <div className="bg-surface-active rounded-md p-3 flex flex-col border border-surface-border">
             <div className="flex justify-between items-center mb-3">
               <h3 className="font-header font-bold text-sm uppercase tracking-wider text-status-warning">In Transit</h3>
-              <span className="bg-white text-xs font-bold px-2 py-0.5 rounded shadow-sm border border-status-warning/30 text-status-warning">{inTransit.length}</span>
+              <span className="bg-surface text-xs font-bold px-2 py-0.5 rounded shadow-sm border border-status-warning/30 text-status-warning">{inTransit.length}</span>
             </div>
             <div className="flex-1 overflow-y-auto space-y-3 min-h-[200px]">
               {inTransit.length === 0 ? (
@@ -171,7 +171,7 @@ function TripsPage() {
           <div className="bg-surface-active rounded-md p-3 flex flex-col border border-surface-border">
             <div className="flex justify-between items-center mb-3">
               <h3 className="font-header font-bold text-sm uppercase tracking-wider text-status-success">Delivered</h3>
-              <span className="bg-white text-xs font-bold px-2 py-0.5 rounded shadow-sm border border-status-success/30 text-status-success">{delivered.length}</span>
+              <span className="bg-surface text-xs font-bold px-2 py-0.5 rounded shadow-sm border border-status-success/30 text-status-success">{delivered.length}</span>
             </div>
             <div className="flex-1 overflow-y-auto space-y-3 min-h-[200px]">
               {delivered.length === 0 ? (
@@ -206,7 +206,7 @@ function TripsPage() {
             <button type="button" onClick={() => setIsModalOpen(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">Cancel</button>
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
               <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
-                {isSubmitting ? 'Saving...' : 'Save Record'}
+                {isSubmitting ? 'Scheduling...' : 'Schedule Trip'}
               </button>
             )} />
           </div>
@@ -215,3 +215,4 @@ function TripsPage() {
     </div>
   )
 }
+

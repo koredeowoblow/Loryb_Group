@@ -39,7 +39,7 @@ function MaterialsHandoffPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden overflow-x-auto">
+      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
         {isLoading ? (
           <div className="p-8 text-center text-text-muted">Loading...</div>
         ) : (
@@ -55,7 +55,7 @@ function MaterialsHandoffPage() {
                 </tr>
               ))}
             </thead>
-            <tbody className="bg-white divide-y divide-surface-border text-sm">
+            <tbody className="bg-surface divide-y divide-surface-border text-sm">
               {table.getRowModel().rows.map(row => (
                 <tr key={row.id} className="hover:bg-surface-active/60 transition-colors">
                   {row.getVisibleCells().map(cell => (
@@ -79,3 +79,4 @@ function MaterialsHandoffPage() {
     </div>
   )
 }
+

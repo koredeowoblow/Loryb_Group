@@ -82,7 +82,7 @@ function RbacPage() {
 
   const [editFormData, setEditFormData] = useState({ name: '', description: '' })
 
-  const activeRole = roles.find(r => r.id === selectedRole)!
+  const activeRole = roles.find(r => r.id === selectedRole) || roles[0]
 
   const handleEdit = () => {
     setTempPermissions([...activeRole.permissions])
@@ -118,6 +118,7 @@ function RbacPage() {
   // Group permissions by category
   const categories = Array.from(new Set(ALL_PERMISSIONS.map(p => p.category)))
 
+  if (!activeRole) return <div className="p-8 text-center text-text-muted">Loading roles...</div>;
   return (
     <div className="space-y-6 max-w-6xl">
       <div className="flex justify-between items-center">
@@ -135,7 +136,7 @@ function RbacPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
         {/* Roles Sidebar */}
-        <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden flex flex-col h-[calc(100vh-12rem)]">
+        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden flex flex-col h-[calc(100vh-12rem)]">
           <div className="p-4 border-b border-surface-border bg-surface-muted/30">
             <h3 className="font-header font-bold uppercase tracking-wide text-sm text-primary flex items-center gap-2">
               <Users size={16} /> User Roles
@@ -166,7 +167,7 @@ function RbacPage() {
         </div>
 
         {/* Permissions Configuration */}
-        <div className="lg:col-span-3 bg-white rounded-md shadow-sm border border-surface-border flex flex-col h-[calc(100vh-12rem)]">
+        <div className="lg:col-span-3 bg-surface rounded-none shadow-none border-2 border-surface-border flex flex-col h-[calc(100vh-12rem)]">
           <div className="p-6 border-b border-surface-border flex justify-between items-start bg-surface-muted/10">
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -217,7 +218,7 @@ function RbacPage() {
                             }`}
                           >
                             <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 mt-0.5 border transition-colors ${
-                              isGranted ? 'bg-primary border-primary text-white' : 'bg-white border-surface-border text-transparent'
+                              isGranted ? 'bg-primary border-primary text-white' : 'bg-surface border-surface-border text-transparent'
                             }`}>
                               <Check size={14} />
                             </div>
@@ -241,7 +242,7 @@ function RbacPage() {
         </div>
       </div>
 
-      <Modal isOpen={isEditing} onClose={handleCancel} title="Edit Role & Permissions">
+      <Modal isOpen={isEditing} onClose={handleCancel} title={'Edit Role & Permissions'}>
         <div className="space-y-4">
           {activeRole.isSystem && (
             <div className="p-3 bg-status-info/10 border border-status-info/20 rounded-md text-xs text-status-info-dark flex items-start gap-2">
@@ -256,7 +257,7 @@ function RbacPage() {
               value={editFormData.name}
               disabled={activeRole.isSystem}
               onChange={e => setEditFormData({...editFormData, name: e.target.value})}
-              className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors text-sm font-bold text-text-primary disabled:opacity-60 disabled:cursor-not-allowed" 
+              className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors text-sm font-bold text-text-primary disabled:opacity-60 disabled:cursor-not-allowed" 
             />
           </div>
           <div>
@@ -266,7 +267,7 @@ function RbacPage() {
               rows={2}
               disabled={activeRole.isSystem}
               onChange={e => setEditFormData({...editFormData, description: e.target.value})}
-              className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors text-sm text-text-primary disabled:opacity-60 disabled:cursor-not-allowed" 
+              className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors text-sm text-text-primary disabled:opacity-60 disabled:cursor-not-allowed" 
             />
           </div>
 
@@ -316,3 +317,4 @@ function RbacPage() {
     </div>
   )
 }
+

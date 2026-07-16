@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { auth, USE_MOCK_DATA } from '../api/core'
 import { useAuth } from '../auth'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { getRoleRedirect } from '../lib/rbac'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
@@ -31,18 +32,11 @@ function LoginPage() {
     try {
       const response = await auth.login(formData)
       const { role } = response.user
+      localStorage.setItem('loryb_token', response.token)
       setRole(role)
       
-      const roleRedirects: Record<string, string> = {
-        'CEO': '/ceo/overview',
-        'Admin': '/ceo/overview',
-        'Security': '/security/gate-log',
-        'Warehouse': '/warehouse/stock-overview',
-        'Logistics': '/logistics/fleet',
-        'Finance': '/finance/overview',
-      }
       
-      navigate({ to: (roleRedirects[role] || '/ceo/overview') as any })
+      navigate({ to: getRoleRedirect(role) as any })
     } catch (err: any) {
       setError(err.message || 'Invalid email or password')
     } finally {
@@ -52,7 +46,7 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-muted px-4 font-sans text-text-primary">
-      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-lg shadow-xl border border-surface-border">
+      <div className="max-w-md w-full space-y-8 bg-surface p-10 rounded-lg shadow-xl border border-surface-border">
         <div className="flex flex-col items-center">
           <img src="/logo.png" alt="Loryb Group of Companies" className="h-16 w-auto mb-4" />
           <h2 className="mt-2 text-center text-3xl font-bold font-header tracking-tight text-primary">
@@ -71,22 +65,24 @@ function LoginPage() {
           )}
           
           <div>
-            <label className="block text-sm font-bold text-text-primary mb-1">Email address</label>
+            <label htmlFor="email" className="block text-sm font-bold text-text-primary mb-1">Email address</label>
             <input
+              id="email"
               type="email"
               required
-              className="appearance-none block w-full px-3 py-2 border border-surface-border rounded-md shadow-sm placeholder-text-muted focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-surface-muted focus:bg-white transition-colors"
+              className="appearance-none block w-full px-3 py-2 border border-surface-border rounded-md shadow-sm placeholder-text-muted focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-surface-muted focus:bg-surface transition-colors"
               value={formData.email}
               onChange={e => setFormData({ ...formData, email: e.target.value })}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-text-primary mb-1">Password</label>
+            <label htmlFor="password" className="block text-sm font-bold text-text-primary mb-1">Password</label>
             <input
+              id="password"
               type="password"
               required
-              className="appearance-none block w-full px-3 py-2 border border-surface-border rounded-md shadow-sm placeholder-text-muted focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-surface-muted focus:bg-white transition-colors"
+              className="appearance-none block w-full px-3 py-2 border border-surface-border rounded-md shadow-sm placeholder-text-muted focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-surface-muted focus:bg-surface transition-colors"
               value={formData.password}
               onChange={e => setFormData({ ...formData, password: e.target.value })}
             />
@@ -133,7 +129,7 @@ function LoginPage() {
               {showHint ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
             {showHint && (
-              <div className="p-4 border-t border-surface-border bg-white text-xs text-text-secondary">
+              <div className="p-4 border-t border-surface-border bg-surface text-xs text-text-secondary">
                 <table className="w-full">
                   <thead>
                     <tr className="text-left font-bold text-text-primary border-b border-surface-border">

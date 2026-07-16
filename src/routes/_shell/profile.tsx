@@ -41,7 +41,7 @@ function ProfilePage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden overflow-x-auto">
+      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
         <div className="p-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-8 pb-8 border-b border-surface-border text-center sm:text-left">
             <div className="w-24 h-24 shrink-0 rounded-full bg-primary text-white flex items-center justify-center font-bold font-header text-4xl shadow-sm border border-primary-light">
@@ -51,7 +51,7 @@ function ProfilePage() {
               <h3 className="text-2xl font-bold text-primary font-header">{formData.firstName} {formData.lastName}</h3>
               <p className="text-text-secondary mt-1">{formData.role} • {formData.department}</p>
               <div className="mt-3 flex gap-2">
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold font-header uppercase tracking-wider bg-status-success/10 text-status-success">
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold font-header uppercase tracking-wider bg-status-success text-white border-2 border-status-success-dark shadow-none">
                   Active Account
                 </span>
                 <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold font-header uppercase tracking-wider bg-surface-muted text-text-secondary border border-surface-border">
@@ -70,7 +70,7 @@ function ProfilePage() {
                   value={formData.firstName}
                   onChange={e => setFormData({...formData, firstName: e.target.value})}
                   disabled={!isEditing}
-                  className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
+                  className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                 />
               </div>
               <div>
@@ -80,7 +80,7 @@ function ProfilePage() {
                   value={formData.lastName}
                   onChange={e => setFormData({...formData, lastName: e.target.value})}
                   disabled={!isEditing}
-                  className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
+                  className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                 />
               </div>
               <div>
@@ -90,7 +90,7 @@ function ProfilePage() {
                   value={formData.email}
                   onChange={e => setFormData({...formData, email: e.target.value})}
                   disabled={!isEditing}
-                  className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
+                  className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                 />
               </div>
               <div>
@@ -100,7 +100,7 @@ function ProfilePage() {
                   value={formData.phone}
                   onChange={e => setFormData({...formData, phone: e.target.value})}
                   disabled={!isEditing}
-                  className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
+                  className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                 />
               </div>
               <div>
@@ -140,3 +140,4 @@ function ProfilePage() {
     </div>
   )
 }
+

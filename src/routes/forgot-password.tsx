@@ -23,7 +23,7 @@ function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-muted px-4 font-sans text-text-primary">
-      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-lg shadow-xl border border-surface-border">
+      <div className="max-w-md w-full space-y-8 bg-surface p-10 rounded-lg shadow-xl border border-surface-border">
         <div className="flex flex-col items-center">
           <img src="/logo.png" alt="Loryb Group of Companies" className="h-16 w-auto mb-4" />
           <h2 className="mt-2 text-center text-3xl font-bold font-header tracking-tight text-primary">
@@ -47,7 +47,7 @@ function ForgotPasswordPage() {
               <input
                 type="email"
                 required
-                className="appearance-none block w-full px-3 py-2 border border-surface-border rounded-md shadow-sm placeholder-text-muted focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-surface-muted focus:bg-white transition-colors"
+                className="appearance-none block w-full px-3 py-2 border border-surface-border rounded-md shadow-sm placeholder-text-muted focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-surface-muted focus:bg-surface transition-colors"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
               />

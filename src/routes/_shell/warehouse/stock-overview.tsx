@@ -38,7 +38,7 @@ function StockOverviewPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white p-4 rounded-md shadow-sm border border-surface-border hover:border-primary/30 transition-all">
+      <div className="flex justify-between items-center bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 transition-all">
         <div>
           <h2 className="text-xl font-bold font-header tracking-tight text-primary flex items-center gap-2">
             <Warehouse size={24} /> Stock Overview
@@ -54,7 +54,7 @@ function StockOverviewPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {activeAlerts.map(alert => (
-              <div key={alert.id} className="bg-white p-3 rounded border border-status-error/20 shadow-sm flex flex-col hover:border-status-error/50 transition-all">
+              <div key={alert.id} className="bg-surface p-3 rounded border border-status-error/20 shadow-sm flex flex-col hover:border-status-error/50 transition-all">
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-bold text-text-primary">{alert.grainType}</span>
                   <span className={`text-[0.65rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${alert.status === 'critical' ? 'bg-status-error text-white' : 'bg-status-pending-dark text-white'}`}>
@@ -79,7 +79,7 @@ function StockOverviewPage() {
         ].map(grain => {
           const percent = Math.min(100, Math.round((grain.value / grain.cap) * 100))
           return (
-            <div key={grain.name} className="bg-white p-5 rounded-md shadow-sm border border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+            <div key={grain.name} className="bg-surface p-5 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
               <div className="flex justify-between items-end mb-4">
                 <h3 className="font-header font-bold uppercase tracking-wider text-text-muted text-sm">{grain.name}</h3>
                 <div className="text-2xl font-bold text-primary">{grain.value.toLocaleString()} <span className="text-xs text-text-muted font-normal">kg</span></div>
@@ -100,7 +100,7 @@ function StockOverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* 7-Day Trend */}
-        <div className="bg-white rounded-md shadow-sm border border-surface-border lg:col-span-2 flex flex-col hover:border-primary/30 transition-all">
+        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border lg:col-span-2 flex flex-col hover:border-primary/30 transition-all">
           <div className="p-4 border-b border-surface-border flex items-center gap-2 text-primary">
             <Activity size={18} />
             <h3 className="font-header font-bold uppercase tracking-wide text-sm">7-Day Movement Trend</h3>
@@ -121,7 +121,7 @@ function StockOverviewPage() {
         </div>
 
         {/* Recent GRN Intake List */}
-        <div className="bg-white rounded-md shadow-sm border border-surface-border flex flex-col hover:border-primary/30 transition-all">
+        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border flex flex-col hover:border-primary/30 transition-all">
           <div className="p-4 border-b border-surface-border flex items-center gap-2 text-primary bg-surface-muted/30">
             <ArrowDownToLine size={18} />
             <h3 className="font-header font-bold uppercase tracking-wide text-sm">Recent Intake (GRN)</h3>
@@ -148,3 +148,4 @@ function StockOverviewPage() {
     </div>
   )
 }
+

@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_shell/ceo/overview')({
 
 function StatCard({ title, value, subtitle }: { title: string; value: string | number; subtitle?: string }) {
   return (
-    <div className="bg-white p-4 rounded-md shadow-sm border border-surface-border flex flex-col justify-center h-full">
+    <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border flex flex-col justify-center h-full">
       <div className="text-xs uppercase tracking-wider font-bold text-text-secondary mb-1 font-header">{title}</div>
       <div className="text-2xl font-bold text-primary">{value}</div>
       {subtitle && <div className="text-xs text-text-muted mt-1">{subtitle}</div>}
@@ -102,7 +102,7 @@ function CEOOverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Security Snapshot */}
-        <div className="bg-white rounded-md shadow-sm border border-surface-border flex flex-col hover:border-primary/50 transition-colors">
+        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border flex flex-col hover:border-primary/50 transition-colors">
           <div className="p-4 border-b border-surface-border flex justify-between items-center bg-surface-muted/30">
             <div className="flex items-center gap-2 text-primary">
               <Shield size={18} />
@@ -144,7 +144,7 @@ function CEOOverviewPage() {
         </div>
 
         {/* Warehouse Snapshot */}
-        <div className="bg-white rounded-md shadow-sm border border-surface-border flex flex-col hover:border-primary/50 transition-colors">
+        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border flex flex-col hover:border-primary/50 transition-colors">
           <div className="p-4 border-b border-surface-border flex justify-between items-center">
             <div className="flex items-center gap-2 text-primary">
               <Warehouse size={18} />
@@ -180,7 +180,7 @@ function CEOOverviewPage() {
         </div>
 
         {/* Logistics Snapshot */}
-        <div className="bg-white rounded-md shadow-sm border border-surface-border flex flex-col hover:border-primary/50 transition-colors">
+        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border flex flex-col hover:border-primary/50 transition-colors">
           <div className="p-4 border-b border-surface-border flex justify-between items-center">
             <div className="flex items-center gap-2 text-primary">
               <Truck size={18} />
@@ -216,7 +216,7 @@ function CEOOverviewPage() {
                 <div className="text-xs text-text-secondary font-medium uppercase tracking-wider mb-1">Weekly Trips Trend</div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-xl font-bold text-text-primary">{completedThisWeek}</span>
-                  <span className={`px-2 py-0.5 rounded text-[0.65rem] font-bold tracking-widest uppercase font-header ${completedThisWeek >= completedLastWeek ? 'bg-status-success/10 text-status-success-dark border border-status-success/20' : 'bg-status-error/10 text-status-error-dark border border-status-error/20'}`}>
+                  <span className={`px-2 py-0.5 rounded text-[0.65rem] font-bold tracking-widest uppercase font-header ${completedThisWeek >= completedLastWeek ? 'bg-status-success text-white border-2 border-status-success-dark shadow-none-dark border border-status-success/20' : 'bg-status-error text-white border-2 border-status-error-dark shadow-none-dark border border-status-error/20'}`}>
                     {completedThisWeek >= completedLastWeek ? '+' : '-'}{Math.abs(completedThisWeek - completedLastWeek)} vs last week
                   </span>
                 </div>
@@ -226,7 +226,7 @@ function CEOOverviewPage() {
         </div>
 
         {/* Finance Snapshot */}
-        <div className="bg-white rounded-md shadow-sm border border-surface-border flex flex-col hover:border-primary/50 transition-colors">
+        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border flex flex-col hover:border-primary/50 transition-colors">
           <div className="p-4 border-b border-surface-border flex justify-between items-center">
             <div className="flex items-center gap-2 text-primary">
               <DollarSign size={18} />
@@ -266,4 +266,5 @@ function CEOOverviewPage() {
     </div>
   )
 }
+
 

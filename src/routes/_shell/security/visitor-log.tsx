@@ -95,7 +95,7 @@ function VisitorLogPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden overflow-x-auto">
+      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
         {isLoading ? (
           <div className="p-8 text-center text-text-muted">Loading...</div>
         ) : (
@@ -111,7 +111,7 @@ function VisitorLogPage() {
                 </tr>
               ))}
             </thead>
-            <tbody className="bg-white divide-y divide-surface-border text-sm">
+            <tbody className="bg-surface divide-y divide-surface-border text-sm">
               {table.getRowModel().rows.map(row => (
                 <tr key={row.id} className="hover:bg-surface-active/60 transition-colors">
                   {row.getVisibleCells().map(cell => (
@@ -170,7 +170,7 @@ function VisitorLogPage() {
                   disabled={!canSubmit || isSubmitting}
                   className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
                 >
-                  {isSubmitting ? 'Saving...' : 'Save Record'}
+                  {isSubmitting ? 'Logging...' : 'Log Visitor'}
                 </button>
               )}
             />
@@ -180,3 +180,4 @@ function VisitorLogPage() {
     </div>
   )
 }
+

@@ -4395,12 +4395,13 @@ let mockState = {
   ]
 };
 
-export function getMock<T>(key: keyof typeof mockState): T[] {
-  return mockState[key] as unknown as T[];
+export function getMock<T>(key: string): T[] {
+  return (mockState as any)[key] as unknown as T[] || [];
 }
 
-export function addMock<T extends {id: string}>(key: keyof typeof mockState, item: Omit<T, 'id'>): T {
+export function addMock<T extends {id: string}>(key: string, item: Omit<T, 'id'>): T {
   const newItem = { ...item, id: Math.random().toString(36).substring(7) } as T;
-  mockState[key].unshift(newItem as any);
+  if (!(mockState as any)[key]) (mockState as any)[key] = [];
+  (mockState as any)[key].unshift(newItem as any);
   return newItem;
 }

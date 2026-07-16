@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { orgSettings } from '../../../api/core'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/_shell/settings/org-settings')({
   component: OrgSettingsPage,
 })
 function OrgSettingsPage() {
-  const { isLoading } = useQuery({
+  const queryClient = useQueryClient()
+  const { data, isLoading } = useQuery({
     queryKey: ['org-settings'],
     queryFn: orgSettings.get,
   })
@@ -15,14 +17,46 @@ function OrgSettingsPage() {
   const [activeTab, setActiveTab] = useState<'general' | 'notifications' | 'security'>('general')
   const [isEditing, setIsEditing] = useState(false)
 
-  // Normally we would use a form library here, but for layout purposes:
+  const [successMsg, setSuccessMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
+
   const [formData, setFormData] = useState({
-    companyName: 'Loryb Group of Companies',
-    siteName: 'Greenville LNG Site',
-    contactEmail: 'admin@loryb.com',
-    contactPhone: '+234 800 123 4567',
-    address: '123 Logistics Way, Lagos, Nigeria'
+    companyName: '',
+    siteName: '',
+    contactEmail: '',
+    contactPhone: '',
+    address: ''
   })
+
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        companyName: data.companyName || '',
+        siteName: data.siteName || '',
+        contactEmail: data.contactEmail || '',
+        contactPhone: data.contactPhone || '',
+        address: data.address || ''
+      })
+    }
+  }, [data])
+
+  const mutation = useMutation({
+    mutationFn: (payload: any) => orgSettings.update(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['org-settings'] })
+      setIsEditing(false)
+      setSuccessMsg('Settings updated successfully.')
+      setTimeout(() => setSuccessMsg(''), 3000)
+    },
+    onError: (err: any) => {
+      setErrorMsg(err.message || 'Failed to update settings.')
+      setTimeout(() => setErrorMsg(''), 5000)
+    }
+  })
+
+  const handleSave = () => {
+    mutation.mutate(formData)
+  }
 
   if (isLoading) {
     return <div className="p-8 text-center text-text-muted">Loading settings...</div>
@@ -34,6 +68,8 @@ function OrgSettingsPage() {
         <div>
           <h2 className="text-xl font-bold font-header tracking-tight text-primary">Organization Settings</h2>
           <p className="text-sm text-text-secondary mt-1">Manage global system configurations and company details.</p>
+          {successMsg && <div className="text-sm text-status-success mt-2">{successMsg}</div>}
+          {errorMsg && <div className="text-sm text-status-error mt-2">{errorMsg}</div>}
         </div>
         <div className="flex gap-2">
           {isEditing ? (
@@ -41,8 +77,8 @@ function OrgSettingsPage() {
               <button onClick={() => setIsEditing(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">
                 Cancel
               </button>
-              <button onClick={() => setIsEditing(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light transition-colors">
-                Save Changes
+              <button onClick={handleSave} disabled={mutation.isPending} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light transition-colors disabled:opacity-50">
+                {mutation.isPending ? 'Saving...' : 'Save Changes'}
               </button>
             </>
           ) : (
@@ -53,7 +89,7 @@ function OrgSettingsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-surface-border overflow-hidden overflow-x-auto">
+      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
         <div className="flex border-b border-surface-border">
           <button 
             onClick={() => setActiveTab('general')}
@@ -86,7 +122,7 @@ function OrgSettingsPage() {
                     value={formData.companyName}
                     onChange={e => setFormData({...formData, companyName: e.target.value})}
                     disabled={!isEditing}
-                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
+                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                   />
                 </div>
                 <div>
@@ -96,7 +132,7 @@ function OrgSettingsPage() {
                     value={formData.siteName}
                     onChange={e => setFormData({...formData, siteName: e.target.value})}
                     disabled={!isEditing}
-                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
+                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                   />
                 </div>
                 <div>
@@ -106,7 +142,7 @@ function OrgSettingsPage() {
                     value={formData.contactEmail}
                     onChange={e => setFormData({...formData, contactEmail: e.target.value})}
                     disabled={!isEditing}
-                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
+                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                   />
                 </div>
                 <div>
@@ -116,7 +152,7 @@ function OrgSettingsPage() {
                     value={formData.contactPhone}
                     onChange={e => setFormData({...formData, contactPhone: e.target.value})}
                     disabled={!isEditing}
-                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
+                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                   />
                 </div>
               </div>
@@ -127,7 +163,7 @@ function OrgSettingsPage() {
                   value={formData.address}
                   onChange={e => setFormData({...formData, address: e.target.value})}
                   disabled={!isEditing}
-                  className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
+                  className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                 />
               </div>
             </div>
@@ -170,7 +206,7 @@ function OrgSettingsPage() {
               </div>
               <div>
                 <label className="block text-sm font-bold text-text-primary mb-1">Session Timeout (Minutes)</label>
-                <select disabled={!isEditing} className="w-full max-w-xs px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm">
+                <select disabled={!isEditing} className="w-full max-w-xs px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm">
                   <option value="15">15 Minutes</option>
                   <option value="30">30 Minutes</option>
                   <option value="60">1 Hour</option>
@@ -184,3 +220,4 @@ function OrgSettingsPage() {
     </div>
   )
 }
+

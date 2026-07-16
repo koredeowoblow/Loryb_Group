@@ -1,8 +1,10 @@
 import { createFileRoute, Outlet, Link, useRouterState, redirect, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { LayoutDashboard, Shield, Warehouse, Truck, DollarSign, ChevronDown, ChevronRight, LogOut, Settings as SettingsIcon, Menu, X } from 'lucide-react'
+import { LayoutDashboard, Shield, Warehouse, Truck, DollarSign, ChevronDown, ChevronRight, LogOut, Settings as SettingsIcon, Menu, X, Moon, Sun } from 'lucide-react'
+import { useEffect } from 'react'
 import clsx from 'clsx'
 import { useAuth, Role } from '../auth'
+import { AUTH_BYPASS_PATHS, ADMIN_RESTRICTED_PATHS, getRoleRedirect } from '../lib/rbac'
 
 export const Route = createFileRoute('/_shell')({
   component: ShellLayout,
@@ -12,34 +14,55 @@ export const Route = createFileRoute('/_shell')({
 
     if (role === 'CEO') return // CEO sees everything
     
-    // Auth bypass (always allow)
-    if (path === '/login' || path === '/forgot-password' || path === '/settings/profile' || path === '/notifications' || path === '/403') {
+    if (AUTH_BYPASS_PATHS.includes(path)) {
       return
     }
 
     if (role === 'Admin') {
-      if (path.startsWith('/settings/user-management') || path.startsWith('/settings/org-settings') || path.startsWith('/settings/rbac')) {
+      if (ADMIN_RESTRICTED_PATHS.some(p => path.startsWith(p))) {
         throw redirect({ to: '/403' })
       }
       return
     }
 
-    if (role === 'Security' && !path.startsWith('/security')) throw redirect({ to: '/security' })
-    if (role === 'Warehouse' && !path.startsWith('/warehouse')) throw redirect({ to: '/warehouse/stock-overview' })
-    if (role === 'Logistics' && !path.startsWith('/logistics')) throw redirect({ to: '/logistics/fleet' })
-    if (role === 'Finance' && !path.startsWith('/finance')) throw redirect({ to: '/finance/overview' })
+    const rolePath = role.toLowerCase();
+    if (['Security', 'Warehouse', 'Logistics', 'Finance'].includes(role) && !path.startsWith(`/${rolePath}`)) {
+      throw redirect({ to: getRoleRedirect(role) })
+    }
   }
 })
 
 function ShellLayout() {
   const { role } = useAuth()
   const [isSidebarOpen, setSidebarOpen] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark') || window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  })
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [isDarkMode])
   
+  const router = useRouterState()
+  const isLoading = router.status === 'pending' || router.isLoading
+
   return (
-    <div className="flex h-screen bg-surface-muted text-text-primary overflow-hidden font-sans">
+    <div className="flex h-screen bg-surface-muted text-text-primary overflow-hidden font-sans transition-colors duration-200">
       <Sidebar role={role} isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <TopNav role={role} toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} />
+      <div className="flex flex-col flex-1 overflow-hidden relative">
+        {isLoading && (
+          <div className="absolute top-0 left-0 right-0 h-1 bg-surface-muted z-50">
+            <div className="h-full bg-primary animate-pulse"></div>
+          </div>
+        )}
+        <TopNav role={role} toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} isDarkMode={isDarkMode} toggleDarkMode={() => setIsDarkMode(!isDarkMode)} />
         <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 relative">
           <Outlet />
         </main>
@@ -49,6 +72,14 @@ function ShellLayout() {
         <div 
           className="fixed inset-0 bg-black/50 z-20 md:hidden transition-opacity" 
           onClick={() => setSidebarOpen(false)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') {
+              setSidebarOpen(false)
+            }
+          }}
+          aria-label="Close sidebar"
         />
       )}
     </div>
@@ -141,35 +172,37 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role, isOpen: boolean, set
 
   return (
     <aside className={clsx(
-      "bg-white text-text-primary border-r border-surface-border flex flex-col z-30 shadow-sm overflow-y-auto transition-transform duration-300 md:translate-x-0 fixed md:static inset-y-0 left-0 w-64",
+      "bg-surface text-text-primary border-r border-surface-border flex flex-col z-30 shadow-sm overflow-y-auto transition-transform duration-300 md:translate-x-0 fixed md:static inset-y-0 left-0 w-64",
       isOpen ? "translate-x-0" : "-translate-x-full"
     )}>
-      <div className="h-16 md:h-20 flex flex-row items-center justify-between px-6 border-b border-surface-border bg-white sticky top-0 z-20 shrink-0">
+      <div className="h-16 md:h-20 flex flex-row items-center justify-between px-6 border-b border-surface-border bg-surface sticky top-0 z-20 shrink-0">
           <img src="/logo.png" alt="Loryb Group of Companies" className="h-8 md:h-10 w-auto" />
-          <button className="md:hidden p-1 text-text-secondary hover:text-primary" onClick={() => setIsOpen(false)}>
+          <button className="md:hidden p-3 text-text-secondary hover:text-primary" onClick={() => setIsOpen(false)} aria-label="Close sidebar">
             <X size={20} />
           </button>
       </div>
       
-      <div className="px-6 mt-4">
-        <div className="orbit-divider opacity-50 my-2" />
+      <div className="px-6 mt-2">
+        <hr className="border-t border-surface-border my-2" />
       </div>
 
-      <nav className="flex-1 py-2 flex flex-col gap-1 px-4 overflow-y-auto">
-        {navItems.map((item) => {
-          const Icon = item.icon
-          const isModuleActive = currentPath.startsWith(item.to)
-          const isExpanded = expandedMenus[item.to]
+      <nav className="flex-1 py-2 overflow-y-auto">
+        <ul className="flex flex-col gap-1 px-4">
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const isModuleActive = currentPath.startsWith(item.to)
+            const isExpanded = expandedMenus[item.to]
 
-          return (
-            <div key={item.to} className="flex flex-col mb-1">
+            return (
+              <li key={item.to} className="flex flex-col mb-1">
               <button
                 onClick={() => toggleMenu(item.to)}
+                aria-expanded={isExpanded}
                 className={clsx(
-                  'flex items-center justify-between px-3 py-2.5 rounded-md transition-all text-sm font-medium w-full',
+                  'flex items-center justify-between px-3 py-2.5 transition-all text-sm font-medium w-full border-l-2',
                   isModuleActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-text-secondary hover:bg-surface-active hover:text-primary'
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-transparent text-text-secondary hover:bg-surface-active hover:text-primary'
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -182,32 +215,34 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role, isOpen: boolean, set
               </button>
               
               {isExpanded && item.subItems && (
-                <div className="ml-9 mt-1 flex flex-col gap-0.5 border-l-2 border-surface-border pl-2">
+                <ul className="ml-9 mt-1 flex flex-col gap-0.5 border-l-2 border-surface-border pl-2">
                   {item.subItems.map(subItem => {
                     // Filter sub-items by role if subItem has roles array
                     if (subItem.roles && !subItem.roles.includes(role)) return null;
 
                     const isSubActive = currentPath === subItem.to
                     return (
-                      <Link
-                        key={subItem.to}
-                        to={subItem.to}
-                        className={clsx(
-                          'px-3 py-1.5 rounded-md transition-all text-xs font-medium',
-                          isSubActive
-                            ? 'bg-primary text-white shadow-sm font-bold'
-                            : 'text-text-secondary hover:bg-surface-active hover:text-primary'
-                        )}
-                      >
-                        {subItem.label}
-                      </Link>
+                      <li key={subItem.to}>
+                        <Link
+                          to={subItem.to}
+                          className={clsx(
+                            'block px-3 py-1.5 transition-all text-xs font-medium',
+                            isSubActive
+                              ? 'bg-primary text-white font-bold hazard-tape shadow-none'
+                              : 'text-text-secondary hover:bg-surface-active hover:text-primary'
+                          )}
+                        >
+                          {subItem.label}
+                        </Link>
+                      </li>
                     )
                   })}
-                </div>
+                </ul>
               )}
-            </div>
+            </li>
           )
         })}
+        </ul>
       </nav>
       <div className="p-4 border-t border-surface-border bg-surface-muted/50 text-xs text-text-muted flex justify-between items-center sticky bottom-0 z-20">
         <div className="flex flex-col">
@@ -218,8 +253,9 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role, isOpen: boolean, set
         </div>
         <button 
           onClick={() => navigate({ to: '/login' as any })}
-          className="p-1.5 text-text-secondary hover:text-status-error hover:bg-status-error/10 rounded-md transition-colors"
+          className="p-3 text-text-secondary hover:text-status-error hover:bg-status-error/10 rounded-md transition-colors"
           title="Log out"
+          aria-label="Log out"
         >
           <LogOut size={16} />
         </button>
@@ -228,13 +264,14 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role, isOpen: boolean, set
   )
 }
 
-function TopNav({ role, toggleSidebar }: { role: Role, toggleSidebar: () => void }) {
+function TopNav({ role, toggleSidebar, isDarkMode, toggleDarkMode }: { role: Role, toggleSidebar: () => void, isDarkMode: boolean, toggleDarkMode: () => void }) {
   return (
-    <header className="h-16 bg-white border-b border-surface-border flex items-center px-4 md:px-6 justify-between shrink-0 shadow-sm z-10">
+    <header className="h-16 bg-surface border-b border-surface-border flex items-center px-4 md:px-6 justify-between shrink-0 shadow-sm z-10 transition-colors duration-200">
       <div className="flex items-center gap-2 md:gap-4">
         <button 
           onClick={toggleSidebar}
-          className="p-1.5 md:hidden text-text-secondary hover:text-primary transition-colors"
+          className="p-3 md:hidden text-text-secondary hover:text-primary transition-colors"
+          aria-label="Open sidebar"
         >
           <Menu size={20} />
         </button>
@@ -242,6 +279,13 @@ function TopNav({ role, toggleSidebar }: { role: Role, toggleSidebar: () => void
         <div className="text-sm font-semibold text-primary font-header truncate">Loryb Group of Companies</div>
       </div>
       <div className="flex items-center gap-3">
+        <button
+          onClick={toggleDarkMode}
+          className="p-2 rounded-full text-text-secondary hover:bg-surface-active hover:text-primary transition-colors"
+          aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
         <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold font-header shadow-sm border border-primary-light text-sm">
           {role.charAt(0)}
         </div>

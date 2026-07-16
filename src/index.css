@@ -3,10 +3,10 @@
 @config "../tailwind.config.js";
 
 :root {
-  --color-primary: 255 90 0;
-  --color-primary-hover: 220 70 0;
-  --color-primary-light: 255 130 60;
-  --color-primary-lighter: 255 200 170;
+  --color-primary: 0 43 121;
+  --color-primary-hover: 0 32 90;
+  --color-primary-light: 40 80 180;
+  --color-primary-lighter: 100 150 230;
 
   --color-accent: 255 193 7;
   --color-accent-hover: 224 168 0;
@@ -35,10 +35,10 @@
 }
 
 .dark {
-  --color-primary: 255 90 0;
-  --color-primary-hover: 220 70 0;
-  --color-primary-light: 255 130 60;
-  --color-primary-lighter: 255 200 170;
+  --color-primary: 0 43 121;
+  --color-primary-hover: 0 32 90;
+  --color-primary-light: 40 80 180;
+  --color-primary-lighter: 100 150 230;
 
   --color-accent: 255 193 7;
   --color-accent-hover: 224 168 0;

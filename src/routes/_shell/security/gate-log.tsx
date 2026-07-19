@@ -1,13 +1,24 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { visitorLog as visitorLogApi, dispatchRecord as dispatchRecordApi, staffAttendance as staffAttendanceApi, motorcycleLog as motorcycleLogApi, suppliers as suppliersApi } from '../../../api/security'
-import { Shield, Clock } from 'lucide-react'
+import { Shield, Clock, AlertTriangle } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { Badge } from '../../../components/ui/Badge'
+import { StatCard } from '../../../components/ui/StatCard'
+import { ChartTooltip, CHART_COLORS, chartGridProps, chartAxisProps } from '../../../components/ui/ChartWrapper'
+import { Button } from '../../../components/ui/Button'
 
-export const Route = createFileRoute('/_shell/security/gate-log')({
-  component: GateLogDashboard,
-})
+export const Route = createFileRoute('/_shell/security/gate-log')({ component: GateLogDashboard })
+
+const volumeData = [
+  { day: 'Mon', intake: 12, dispatch: 8  },
+  { day: 'Tue', intake: 19, dispatch: 15 },
+  { day: 'Wed', intake: 15, dispatch: 11 },
+  { day: 'Thu', intake: 22, dispatch: 18 },
+  { day: 'Fri', intake: 18, dispatch: 20 },
+  { day: 'Sat', intake: 5,  dispatch: 4  },
+  { day: 'Sun', intake: 2,  dispatch: 1  },
+]
 
 function GateLogDashboard() {
   const { data, isLoading } = useQuery({
@@ -18,125 +29,118 @@ function GateLogDashboard() {
         dispatchRecordApi.list(),
         staffAttendanceApi.list(),
         motorcycleLogApi.list(),
-        suppliersApi.list()
+        suppliersApi.list(),
       ])
-      
-      const activeVisitors = visitors.filter(v => !v.timeOut).length
-      const todayDispatch = dispatch.length 
-      const staffPresent = staff.filter(s => !s.timeOut).length
-      const activeBikes = motorcycles.filter(m => !m.timeOut).length
-      const todaySuppliers = suppliers.length
-
-      return { visitors, dispatch, staff, motorcycles, activeVisitors, todayDispatch, staffPresent, activeBikes, todaySuppliers }
+      return {
+        visitors,
+        dispatch,
+        activeVisitors:  visitors.filter(v => !v.timeOut).length,
+        todayDispatch:   dispatch.length,
+        staffPresent:    staff.filter(s => !s.timeOut).length,
+        activeBikes:     motorcycles.filter(m => !m.timeOut).length,
+        todaySuppliers:  suppliers.length,
+      }
     },
   })
 
-  if (isLoading) {
-    return <div className="p-8 text-center text-text-muted">Loading Security Dashboard...</div>
-  }
-
-  const volumeData = [
-    { day: 'Mon', intake: 12, dispatch: 8 },
-    { day: 'Tue', intake: 19, dispatch: 15 },
-    { day: 'Wed', intake: 15, dispatch: 11 },
-    { day: 'Thu', intake: 22, dispatch: 18 },
-    { day: 'Fri', intake: 18, dispatch: 20 },
-    { day: 'Sat', intake: 5, dispatch: 4 },
-    { day: 'Sun', intake: 2, dispatch: 1 }
-  ];
-
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-surface p-4 rounded-none shadow-none border-2 border-surface-border">
+
+      {/* ── Page header ──────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h2 className="text-xl font-bold font-header tracking-tight text-primary flex items-center gap-2">
-            <Shield size={24} /> Security Command Center
-          </h2>
-          <p className="text-sm text-text-secondary mt-1">Real-time overview of gate operations and facility access.</p>
+          <h1 className="text-xl font-bold text-text-primary flex items-center gap-2">
+            <Shield size={22} className="text-primary opacity-80" />
+            Security Gate
+          </h1>
+          <p className="text-sm text-text-muted mt-0.5">Real-time overview of gate operations and facility access</p>
         </div>
-        <button className="bg-status-error hover:bg-status-error-dark text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors flex items-center gap-2">
+        <Button variant="danger" icon={<AlertTriangle size={15} />}>
           Emergency Lockdown
-        </button>
+        </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
-          <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Today's Suppliers</div>
-          <div className="text-3xl font-bold text-primary">{data?.todaySuppliers || 0}</div>
-          <div className="text-xs text-status-success-dark mt-1">Processed</div>
-        </div>
-        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
-          <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Dispatches Today</div>
-          <div className="text-3xl font-bold text-primary">{data?.todayDispatch || 0}</div>
-          <div className="text-xs text-status-success-dark mt-1">Cleared for exit</div>
-        </div>
-        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
-          <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Active Visitors</div>
-          <div className="text-3xl font-bold text-primary">{data?.activeVisitors || 0}</div>
-          <div className="text-xs text-status-pending-dark mt-1">Currently on premises</div>
-        </div>
-        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
-          <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Staff Present</div>
-          <div className="text-3xl font-bold text-primary">{data?.staffPresent || 0}</div>
-          <div className="text-xs text-text-secondary mt-1">Clocked in today</div>
-        </div>
-        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
-          <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Active Bikes</div>
-          <div className="text-3xl font-bold text-primary">{data?.activeBikes || 0}</div>
-          <div className="text-xs text-text-secondary mt-1">Dispatched out</div>
-        </div>
+      {/* ── KPI row ──────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <StatCard title="Suppliers Today"  value={data?.todaySuppliers ?? '—'} subtitle="Processed"        />
+        <StatCard title="Dispatches"       value={data?.todayDispatch  ?? '—'} subtitle="Cleared for exit"  />
+        <StatCard title="Active Visitors"  value={data?.activeVisitors ?? '—'} subtitle="On premises"       />
+        <StatCard title="Staff Present"    value={data?.staffPresent   ?? '—'} subtitle="Clocked in"        />
+        <StatCard title="Active Bikes"     value={data?.activeBikes    ?? '—'} subtitle="Dispatched out"     />
       </div>
 
+      {/* ── Charts + feed ────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         {/* Volume Chart */}
-        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border lg:col-span-2 flex flex-col hover:border-primary/30 transition-all">
-          <div className="p-4 border-b border-surface-border">
-            <h3 className="font-header font-bold uppercase tracking-wide text-sm text-primary">Traffic Volume (Last 7 Days)</h3>
+        <div className="card lg:col-span-2 flex flex-col">
+          <div className="px-4 py-3 border-b border-surface-border">
+            <h3 className="text-sm font-semibold text-text-primary">Traffic Volume — Last 7 Days</h3>
           </div>
-          <div className="p-4 w-full">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={volumeData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
-                <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: 4 }} />
-                <Bar dataKey="intake" name="Intake" fill="#002B79" radius={[4, 4, 0, 0]} maxBarSize={40} />
-                <Bar dataKey="dispatch" name="Dispatch" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={40} />
+          <div className="p-4">
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={volumeData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+                <CartesianGrid {...chartGridProps} />
+                <XAxis dataKey="day" {...chartAxisProps} />
+                <YAxis {...chartAxisProps} />
+                <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgb(241 243 248 / 0.6)' }} />
+                <Bar dataKey="intake"   name="Intake"   fill={CHART_COLORS.primary} radius={[4, 4, 0, 0]} maxBarSize={36} />
+                <Bar dataKey="dispatch" name="Dispatch" fill={CHART_COLORS.success} radius={[4, 4, 0, 0]} maxBarSize={36} />
               </BarChart>
             </ResponsiveContainer>
+            {/* Legend */}
+            <div className="flex gap-4 mt-2">
+              <span className="flex items-center gap-1.5 text-xs text-text-muted">
+                <span className="w-2 h-2 rounded-full" style={{ background: CHART_COLORS.primary }} />Intake
+              </span>
+              <span className="flex items-center gap-1.5 text-xs text-text-muted">
+                <span className="w-2 h-2 rounded-full" style={{ background: CHART_COLORS.success }} />Dispatch
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Live Activity Feed */}
-        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border flex flex-col hover:border-primary/30 transition-all">
-          <div className="p-4 border-b border-surface-border flex justify-between items-center bg-surface-muted/30">
-            <h3 className="font-header font-bold uppercase tracking-wide text-sm text-primary flex items-center gap-2"><Clock size={16}/> Live Activity Feed</h3>
+        <div className="card flex flex-col">
+          <div className="px-4 py-3 border-b border-surface-border flex items-center gap-2">
+            <Clock size={15} className="text-text-muted" />
+            <h3 className="text-sm font-semibold text-text-primary">Live Activity Feed</h3>
           </div>
-          <div className="p-0 flex-1 overflow-y-auto max-h-[300px]">
-             {data?.visitors.slice(0, 4).map((v, i) => (
-                <div key={`v-${i}`} className="p-3 border-b border-surface-border hover:bg-surface-active transition-colors flex justify-between items-center">
-                  <div>
-                    <div className="text-sm font-bold text-text-primary">Visitor: {v.name}</div>
-                    <div className="text-xs text-text-secondary">{v.purpose}</div>
+          <div className="flex-1 overflow-y-auto divide-y divide-surface-border max-h-[300px]">
+            {isLoading
+              ? Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="px-4 py-3 animate-pulse flex justify-between">
+                    <div className="flex flex-col gap-1.5">
+                      <div className="h-3 w-32 bg-surface-active rounded-sm" />
+                      <div className="h-2.5 w-20 bg-surface-active rounded-sm" />
+                    </div>
+                    <div className="h-5 w-14 bg-surface-active rounded-sm" />
                   </div>
-                  <div className="text-right">
-                    <div className="text-xs font-bold text-text-muted">{v.timeIn}</div>
-                    <Badge status={v.timeOut ? "inactive" : "active"} />
-                  </div>
-                </div>
-             ))}
-             {data?.dispatch.slice(0, 3).map((d, i) => (
-                <div key={`d-${i}`} className="p-3 border-b border-surface-border hover:bg-surface-active transition-colors flex justify-between items-center">
-                  <div>
-                    <div className="text-sm font-bold text-text-primary">Dispatch: {d.truckNo}</div>
-                    <div className="text-xs text-text-secondary">Driver: {d.driverName}</div>
-                  </div>
-                  <div className="text-right">
-                    <Badge status="success" />
-                  </div>
-                </div>
-             ))}
+                ))
+              : <>
+                  {data?.visitors.slice(0, 4).map((v: any, i) => (
+                    <div key={`v-${i}`} className="px-4 py-3 hover:bg-surface-active transition-colors flex justify-between items-center">
+                      <div>
+                        <div className="text-sm font-medium text-text-primary">{v.visitorName ?? v.name}</div>
+                        <div className="text-xs text-text-muted">{v.purpose}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-text-muted mb-1">{v.timeIn}</div>
+                        <Badge status={v.timeOut ? 'inactive' : 'active'} />
+                      </div>
+                    </div>
+                  ))}
+                  {data?.dispatch.slice(0, 3).map((d: any, i) => (
+                    <div key={`d-${i}`} className="px-4 py-3 hover:bg-surface-active transition-colors flex justify-between items-center">
+                      <div>
+                        <div className="text-sm font-medium text-text-primary">Dispatch: {d.truckNo}</div>
+                        <div className="text-xs text-text-muted">Driver: {d.driverName}</div>
+                      </div>
+                      <Badge status="Cleared" />
+                    </div>
+                  ))}
+                </>
+            }
           </div>
         </div>
 
@@ -144,4 +148,3 @@ function GateLogDashboard() {
     </div>
   )
 }
-

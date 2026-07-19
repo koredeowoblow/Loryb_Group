@@ -1,80 +1,166 @@
+import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { z } from 'zod'
+import { useForm } from '@tanstack/react-form'
+import { HardHat } from 'lucide-react'
+
 import { labourers } from '../../../api/security'
 import { LabourerLogEntry } from '../../../types'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { validateFormWithZod } from '../../../lib/zodValidator'
+import { Modal } from '../../../components/ui/Modal'
+import { FormField } from '../../../components/ui/FormField'
+import { DateTimeField } from '../../../components/ui/DateTimeField'
+import { DataTable, Column } from '../../../components/ui/DataTable'
+import { Button } from '../../../components/ui/Button'
+import { Badge } from '../../../components/ui/Badge'
 
 export const Route = createFileRoute('/_shell/security/labourers-log')({
   component: LabourersLogPage,
 })
 
-const columnHelper = createColumnHelper<LabourerLogEntry>()
-
-const columns = [
-  columnHelper.accessor('labourerName', { header: 'Labourer Name' }),
-  columnHelper.accessor('task', { header: 'Task' }),
-  columnHelper.accessor('timeIn', { header: 'Time In', cell: info => new Date(info.getValue() as string).toLocaleString() }),
-  columnHelper.accessor('timeOut', { header: 'Time Out', cell: info => new Date(info.getValue() as string).toLocaleString() }),
-]
+const schema = z.object({
+  labourerName: z.string().min(1, 'Required'),
+  task: z.string().min(1, 'Required'),
+  timeIn: z.string().min(1, 'Required'),
+  timeOut: z.string().optional(),
+})
 
 function LabourersLogPage() {
-  const { data, isLoading } = useQuery({
+  const queryClient = useQueryClient()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const { data = [], isLoading } = useQuery({
     queryKey: ['labourers-log'],
     queryFn: labourers.list,
   })
 
-  const table = useReactTable({
-    data: data || [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
+  const mutation = useMutation({
+    mutationFn: labourers.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['labourers-log'] })
+      setIsModalOpen(false)
+    },
+    onError: () => setErrorMsg('Failed to save record. Please try again.')
   })
 
+  const form = useForm({
+    defaultValues: {
+      labourerName: '',
+      task: '',
+      timeIn: '',
+      timeOut: '',
+    },
+    validators: {
+      onChange: validateFormWithZod(schema),
+    },
+    onSubmit: async ({ value }) => {
+      setErrorMsg('')
+      await mutation.mutateAsync(value)
+    },
+  })
+
+  const columns: Column<LabourerLogEntry>[] = [
+    { key: 'labourerName', header: 'Labourer Name', sortable: true },
+    { key: 'task', header: 'Task' },
+    { 
+      key: 'timeIn', 
+      header: 'Time In', 
+      sortable: true,
+      render: (row) => new Date(row.timeIn).toLocaleString() 
+    },
+    { 
+      key: 'timeOut', 
+      header: 'Time Out',
+      render: (row) => row.timeOut 
+        ? <span className="text-text-muted">{new Date(row.timeOut).toLocaleString()}</span> 
+        : <Badge status="active" />
+    },
+  ]
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold font-header tracking-tight text-primary">LabourersLog</h2>
-        <button className="bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light">
-          Add New
-        </button>
+    <div className="space-y-6">
+      {/* ── Page Header ─────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-xl font-bold text-text-primary flex items-center gap-2">
+            <HardHat size={22} className="text-primary opacity-80" />
+            Labourers Log
+          </h1>
+          <p className="text-sm text-text-muted mt-0.5">Track temporary workers and daily tasks</p>
+        </div>
       </div>
 
-      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
-        {isLoading ? (
-          <div className="p-8 text-center text-text-muted">Loading...</div>
-        ) : (
-          <table className="min-w-full divide-y divide-surface-border border-b border-surface-border">
-            <thead className="bg-surface-muted">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id} className="px-4 py-3 text-left text-[0.7rem] font-bold text-text-secondary uppercase tracking-wider bg-surface-muted border-b border-surface-border font-header">
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-surface divide-y divide-surface-border text-sm">
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-surface-active/60 transition-colors">
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-4 py-3 whitespace-nowrap text-sm text-text-primary border-b border-surface-border/50">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-              {table.getRowModel().rows.length === 0 && (
-                <tr>
-                  <td colSpan={columns.length} className="px-4 py-8 text-center text-sm text-text-muted">
-                    No records found
-                  </td>
-                </tr>
+      {/* ── Data Table ──────────────────────────────────────────────────── */}
+      <DataTable
+        columns={columns}
+        data={data}
+        rowKey="id"
+        isLoading={isLoading}
+        searchable
+        searchPlaceholder="Search labourer name or task..."
+        searchKeys={['labourerName', 'task']}
+        actions={
+          <Button onClick={() => setIsModalOpen(true)}>
+            Log Labourer
+          </Button>
+        }
+      />
+
+      {/* ── Create Modal ────────────────────────────────────────────────── */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        title="Add Labourer Log"
+        description="Record a temporary worker's arrival."
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              children={([canSubmit, isSubmitting]) => (
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    form.handleSubmit()
+                  }}
+                  disabled={!canSubmit || isSubmitting}
+                  isLoading={isSubmitting}
+                >
+                  Log Entry
+                </Button>
               )}
-            </tbody>
-          </table>
+            />
+          </>
+        }
+      >
+        {errorMsg && (
+          <div className="alert alert-danger mb-4">
+            {errorMsg}
+          </div>
         )}
-      </div>
+        <form
+          id="labourer-log-form"
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
+          }}
+          className="space-y-4"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+            <form.Field name="labourerName" children={(field) => <FormField field={field} label="Labourer Name" />} />
+            <form.Field name="task" children={(field) => <FormField field={field} label="Task" />} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+            <form.Field name="timeIn" children={(field) => <DateTimeField field={field} label="Time In" />} />
+            <form.Field name="timeOut" children={(field) => <DateTimeField field={field} label="Time Out (Optional)" />} />
+          </div>
+        </form>
+      </Modal>
     </div>
   )
 }

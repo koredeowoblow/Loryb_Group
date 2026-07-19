@@ -18,7 +18,7 @@ function ReportSection({ title, icon: Icon, children }: { title: string; icon: a
         <div className="bg-primary/10 p-2 rounded-lg text-primary">
           <Icon size={22} />
         </div>
-        <h3 className="text-xl font-bold font-header text-primary tracking-tight">{title}</h3>
+        <h3 className="text-xl font-bold font-header text-text-primary tracking-tight">{title}</h3>
       </div>
       {children}
     </div>
@@ -128,10 +128,10 @@ function ReportsPage() {
       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4 bg-surface p-6 rounded-xl shadow-sm border border-surface-border relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         <div className="relative z-10">
-          <div className="flex items-center gap-2 text-primary font-bold text-sm uppercase tracking-widest mb-2 font-header">
+          <div className="flex items-center gap-2 text-text-primary font-bold text-sm uppercase tracking-widest mb-2 font-header">
             <FileText size={16} /> Enterprise Analytics
           </div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900">
+          <h2 className="text-3xl font-extrabold tracking-tight text-text-primary">
             Comprehensive Report
           </h2>
           <p className="text-sm text-text-secondary mt-1 max-w-lg">
@@ -146,11 +146,11 @@ function ReportsPage() {
             <button className="px-4 py-1.5 text-sm font-semibold rounded-md text-text-muted hover:text-text-primary transition-colors">YTD</button>
           </div>
           
-          <button className="bg-surface hover:bg-surface-muted text-text-primary border border-surface-border px-4 py-2 rounded-lg shadow-sm text-sm font-bold transition-colors flex items-center gap-2">
+          <button className="btn btn-secondary rounded-lg px-4 py-2">
             <Filter size={16} /> Filters
           </button>
           
-          <button className="bg-primary hover:bg-primary-hover text-white px-5 py-2 rounded-lg shadow-md text-sm font-bold uppercase tracking-wider transition-colors flex items-center gap-2">
+          <button className="btn btn-primary rounded-lg px-5 py-2 font-header uppercase tracking-wider">
             <Download size={16} /> Export PDF
           </button>
         </div>

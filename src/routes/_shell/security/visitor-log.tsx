@@ -1,29 +1,23 @@
-import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { visitorLog } from '../../../api/security'
-import { VisitorLog } from '../../../types'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
+import { Users } from 'lucide-react'
+
+import { visitorLog } from '../../../api/security'
+import { VisitorLog } from '../../../types'
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { Modal } from '../../../components/ui/Modal'
 import { FormField } from '../../../components/ui/FormField'
 import { DateTimeField } from '../../../components/ui/DateTimeField'
+import { DataTable, Column } from '../../../components/ui/DataTable'
+import { Button } from '../../../components/ui/Button'
+import { Badge } from '../../../components/ui/Badge'
 
 export const Route = createFileRoute('/_shell/security/visitor-log')({
   component: VisitorLogPage,
 })
-
-const columnHelper = createColumnHelper<VisitorLog>()
-
-const columns = [
-  columnHelper.accessor('name', { header: 'Name' }),
-  columnHelper.accessor('personVisiting', { header: 'Visiting' }),
-  columnHelper.accessor('purpose', { header: 'Purpose' }),
-  columnHelper.accessor('timeIn', { header: 'Time In' }),
-  columnHelper.accessor('timeOut', { header: 'Time Out' }),
-]
 
 const schema = z.object({
   name: z.string().min(1, 'Required'),
@@ -41,7 +35,7 @@ function VisitorLogPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
-  const { data, isLoading } = useQuery({
+  const { data = [], isLoading } = useQuery({
     queryKey: ['visitorLog'],
     queryFn: visitorLog.list,
   })
@@ -52,15 +46,7 @@ function VisitorLogPage() {
       queryClient.invalidateQueries({ queryKey: ['visitorLog'] })
       setIsModalOpen(false)
     },
-    onError: () => {
-      setErrorMsg('Failed to save record. Please try again.')
-    }
-  })
-
-  const table = useReactTable({
-    data: data || [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
+    onError: () => setErrorMsg('Failed to save record. Please try again.')
   })
 
   const form = useForm({
@@ -83,59 +69,85 @@ function VisitorLogPage() {
     },
   })
 
+  const columns: Column<VisitorLog>[] = [
+    { key: 'name', header: 'Name', sortable: true },
+    { key: 'personVisiting', header: 'Visiting' },
+    { key: 'purpose', header: 'Purpose' },
+    { key: 'timeIn', header: 'Time In', sortable: true },
+    { 
+      key: 'timeOut', 
+      header: 'Status / Time Out',
+      render: (row) => row.timeOut 
+        ? <span className="text-text-muted">{row.timeOut}</span> 
+        : <Badge status="active" />
+    },
+  ]
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold font-header tracking-tight text-primary">Visitor Log</h2>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
-        >
-          Add New
-        </button>
+    <div className="space-y-6">
+      {/* ── Page Header ─────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-xl font-bold text-text-primary flex items-center gap-2">
+            <Users size={22} className="text-primary opacity-80" />
+            Visitor Log
+          </h1>
+          <p className="text-sm text-text-muted mt-0.5">Track and manage all facility visitors</p>
+        </div>
       </div>
 
-      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
-        {isLoading ? (
-          <div className="p-8 text-center text-text-muted">Loading...</div>
-        ) : (
-          <table className="min-w-full divide-y divide-surface-border border-b border-surface-border">
-            <thead className="bg-surface-muted">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id} className="px-4 py-3 text-left text-[0.7rem] font-bold text-text-secondary uppercase tracking-wider bg-surface-muted border-b border-surface-border font-header">
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-surface divide-y divide-surface-border text-sm">
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-surface-active/60 transition-colors">
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-4 py-3 whitespace-nowrap text-sm text-text-primary border-b border-surface-border/50">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-              {table.getRowModel().rows.length === 0 && (
-                <tr>
-                  <td colSpan={columns.length} className="px-4 py-8 text-center text-sm text-text-muted">
-                    No records found
-                  </td>
-                </tr>
+      {/* ── Data Table ──────────────────────────────────────────────────── */}
+      <DataTable
+        columns={columns}
+        data={data}
+        rowKey="id"
+        isLoading={isLoading}
+        searchable
+        searchPlaceholder="Search visitors..."
+        searchKeys={['name', 'personVisiting', 'purpose']}
+        actions={
+          <Button onClick={() => setIsModalOpen(true)}>
+            Add Visitor
+          </Button>
+        }
+      />
+
+      {/* ── Create Modal ────────────────────────────────────────────────── */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        title="Add Visitor Log"
+        description="Record a new visitor entry."
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              children={([canSubmit, isSubmitting]) => (
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    form.handleSubmit()
+                  }}
+                  disabled={!canSubmit || isSubmitting}
+                  isLoading={isSubmitting}
+                >
+                  Log Visitor
+                </Button>
               )}
-            </tbody>
-          </table>
+            />
+          </>
+        }
+      >
+        {errorMsg && (
+          <div className="alert alert-danger mb-4">
+            {errorMsg}
+          </div>
         )}
-      </div>
-
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Visitor Log">
-        {errorMsg && <div className="mb-4 text-sm bg-status-error/10 border border-status-error/20 text-status-error font-medium p-2 rounded">{errorMsg}</div>}
         <form
+          id="visitor-form"
           onSubmit={(e) => {
             e.preventDefault()
             e.stopPropagation()
@@ -143,38 +155,23 @@ function VisitorLogPage() {
           }}
           className="space-y-4"
         >
-          <form.Field name="name" children={(field) => <FormField field={field} label="Name" />} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+            <form.Field name="name" children={(field) => <FormField field={field} label="Name" />} />
+            <form.Field name="phoneNo" children={(field) => <FormField field={field} label="Phone No" type="tel" />} />
+          </div>
           <form.Field name="address" children={(field) => <FormField field={field} label="Address" />} />
-          <form.Field name="phoneNo" children={(field) => <FormField field={field} label="Phone No" />} />
-          <form.Field name="personVisiting" children={(field) => <FormField field={field} label="Person Visiting" />} />
-          <form.Field name="purpose" children={(field) => <FormField field={field} label="Purpose" />} />
           
-          <form.Field name="timeIn" children={(field) => <DateTimeField field={field} label="Time In" />} />
-          <form.Field name="timeOut" children={(field) => <DateTimeField field={field} label="Time Out (Optional)" />} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+            <form.Field name="personVisiting" children={(field) => <FormField field={field} label="Person Visiting" />} />
+            <form.Field name="purpose" children={(field) => <FormField field={field} label="Purpose" />} />
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+            <form.Field name="timeIn" children={(field) => <DateTimeField field={field} label="Time In" />} />
+            <form.Field name="timeOut" children={(field) => <DateTimeField field={field} label="Time Out (Optional)" />} />
+          </div>
           
           <form.Field name="signature" children={(field) => <FormField field={field} label="Signature (Type Name)" />} />
-
-          <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors"
-            >
-              Cancel
-            </button>
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <button
-                  type="submit"
-                  disabled={!canSubmit || isSubmitting}
-                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
-                >
-                  {isSubmitting ? 'Logging...' : 'Log Visitor'}
-                </button>
-              )}
-            />
-          </div>
         </form>
       </Modal>
     </div>

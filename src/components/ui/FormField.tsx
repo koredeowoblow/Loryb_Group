@@ -26,13 +26,13 @@ export function FormField({
         onChange={(e: any) => field.handleChange(e.target.value)}
         aria-invalid={hasError}
         aria-describedby={hasError ? errorId : undefined}
-        className="w-full px-2.5 py-1.5 text-sm border border-surface-border bg-surface rounded shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-shadow"
+        className="w-full px-3 py-2 text-sm border border-surface-border bg-surface-base rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-shadow text-text-primary placeholder:text-text-muted"
       />
-      {hasError ? (
-        <em id={errorId} className="text-status-error text-xs mt-1 block">
+      {hasError && (
+        <em id={errorId} className="text-status-danger text-xs mt-1 block">
           {field.state.meta.errors.map((e: any) => typeof e === 'string' ? e : e?.message || 'Invalid input').join(', ')}
         </em>
-      ) : null}
+      )}
     </div>
   )
 }

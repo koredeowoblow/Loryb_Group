@@ -66,7 +66,7 @@ function OrgSettingsPage() {
     <div className="space-y-6 max-w-4xl">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-bold font-header tracking-tight text-primary">Organization Settings</h2>
+          <h2 className="text-xl font-bold font-header tracking-tight text-text-primary">Organization Settings</h2>
           <p className="text-sm text-text-secondary mt-1">Manage global system configurations and company details.</p>
           {successMsg && <div className="text-sm text-status-success mt-2">{successMsg}</div>}
           {errorMsg && <div className="text-sm text-status-error mt-2">{errorMsg}</div>}
@@ -74,22 +74,22 @@ function OrgSettingsPage() {
         <div className="flex gap-2">
           {isEditing ? (
             <>
-              <button onClick={() => setIsEditing(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">
+              <button onClick={() => setIsEditing(false)} className="btn btn-ghost px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider">
                 Cancel
               </button>
-              <button onClick={handleSave} disabled={mutation.isPending} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light transition-colors disabled:opacity-50">
+              <button onClick={handleSave} disabled={mutation.isPending} className="btn btn-primary px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider">
                 {mutation.isPending ? 'Saving...' : 'Save Changes'}
               </button>
             </>
           ) : (
-            <button onClick={() => setIsEditing(true)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-primary hover:text-primary-hover border border-primary rounded transition-colors">
+            <button onClick={() => setIsEditing(true)} className="btn btn-secondary px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider">
               Edit Settings
             </button>
           )}
         </div>
       </div>
 
-      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
+      <div className="card p-0 overflow-hidden overflow-x-auto">
         <div className="flex border-b border-surface-border">
           <button 
             onClick={() => setActiveTab('general')}

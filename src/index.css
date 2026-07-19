@@ -1,98 +1,389 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+/*
+ * LORYB GROUP — DESIGN TOKEN FILE
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Single source of truth for all design tokens.
+ * Convention: ALL values use the RGB triplet format "R G B" (no commas).
+ * This lets Tailwind apply opacity modifiers: rgb(var(--token) / 0.1)
+ *
+ * Token hierarchy:
+ *   1. Primitive values (raw grays, raw hues)
+ *   2. Semantic aliases (surface, text, status)
+ *   3. Shadow variables (can't be expressed as RGB triplets)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap');
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   LIGHT MODE (default)
+═══════════════════════════════════════════════════════════════════════════ */
 :root {
-  --color-primary: 0 43 121;
-  --color-primary-hover: 0 32 90;
-  --color-primary-light: 40 80 180;
-  --color-primary-lighter: 100 150 230;
 
-  --color-accent: 255 193 7;
-  --color-accent-hover: 224 168 0;
-  --color-accent-light: 255 213 79;
-  --color-accent-lighter: 255 243 224;
+  /* ── BRAND: Navy ──────────────────────────────────────────────────────────
+   * Derived from Loryb Group logo.
+   * Primary: hsl(221, 100%, 24%) → rgb(0, 43, 121)
+   * Rationale: Deep navy reads as authority/logistics without feeling
+   * generic. High enough contrast against white (WCAG AAA on white).
+   */
+  --color-primary:       0 43 121;    /* hsl(221,100%,24%) */
+  --color-primary-hover: 0 32 92;     /* 8% darker for press states */
+  --color-primary-light: 51 102 187;  /* 20% lighter — for tints/icons */
+  --color-primary-dark:  0 28 78;     /* deepest navy — active sidebar */
 
-  --color-surface: 245 245 245;
-  --color-surface-muted: 234 234 234;
-  --color-surface-border: 30 30 30;
-  --color-surface-active: 220 220 220;
+  /* ── BRAND: Gold ──────────────────────────────────────────────────────────
+   * Derived from Loryb Group logo accent.
+   * Accent: hsl(45, 100%, 51%) → rgb(255, 193, 7)
+   * NOTE: Gold is brand-only. Status warning is deliberately offset to
+   * hsl(32, 95%, 44%) so they are perceptually distinct.
+   */
+  --color-accent:        255 193 7;   /* hsl(45,100%,51%) */
+  --color-accent-hover:  217 164 6;   /* 15% darker */
+  --color-accent-light:  255 220 90;  /* 25% lighter tint */
 
-  --color-text-primary: 30 30 30;
-  --color-text-secondary: 70 70 70;
-  --color-text-muted: 120 120 120;
+  /* ── GRAYS: 9-step neutral scale ─────────────────────────────────────────
+   * Slightly blue-tinted (hue ~220) to complement the navy brand.
+   * Not pure gray — pure grays look dirty next to saturated navy.
+   */
+  --color-gray-50:  248 249 252;   /* page canvas */
+  --color-gray-100: 241 243 248;   /* subtle tint rows / sidebar bg */
+  --color-gray-200: 224 228 237;   /* borders, dividers */
+  --color-gray-300: 200 207 221;   /* disabled inputs */
+  --color-gray-400: 152 162 183;   /* placeholder text */
+  --color-gray-500: 108 121 147;   /* secondary text */
+  --color-gray-600: 74 86 108;     /* body text */
+  --color-gray-700: 52 61 80;      /* strong text */
+  --color-gray-800: 30 36 52;      /* headings */
+  --color-gray-900: 15 19 32;      /* near-black text */
 
-  --color-status-pending: 255 193 7;
-  --color-status-pending-dark: 200 150 0;
-  --color-status-intransit: 44 62 80;
-  --color-status-intransit-dark: 30 45 60;
-  --color-status-success: 76 107 86; /* Muted Tarp Green */
-  --color-status-success-dark: 58 82 66;
-  --color-status-error: 220 53 69;
-  --color-status-error-dark: 180 30 40;
-  --color-status-draft: 120 120 120;
-  --color-status-draft-dark: 80 80 80;
+  /* ── SURFACES: 3-level elevation ─────────────────────────────────────────
+   * base → raised → overlay. Each step is visually distinct via bg + shadow.
+   * Borders are 1px hairlines (low opacity), never 2px hard lines.
+   */
+  --color-surface-base:    248 249 252;   /* page background (gray-50 tinted) */
+  --color-surface-raised:  255 255 255;   /* cards, sidebars (pure white) */
+  --color-surface-overlay: 255 255 255;   /* modals, dropdowns */
+  --color-surface-border:  224 228 237;   /* gray-200 — 1px hairline only */
+  --color-surface-active:  241 243 248;   /* hovered/selected rows, gray-100 */
+
+  /* ── TEXT ─────────────────────────────────────────────────────────────────*/
+  --color-text-primary:   15 19 32;      /* gray-900 */
+  --color-text-secondary: 74 86 108;     /* gray-600 */
+  --color-text-muted:     152 162 183;   /* gray-400 */
+  --color-text-inverse:   255 255 255;   /* white — on dark backgrounds */
+
+  /* ── STATUS / SEMANTIC COLORS ─────────────────────────────────────────────
+   * Rule: NO status color may share a hue family with the brand colors.
+   * Brand occupies hsl(221) navy and hsl(45) gold.
+   * Therefore:
+   *   success → emerald  hsl(160)  — clearly distinct
+   *   warning → orange   hsl(32)   — warm but darker/different from gold(45)
+   *   danger  → red      hsl(4)    — unambiguous
+   *   info    → violet   hsl(250)  — periwinkle, clearly not navy blue(221)
+   *   neutral → gray-500 hsl(220)  — desaturated, for draft/inactive
+   *
+   * Each status has 3 sub-tokens:
+   *   DEFAULT → icon color, text color, dot color
+   *   -bg     → 10% tint background for badge/alert container
+   *   -border → 30% tint border for alert container
+   */
+
+  /* success — emerald */
+  --color-status-success:        22 163 74;    /* hsl(142,76%,36%) */
+  --color-status-success-bg:     240 253 244;  /* very light mint */
+  --color-status-success-border: 134 239 172;  /* light mint border */
+
+  /* warning — amber-orange (NOT gold) */
+  --color-status-warning:        217 119 6;    /* hsl(32,95%,44%) */
+  --color-status-warning-bg:     255 251 235;  /* light amber */
+  --color-status-warning-border: 252 211 77;   /* amber border */
+
+  /* danger — red */
+  --color-status-danger:         220 38 38;    /* hsl(0,72%,51%) */
+  --color-status-danger-bg:      254 242 242;  /* light red */
+  --color-status-danger-border:  252 165 165;  /* rose border */
+
+  /* info — violet/periwinkle (distinct from navy) */
+  --color-status-info:           109 40 217;   /* hsl(262,72%,50%) */
+  --color-status-info-bg:        245 243 255;  /* lavender tint */
+  --color-status-info-border:    196 181 253;  /* light violet border */
+
+  /* neutral — for draft / inactive / unknown */
+  --color-status-neutral:        108 121 147;  /* gray-500 */
+  --color-status-neutral-bg:     241 243 248;  /* gray-100 */
+  --color-status-neutral-border: 200 207 221;  /* gray-300 */
+
+  /* ── SHADOWS ─────────────────────────────────────────────────────────────
+   * 3 levels. Light mode uses standard drop shadows.
+   * sm  → barely lifted (inputs, inline elements)
+   * md  → cards (the primary elevation in this product)
+   * lg  → modals, dropdowns
+   */
+  --shadow-sm: 0 1px 3px 0 rgb(15 19 32 / 0.06),
+               0 1px 2px -1px rgb(15 19 32 / 0.04);
+  --shadow-md: 0 4px 8px -2px rgb(15 19 32 / 0.08),
+               0 2px 4px -2px rgb(15 19 32 / 0.05);
+  --shadow-lg: 0 12px 24px -6px rgb(15 19 32 / 0.12),
+               0 4px 8px -4px rgb(15 19 32 / 0.06);
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DARK MODE
+   Strategy: Blue-tinted dark surfaces (not pure neutral-black) to complement
+   the navy brand. Three distinct elevation levels using lightness steps of
+   ~5-6% each, so cards are clearly visible without relying on borders.
+═══════════════════════════════════════════════════════════════════════════ */
 .dark {
-  --color-primary: 0 43 121;
-  --color-primary-hover: 0 32 90;
-  --color-primary-light: 40 80 180;
-  --color-primary-lighter: 100 150 230;
 
-  --color-accent: 255 193 7;
-  --color-accent-hover: 224 168 0;
-  --color-accent-light: 255 213 79;
-  --color-accent-lighter: 255 243 224;
+  /* Brand: identical — primary navy works fine in dark */
+  --color-primary:       0 43 121;
+  --color-primary-hover: 0 32 92;
+  --color-primary-light: 51 102 187;
+  --color-primary-dark:  0 28 78;
 
-  --color-surface: 26 26 26;
-  --color-surface-muted: 17 17 17;
-  --color-surface-border: 70 70 70;
-  --color-surface-active: 40 40 40;
+  /* Accent: gold reads well on dark */
+  --color-accent:        255 193 7;
+  --color-accent-hover:  217 164 6;
+  --color-accent-light:  255 220 90;
 
-  --color-text-primary: 240 240 240;
-  --color-text-secondary: 180 180 180;
-  --color-text-muted: 120 120 120;
+  /* Grays inverted: still blue-tinted, darker end */
+  --color-gray-50:  15 19 32;
+  --color-gray-100: 22 27 43;
+  --color-gray-200: 33 39 58;
+  --color-gray-300: 50 58 80;
+  --color-gray-400: 90 101 128;
+  --color-gray-500: 130 143 168;
+  --color-gray-600: 165 176 198;
+  --color-gray-700: 200 207 221;
+  --color-gray-800: 224 228 237;
+  --color-gray-900: 248 249 252;
+
+  /* ── SURFACES: layered dark elevation ─────────────────────────────────────
+   * Each step is ~5 lightness points apart, which provides visible depth
+   * without relying on borders. Values:
+   * base    → hsl(224,37%,10%)  #0F1318  — deepest page background
+   * raised  → hsl(224,33%,14%)  #19202E  — cards, sidebars
+   * overlay → hsl(224,30%,18%)  #232D3F  — modals, dropdown panels
+   *
+   * Border is a low-opacity line (not 2px hard) — just enough to hint at
+   * edges in low-contrast situations.
+   */
+  --color-surface-base:    15 19 32;     /* #0F1320 — page bg */
+  --color-surface-raised:  22 29 46;     /* #161D2E — cards */
+  --color-surface-overlay: 30 39 61;     /* #1E273D — modals */
+  --color-surface-border:  45 55 80;     /* subtle 1px separator */
+  --color-surface-active:  33 42 64;     /* hovered rows, selected state */
+
+  /* Text */
+  --color-text-primary:   235 237 244;  /* near-white with blue tint */
+  --color-text-secondary: 155 165 190;  /* muted, readable */
+  --color-text-muted:     90 101 128;   /* timestamps, captions */
+  --color-text-inverse:   15 19 32;     /* on light chips */
+
+  /* ── STATUS: same hues, lighter values for dark surfaces ─────────────────
+   * Text/icon versions stay the same. Backgrounds become tinted dark,
+   * not a simple lightness swap — they use the same hue with low opacity.
+   */
+
+  --color-status-success:        34 197 94;    /* lighter green for dark bg */
+  --color-status-success-bg:     5 46 22;      /* very dark mint */
+  --color-status-success-border: 22 101 52;    /* deep mint border */
+
+  --color-status-warning:        251 146 60;   /* lighter orange for dark bg */
+  --color-status-warning-bg:     69 26 3;      /* dark amber */
+  --color-status-warning-border: 154 52 18;    /* dark orange border */
+
+  --color-status-danger:         248 113 113;  /* lighter red for dark bg */
+  --color-status-danger-bg:      69 10 10;     /* dark red */
+  --color-status-danger-border:  153 27 27;    /* deep red border */
+
+  --color-status-info:           167 139 250;  /* lighter violet for dark bg */
+  --color-status-info-bg:        30 27 75;     /* dark purple */
+  --color-status-info-border:    76 29 149;    /* deep violet border */
+
+  --color-status-neutral:        130 143 168;
+  --color-status-neutral-bg:     33 39 58;
+  --color-status-neutral-border: 50 58 80;
+
+  /* ── SHADOWS: dark mode uses inner glow + subtle color ───────────────────
+   * Standard drop shadows disappear on dark bg. Instead: slight color lift.
+   */
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3),
+               0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.4),
+               0 2px 4px -2px rgb(0 0 0 / 0.25);
+  --shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.5),
+               0 4px 8px -4px rgb(0 0 0 / 0.3);
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE LAYER
+═══════════════════════════════════════════════════════════════════════════ */
 @layer base {
-  body {
-    @apply bg-surface-muted text-text-primary antialiased font-sans text-sm transition-colors duration-200;
+  *, *::before, *::after {
+    border-color: rgb(var(--color-surface-border));
   }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-header tracking-tight text-primary font-bold uppercase;
+
+  body {
+    @apply bg-surface-base text-text-primary antialiased font-sans text-base;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Typography scale — semantic, not size-based */
+  h1 { @apply text-xl font-bold tracking-tight text-text-primary; }
+  h2 { @apply text-lg font-semibold tracking-tight text-text-primary; }
+  h3 { @apply text-md font-semibold text-text-primary; }
+  h4 { @apply text-base font-semibold text-text-primary; }
+
+  /* Focus ring — applied globally, matches brand */
+  :focus-visible {
+    outline: 2px solid rgb(var(--color-primary) / 0.5);
+    outline-offset: 2px;
   }
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMPONENT LAYER — shared utility classes derived from tokens
+═══════════════════════════════════════════════════════════════════════════ */
 @layer components {
-  /* The Hazard Tape Motif */
-  .hazard-tape {
-    background-image: repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 10px,
-      rgb(var(--color-primary)) 10px,
-      rgb(var(--color-primary)) 20px
-    );
+
+  /* ── CARD ────────────────────────────────────────────────────────────────
+   * The canonical card class. All cards use this — no exceptions.
+   * Border: 1px hairline at low opacity. NO border-2.
+   */
+  .card {
+    @apply bg-surface-raised rounded-md shadow-md border border-surface-border;
   }
-  
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-lg;
+  }
+
+  /* ── BADGE ───────────────────────────────────────────────────────────────
+   * Badge source of truth. Consumed by every status indicator:
+   * fleet legend dots, gate log status, alert strips, dispatch column.
+   * Usage: <span class="badge badge-success">Cleared</span>
+   */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-1 rounded-sm text-xs font-medium;
+  }
+  .badge-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .badge-success {
+    background-color: rgb(var(--color-status-success-bg));
+    color: rgb(var(--color-status-success));
+    border: 1px solid rgb(var(--color-status-success-border));
+  }
+  .badge-warning {
+    background-color: rgb(var(--color-status-warning-bg));
+    color: rgb(var(--color-status-warning));
+    border: 1px solid rgb(var(--color-status-warning-border));
+  }
+  .badge-danger {
+    background-color: rgb(var(--color-status-danger-bg));
+    color: rgb(var(--color-status-danger));
+    border: 1px solid rgb(var(--color-status-danger-border));
+  }
+  .badge-info {
+    background-color: rgb(var(--color-status-info-bg));
+    color: rgb(var(--color-status-info));
+    border: 1px solid rgb(var(--color-status-info-border));
+  }
+  .badge-neutral {
+    background-color: rgb(var(--color-status-neutral-bg));
+    color: rgb(var(--color-status-neutral));
+    border: 1px solid rgb(var(--color-status-neutral-border));
+  }
+
+  /* ── ALERT STRIP ─────────────────────────────────────────────────────────
+   * Full-width inline alert (e.g. low-stock warning on Overview).
+   * Distinct from badge — takes full width, has icon slot.
+   */
+  .alert {
+    @apply flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium;
+  }
+  .alert-danger {
+    background-color: rgb(var(--color-status-danger-bg));
+    color: rgb(var(--color-status-danger));
+    border: 1px solid rgb(var(--color-status-danger-border));
+  }
+  .alert-warning {
+    background-color: rgb(var(--color-status-warning-bg));
+    color: rgb(var(--color-status-warning));
+    border: 1px solid rgb(var(--color-status-warning-border));
+  }
+
+  /* ── BUTTON ──────────────────────────────────────────────────────────────*/
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-3 py-2 rounded-sm text-sm font-medium
+           transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1;
+  }
+  .btn-primary {
+    @apply bg-primary text-text-inverse hover:bg-primary-hover focus-visible:ring-primary;
+  }
+  .btn-secondary {
+    @apply bg-surface-raised text-text-primary border border-surface-border hover:bg-surface-active;
+  }
+  .btn-danger {
+    @apply bg-status-danger text-text-inverse hover:opacity-90 focus-visible:ring-danger;
+  }
+  .btn-ghost {
+    @apply text-text-secondary hover:bg-surface-active hover:text-text-primary;
+  }
+
+  /* ── STATUS DOT ──────────────────────────────────────────────────────────
+   * Used in Fleet legend, sidebar user indicator, and table rows.
+   * Single source: all status dots pull from status- variables.
+   */
+  .status-dot { @apply w-2 h-2 rounded-full flex-shrink-0; }
+  .status-dot-success { background-color: rgb(var(--color-status-success)); }
+  .status-dot-warning { background-color: rgb(var(--color-status-warning)); }
+  .status-dot-danger  { background-color: rgb(var(--color-status-danger)); }
+  .status-dot-info    { background-color: rgb(var(--color-status-info)); }
+  .status-dot-neutral { background-color: rgb(var(--color-status-neutral)); }
+
+  /* ── HAZARD TAPE (brand motif — use sparingly) ───────────────────────────
+   * Retained as brand identity but scoped to intentional uses only.
+   * E.g. top edge of the sidebar logo block. NOT on active nav items.
+   */
   .hazard-tape-border-top {
     position: relative;
   }
   .hazard-tape-border-top::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
     background-image: repeating-linear-gradient(
       -45deg,
-      transparent,
-      transparent 10px,
-      rgb(var(--color-primary)) 10px,
-      rgb(var(--color-primary)) 20px
+      transparent 0px, transparent 6px,
+      rgb(var(--color-primary)) 6px, rgb(var(--color-primary)) 12px
     );
+    opacity: 0.6;
+  }
+
+  /* ── TABLE BASE ──────────────────────────────────────────────────────────*/
+  .table-base {
+    @apply w-full text-sm border-collapse;
+  }
+  .table-base thead {
+    @apply bg-surface-active;
+  }
+  .table-base th {
+    @apply px-3 py-2 text-left text-xs font-semibold text-text-secondary uppercase tracking-wide;
+  }
+  .table-base td {
+    @apply px-3 py-2 text-text-primary border-b border-surface-border;
+  }
+  .table-base tbody tr:hover {
+    @apply bg-surface-active;
+  }
+  .table-base tbody tr:last-child td {
+    @apply border-0;
   }
 }

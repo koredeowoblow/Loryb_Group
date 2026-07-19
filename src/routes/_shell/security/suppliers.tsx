@@ -1,31 +1,24 @@
-import { Truck } from 'lucide-react'
-import { validateFormWithZod } from '../../../lib/zodValidator'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { suppliers } from '../../../api/security'
-import { SupplierRecord } from '../../../types'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
+import { Truck } from 'lucide-react'
+
+import { suppliers } from '../../../api/security'
+import { SupplierRecord } from '../../../types'
+import { validateFormWithZod } from '../../../lib/zodValidator'
 import { Modal } from '../../../components/ui/Modal'
 import { FormField } from '../../../components/ui/FormField'
 import { DateTimeField } from '../../../components/ui/DateTimeField'
 import { SelectField } from '../../../components/ui/SelectField'
+import { DataTable, Column } from '../../../components/ui/DataTable'
+import { Button } from '../../../components/ui/Button'
+import { StatCard } from '../../../components/ui/StatCard'
 
 export const Route = createFileRoute('/_shell/security/suppliers')({
   component: SuppliersPage,
 })
-
-const columnHelper = createColumnHelper<SupplierRecord>()
-
-const columns = [
-  columnHelper.accessor('supplierName', { header: 'Supplier Name' }),
-  columnHelper.accessor('driverName', { header: 'Driver' }),
-  columnHelper.accessor('truckNo', { header: 'Truck No' }),
-  columnHelper.accessor('qtyOfGrains', { header: 'Qty' }),
-  columnHelper.accessor('grainType', { header: 'Grain Type' }),
-]
 
 const schema = z.object({
   supplierName: z.string().min(1, 'Required'),
@@ -46,19 +39,16 @@ function SuppliersPage() {
   const queryClient = useQueryClient()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
-  const [searchTerm, setSearchTerm] = useState('')
   const [grainFilter, setGrainFilter] = useState('All')
 
-  const { data, isLoading } = useQuery({
+  const { data = [], isLoading } = useQuery({
     queryKey: ['suppliers'],
     queryFn: suppliers.list,
   })
 
-  const filteredData = (data || []).filter((row) => {
-    const matchesSearch = row.supplierName.toLowerCase().includes(searchTerm.toLowerCase()) || row.truckNo.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesGrain = grainFilter === 'All' || row.grainType === grainFilter
-    return matchesSearch && matchesGrain
-  }) || []
+  const filteredData = useMemo(() => {
+    return data.filter(row => grainFilter === 'All' || row.grainType === grainFilter)
+  }, [data, grainFilter])
 
   const totalQty = filteredData.reduce((acc, row) => acc + row.qtyOfGrains, 0)
 
@@ -68,15 +58,7 @@ function SuppliersPage() {
       queryClient.invalidateQueries({ queryKey: ['suppliers'] })
       setIsModalOpen(false)
     },
-    onError: () => {
-      setErrorMsg('Failed to save record. Please try again.')
-    }
-  })
-
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
+    onError: () => setErrorMsg('Failed to save record. Please try again.')
   })
 
   const form = useForm({
@@ -103,115 +85,103 @@ function SuppliersPage() {
     },
   })
 
+  const columns: Column<SupplierRecord>[] = [
+    { key: 'supplierName', header: 'Supplier Name', sortable: true },
+    { key: 'driverName', header: 'Driver' },
+    { key: 'truckNo', header: 'Truck No' },
+    { key: 'qtyOfGrains', header: 'Qty', sortable: true },
+    { key: 'grainType', header: 'Grain Type' },
+  ]
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6">
+      {/* ── Page Header ─────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h2 className="text-xl font-bold font-header tracking-tight text-primary">Suppliers Record</h2>
-          <p className="text-sm text-text-secondary mt-1">Manage and track inbound grain deliveries from suppliers.</p>
-        </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
-        >
-          Log Supplier
-        </button>
-      </div>
-
-      {/* Summary Strip & Filters */}
-      <div className="bg-surface p-3 rounded-none shadow-none border-2 border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
-        <div className="flex gap-6">
-          <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Records</div>
-            <div className="text-lg font-bold text-primary">{filteredData.length}</div>
-          </div>
-          <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Qty Received</div>
-            <div className="text-lg font-bold text-primary">{totalQty.toLocaleString()} kg</div>
-          </div>
-        </div>
-        
-        <div className="flex gap-2 w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Search supplier or truck no..."
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-          />
-          <select
-            value={grainFilter}
-            onChange={e => setGrainFilter(e.target.value)}
-            className="px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer"
-          >
-            <option value="All">All Grains</option>
-            <option value="Maize">Maize</option>
-            <option value="Sorghum">Sorghum</option>
-            <option value="SoyaBeans">Soya Beans</option>
-          </select>
+          <h1 className="text-xl font-bold text-text-primary flex items-center gap-2">
+            <Truck size={22} className="text-primary opacity-80" />
+            Suppliers Record
+          </h1>
+          <p className="text-sm text-text-muted mt-0.5">Manage and track inbound grain deliveries from suppliers</p>
         </div>
       </div>
 
-      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
-        {isLoading ? (
-          <div className="p-12 flex flex-col items-center justify-center space-y-4">
-            <div className="w-8 h-8 border-4 border-surface-border border-t-primary rounded-full animate-spin"></div>
-            <div className="text-sm font-medium text-text-muted">Loading supplier records...</div>
+      {/* ── KPI Row ─────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <StatCard title="Total Records" value={filteredData.length} subtitle="Based on current filters" />
+        <StatCard title="Total Qty Received" value={`${totalQty.toLocaleString()} kg`} subtitle="Cumulative total" />
+      </div>
+
+      {/* ── Data Table ──────────────────────────────────────────────────── */}
+      <DataTable
+        columns={columns}
+        data={filteredData}
+        rowKey="id"
+        isLoading={isLoading}
+        searchable
+        searchPlaceholder="Search supplier or truck no..."
+        searchKeys={['supplierName', 'truckNo', 'driverName']}
+        emptyIcon={<Truck />}
+        emptyMessage={grainFilter !== 'All' 
+          ? "We couldn't find any records matching your current filters."
+          : "There are currently no inbound grain deliveries recorded."
+        }
+        actions={
+          <div className="flex items-center gap-3">
+            <select
+              value={grainFilter}
+              onChange={e => setGrainFilter(e.target.value)}
+              className="px-3 py-1.5 text-sm border border-surface-border rounded-sm bg-surface-base focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors text-text-primary"
+            >
+              <option value="All">All Grains</option>
+              <option value="Maize">Maize</option>
+              <option value="Sorghum">Sorghum</option>
+              <option value="SoyaBeans">Soya Beans</option>
+            </select>
+            <Button onClick={() => setIsModalOpen(true)}>
+              Log Supplier
+            </Button>
           </div>
-        ) : (
-          <table className="min-w-full divide-y divide-surface-border border-b border-surface-border">
-            <thead className="bg-surface-muted">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id} className="px-4 py-3 text-left text-[0.7rem] font-bold text-text-secondary uppercase tracking-wider border-b border-surface-border font-header">
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-surface divide-y divide-surface-border text-sm">
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-surface-active/60 transition-colors group cursor-pointer">
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-4 py-3 whitespace-nowrap text-sm text-text-primary border-b border-surface-border/50">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-              {table.getRowModel().rows.length === 0 && (
-                <tr>
-                  <td colSpan={columns.length} className="px-4 py-16 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-2">
-                      <Truck size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />
-                      <h3 className="text-base font-bold text-primary font-header">No supplier records found</h3>
-                      <p className="text-sm text-text-muted max-w-sm">
-                        {searchTerm || grainFilter !== 'All' 
-                          ? "We couldn't find any records matching your current filters. Try adjusting your search criteria."
-                          : "There are currently no inbound grain deliveries recorded. Log the first supplier to begin tracking."}
-                      </p>
-                      {(!searchTerm && grainFilter === 'All') && (
-                        <button
-                          onClick={() => setIsModalOpen(true)}
-                          className="mt-4 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
-                        >
-                          Log Supplier
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
+        }
+      />
+
+      {/* ── Create Modal ────────────────────────────────────────────────── */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        title="Add Supplier Record"
+        description="Log a new inbound grain delivery."
+        size="lg"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              children={([canSubmit, isSubmitting]) => (
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    form.handleSubmit()
+                  }}
+                  disabled={!canSubmit || isSubmitting}
+                  isLoading={isSubmitting}
+                >
+                  Add Supplier
+                </Button>
               )}
-            </tbody>
-          </table>
+            />
+          </>
+        }
+      >
+        {errorMsg && (
+          <div className="alert alert-danger mb-4">
+            {errorMsg}
+          </div>
         )}
-      </div>
-
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Supplier Record">
-        {errorMsg && <div className="mb-4 text-sm bg-status-error/10 border border-status-error/20 text-status-error font-medium p-2 rounded">{errorMsg}</div>}
         <form
+          id="supplier-form"
           onSubmit={(e) => {
             e.preventDefault()
             e.stopPropagation()
@@ -219,52 +189,39 @@ function SuppliersPage() {
           }}
           className="space-y-4"
         >
-          <form.Field name="supplierName" children={(field) => <FormField field={field} label="Supplier Name" />} />
-          <form.Field name="driverName" children={(field) => <FormField field={field} label="Driver Name" />} />
-          <form.Field name="refPhoneNo" children={(field) => <FormField field={field} label="Ref Phone No" />} />
-          <form.Field name="truckNo" children={(field) => <FormField field={field} label="Truck No" />} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+            <form.Field name="supplierName" children={(field) => <FormField field={field} label="Supplier Name" />} />
+            <form.Field name="truckNo" children={(field) => <FormField field={field} label="Truck No" />} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+            <form.Field name="driverName" children={(field) => <FormField field={field} label="Driver Name" />} />
+            <form.Field name="refPhoneNo" children={(field) => <FormField field={field} label="Ref Phone No" type="tel" />} />
+          </div>
           
-          <form.Field name="qtyOfGrains" children={(field) => <FormField field={field as any} label="Qty of Grains" type="number" />} />
-          <form.Field name="confirmedQty" children={(field) => <FormField field={field as any} label="Confirmed Qty" type="number" />} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4">
+            <form.Field name="qtyOfGrains" children={(field) => <FormField field={field as any} label="Qty of Grains" type="number" />} />
+            <form.Field name="confirmedQty" children={(field) => <FormField field={field as any} label="Confirmed Qty" type="number" />} />
+            <form.Field name="grainType" children={(field) => (
+              <SelectField field={field} label="Grain Type" options={[
+                { label: 'Maize', value: 'Maize' },
+                { label: 'Sorghum', value: 'Sorghum' },
+                { label: 'SoyaBeans', value: 'SoyaBeans' },
+              ]} />
+            )} />
+          </div>
           
-          <form.Field name="grainType" children={(field) => (
-            <SelectField field={field} label="Grain Type" options={[
-              { label: 'Maize', value: 'Maize' },
-              { label: 'Sorghum', value: 'Sorghum' },
-              { label: 'SoyaBeans', value: 'SoyaBeans' },
-            ]} />
-          )} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4">
+            <form.Field name="storeLocation" children={(field) => <FormField field={field} label="Store Location" />} />
+            <form.Field name="weightNo" children={(field) => <FormField field={field} label="Weight No" />} />
+            <form.Field name="rejectNo" children={(field) => <FormField field={field as any} label="Reject No" type="number" />} />
+          </div>
           
-          <form.Field name="storeLocation" children={(field) => <FormField field={field} label="Store Location" />} />
-          <form.Field name="weightNo" children={(field) => <FormField field={field} label="Weight No" />} />
-          <form.Field name="rejectNo" children={(field) => <FormField field={field as any} label="Reject No" type="number" />} />
-          <form.Field name="dateTimeIn" children={(field) => <DateTimeField field={field} label="Date/Time In" />} />
-          <form.Field name="dateTimeOut" children={(field) => <DateTimeField field={field} label="Date/Time Out (Optional)" />} />
-
-          <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors"
-            >
-              Cancel
-            </button>
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <button
-                  type="submit"
-                  disabled={!canSubmit || isSubmitting}
-                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
-                >
-                  {isSubmitting ? 'Adding...' : 'Add Supplier'}
-                </button>
-              )}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+            <form.Field name="dateTimeIn" children={(field) => <DateTimeField field={field} label="Date/Time In" />} />
+            <form.Field name="dateTimeOut" children={(field) => <DateTimeField field={field} label="Date/Time Out (Optional)" />} />
           </div>
         </form>
       </Modal>
     </div>
   )
 }
-

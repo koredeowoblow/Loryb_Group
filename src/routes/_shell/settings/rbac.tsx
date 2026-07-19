@@ -123,12 +123,12 @@ function RbacPage() {
     <div className="space-y-6 max-w-6xl">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-bold font-header tracking-tight text-primary flex items-center gap-2">
+          <h2 className="text-xl font-bold font-header tracking-tight text-text-primary flex items-center gap-2">
             <Lock size={24} /> RBAC & Permissions
           </h2>
           <p className="text-sm text-text-secondary mt-1">Manage role-based access control and system permissions.</p>
         </div>
-        <button className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light">
+        <button className="btn btn-primary font-header uppercase tracking-wider">
           Create Custom Role
         </button>
       </div>
@@ -171,7 +171,7 @@ function RbacPage() {
           <div className="p-6 border-b border-surface-border flex justify-between items-start bg-surface-muted/10">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-xl font-bold text-primary font-header">{activeRole.name}</h3>
+                <h3 className="text-xl font-bold text-text-primary font-header">{activeRole.name}</h3>
                 {activeRole.isSystem && (
                   <span className="px-2 py-0.5 bg-status-pending/20 text-status-pending-dark text-[0.65rem] font-bold uppercase tracking-wider rounded">System Role</span>
                 )}
@@ -182,7 +182,7 @@ function RbacPage() {
             <div className="flex gap-2">
               <button 
                 onClick={handleEdit} 
-                className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-primary hover:text-white hover:bg-primary border border-primary rounded shadow-sm transition-all flex items-center gap-1.5"
+                className="btn btn-primary px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider flex items-center gap-1.5"
               >
                 <Edit size={14} /> Edit Role
               </button>
@@ -303,11 +303,11 @@ function RbacPage() {
           </div>
 
           <div className="pt-4 border-t border-surface-border flex justify-end gap-2">
-            <button onClick={handleCancel} className="px-4 py-2 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">
+            <button onClick={handleCancel} className="btn btn-ghost font-header uppercase tracking-wider">
               {activeRole.isSystem ? 'Close' : 'Cancel'}
             </button>
             {!activeRole.isSystem && (
-              <button onClick={handleSave} className="px-4 py-2 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light transition-colors">
+              <button onClick={handleSave} className="btn btn-primary font-header uppercase tracking-wider">
                 Save Changes
               </button>
             )}

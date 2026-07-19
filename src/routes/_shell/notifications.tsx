@@ -80,7 +80,7 @@ function NotificationsPage() {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Bell className="text-primary" />
-          <h2 className="text-xl font-bold font-header tracking-tight text-primary">Notifications</h2>
+          <h2 className="text-xl font-bold font-header tracking-tight text-text-primary">Notifications</h2>
           {unreadCount > 0 && (
             <span className="ml-2 px-2 py-0.5 rounded-full bg-status-error text-white text-xs font-bold">
               {unreadCount} New

@@ -46,10 +46,10 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-muted px-4 font-sans text-text-primary">
-      <div className="max-w-md w-full space-y-8 bg-surface p-10 rounded-lg shadow-xl border border-surface-border">
+      <div className="card max-w-md w-full space-y-8 p-10">
         <div className="flex flex-col items-center">
           <img src="/logo.png" alt="Loryb Group of Companies" className="h-16 w-auto mb-4" />
-          <h2 className="mt-2 text-center text-3xl font-bold font-header tracking-tight text-primary">
+          <h2 className="mt-2 text-center text-3xl font-bold font-header tracking-tight text-text-primary">
             Welcome Back
           </h2>
           <p className="mt-2 text-center text-sm text-text-secondary">
@@ -112,7 +112,7 @@ function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn btn-primary w-full py-2.5"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>

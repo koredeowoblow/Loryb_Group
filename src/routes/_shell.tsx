@@ -1,7 +1,10 @@
 import { createFileRoute, Outlet, Link, useRouterState, redirect, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
-import { LayoutDashboard, Shield, Warehouse, Truck, DollarSign, ChevronDown, ChevronRight, LogOut, Settings as SettingsIcon, Menu, X, Moon, Sun } from 'lucide-react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import {
+  LayoutDashboard, Shield, Warehouse, Truck, DollarSign,
+  ChevronDown, ChevronRight, LogOut, Settings as SettingsIcon,
+  Menu, X, Moon, Sun,
+} from 'lucide-react'
 import clsx from 'clsx'
 import { useAuth, Role } from '../auth'
 import { AUTH_BYPASS_PATHS, ADMIN_RESTRICTED_PATHS, getRoleRedirect } from '../lib/rbac'
@@ -11,251 +14,263 @@ export const Route = createFileRoute('/_shell')({
   beforeLoad: ({ context, location }) => {
     const role = context.auth.role
     const path = location.pathname
-
-    if (role === 'CEO') return // CEO sees everything
-    
-    if (AUTH_BYPASS_PATHS.includes(path)) {
-      return
-    }
-
+    if (role === 'CEO') return
+    if (AUTH_BYPASS_PATHS.includes(path)) return
     if (role === 'Admin') {
-      if (ADMIN_RESTRICTED_PATHS.some(p => path.startsWith(p))) {
-        throw redirect({ to: '/403' })
-      }
+      if (ADMIN_RESTRICTED_PATHS.some(p => path.startsWith(p))) throw redirect({ to: '/403' })
       return
     }
-
-    const rolePath = role.toLowerCase();
+    const rolePath = role.toLowerCase()
     if (['Security', 'Warehouse', 'Logistics', 'Finance'].includes(role) && !path.startsWith(`/${rolePath}`)) {
       throw redirect({ to: getRoleRedirect(role) })
     }
-  }
+  },
 })
+
+// ─── Shell ────────────────────────────────────────────────────────────────────
 
 function ShellLayout() {
   const { role } = useAuth()
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark') || window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return (
+        document.documentElement.classList.contains('dark') ||
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      )
     }
-    return false;
+    return false
   })
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
+    document.documentElement.classList.toggle('dark', isDarkMode)
   }, [isDarkMode])
-  
+
   const router = useRouterState()
   const isLoading = router.status === 'pending' || router.isLoading
 
   return (
-    <div className="flex h-screen bg-surface-muted text-text-primary overflow-hidden font-sans transition-colors duration-200">
+    <div className="flex h-screen bg-surface-base text-text-primary overflow-hidden font-sans">
       <Sidebar role={role} isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
+
       <div className="flex flex-col flex-1 overflow-hidden relative">
+        {/* Page-load progress bar */}
         {isLoading && (
-          <div className="absolute top-0 left-0 right-0 h-1 bg-surface-muted z-50">
-            <div className="h-full bg-primary animate-pulse"></div>
+          <div className="absolute top-0 left-0 right-0 h-px bg-surface-border z-50">
+            <div className="h-full bg-primary animate-pulse" />
           </div>
         )}
-        <TopNav role={role} toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} isDarkMode={isDarkMode} toggleDarkMode={() => setIsDarkMode(!isDarkMode)} />
-        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 relative">
+
+        <TopNav
+          role={role}
+          toggleSidebar={() => setSidebarOpen(s => !s)}
+          isDarkMode={isDarkMode}
+          toggleDarkMode={() => setIsDarkMode(m => !m)}
+        />
+
+        {/* Content */}
+        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>
 
+      {/* Mobile overlay */}
       {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-20 md:hidden transition-opacity" 
+        <div
+          className="fixed inset-0 bg-gray-900/50 z-20 md:hidden"
           onClick={() => setSidebarOpen(false)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') {
-              setSidebarOpen(false)
-            }
-          }}
-          aria-label="Close sidebar"
+          aria-hidden="true"
         />
       )}
     </div>
   )
 }
 
-function Sidebar({ role, isOpen, setIsOpen }: { role: Role, isOpen: boolean, setIsOpen: (val: boolean) => void }) {
-  const router = useRouterState()
+// ─── Nav data ─────────────────────────────────────────────────────────────────
+
+const ALL_NAV = [
+  {
+    label: 'Admin & CEO', icon: LayoutDashboard, to: '/ceo',
+    roles: ['CEO', 'Admin'],
+    subItems: [
+      { label: 'Overview', to: '/ceo/overview' },
+      { label: 'Reports',  to: '/ceo/reports'  },
+    ],
+  },
+  {
+    label: 'Security', icon: Shield, to: '/security',
+    roles: ['CEO', 'Admin', 'Security'],
+    subItems: [
+      { label: 'Gate Log',          to: '/security/gate-log'          },
+      { label: 'Visitor Log',       to: '/security/visitor-log'       },
+      { label: 'Motorcycle Log',    to: '/security/motorcycle-log'    },
+      { label: 'Staff Movement',    to: '/security/staff-movement'    },
+      { label: 'Staff Attendance',  to: '/security/staff-attendance'  },
+      { label: 'Dispatch',          to: '/security/dispatch'          },
+      { label: 'Item Bought',       to: '/security/item-bought'       },
+      { label: 'Labourers Log',     to: '/security/labourers-log'     },
+      { label: 'Light Token',       to: '/security/light-token'       },
+      { label: 'Materials Handoff', to: '/security/materials-handoff' },
+      { label: 'Suppliers',         to: '/security/suppliers'         },
+    ],
+  },
+  {
+    label: 'Warehouse', icon: Warehouse, to: '/warehouse',
+    roles: ['CEO', 'Admin', 'Warehouse'],
+    subItems: [
+      { label: 'Stock Overview',      to: '/warehouse/stock-overview' },
+      { label: 'Goods Received Note', to: '/warehouse/grn'           },
+      { label: 'Bin Card',            to: '/warehouse/bin-card'       },
+      { label: 'Alerts',              to: '/warehouse/alerts'         },
+    ],
+  },
+  {
+    label: 'Logistics', icon: Truck, to: '/logistics',
+    roles: ['CEO', 'Admin', 'Logistics'],
+    subItems: [
+      { label: 'Fleet Registry',  to: '/logistics/fleet'       },
+      { label: 'Trips Board',     to: '/logistics/trips'       },
+      { label: 'Maintenance Log', to: '/logistics/maintenance' },
+      { label: 'Driver Registry', to: '/logistics/drivers'     },
+      { label: 'Waybills',        to: '/logistics/waybills'    },
+    ],
+  },
+  {
+    label: 'Finance', icon: DollarSign, to: '/finance',
+    roles: ['CEO', 'Admin', 'Finance'],
+    subItems: [
+      { label: 'Overview',           to: '/finance/overview'           },
+      { label: 'Sales & Revenue',    to: '/finance/sales'              },
+      { label: 'Invoices',           to: '/finance/invoices'           },
+      { label: 'Expenses',           to: '/finance/expenses'           },
+      { label: 'Payroll',            to: '/finance/payroll'            },
+      { label: 'Supplier Payments',  to: '/finance/supplier-payments'  },
+    ],
+  },
+  {
+    label: 'Settings', icon: SettingsIcon, to: '/settings',
+    roles: ['CEO', 'Admin', 'Security', 'Warehouse', 'Logistics', 'Finance'],
+    subItems: [
+      { label: 'My Profile',       to: '/settings/profile'                              },
+      { label: 'User Management',  to: '/settings/user-management', roles: ['CEO', 'Super_Admin'] },
+      { label: 'RBAC & Permissions', to: '/settings/rbac',          roles: ['CEO', 'Super_Admin'] },
+      { label: 'Org Settings',     to: '/settings/org-settings',    roles: ['CEO', 'Super_Admin'] },
+    ],
+  },
+] as const
+
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
+
+function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; setIsOpen: (v: boolean) => void }) {
+  const { location } = useRouterState()
   const navigate = useNavigate()
-  const currentPath = router.location.pathname
-  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
-    '/ceo': true,
-    '/security': true,
-    '/warehouse': true,
-    '/logistics': true,
-    '/finance': true,
-    '/settings': false,
-  })
+  const currentPath = location.pathname
 
-  const toggleMenu = (path: string) => {
-    setExpandedMenus(prev => ({ ...prev, [path]: !prev[path] }))
-  }
+  const initialExpanded = Object.fromEntries(
+    ALL_NAV.map(item => [item.to, currentPath.startsWith(item.to)])
+  )
+  const [expanded, setExpanded] = useState<Record<string, boolean>>(initialExpanded)
 
-  const allNavItems = [
-    { 
-      label: 'Admin & CEO', icon: LayoutDashboard, to: '/ceo', roles: ['CEO', 'Admin'],
-      subItems: [
-        { label: 'Overview', to: '/ceo/overview' },
-        { label: 'Reports', to: '/ceo/reports' },
-      ]
-    },
-    { 
-      label: 'Security', icon: Shield, to: '/security', roles: ['CEO', 'Admin', 'Security'],
-      subItems: [
-        { label: 'Gate Log', to: '/security/gate-log' },
-        { label: 'Visitor Log', to: '/security/visitor-log' },
-        { label: 'Motorcycle Log', to: '/security/motorcycle-log' },
-        { label: 'Staff Movement', to: '/security/staff-movement' },
-        { label: 'Staff Attendance', to: '/security/staff-attendance' },
-        { label: 'Dispatch', to: '/security/dispatch' },
-        { label: 'Item Bought', to: '/security/item-bought' },
-        { label: 'Labourers Log', to: '/security/labourers-log' },
-        { label: 'Light Token', to: '/security/light-token' },
-        { label: 'Materials Handoff', to: '/security/materials-handoff' },
-        { label: 'Suppliers', to: '/security/suppliers' },
-      ]
-    },
-    { 
-      label: 'Warehouse', icon: Warehouse, to: '/warehouse', roles: ['CEO', 'Admin', 'Warehouse'],
-      subItems: [
-        { label: 'Stock Overview', to: '/warehouse/stock-overview' },
-        { label: 'Goods Received Note', to: '/warehouse/grn' },
-        { label: 'Bin Card', to: '/warehouse/bin-card' },
-        { label: 'Alerts', to: '/warehouse/alerts' },
-      ]
-    },
-    { 
-      label: 'Logistics', icon: Truck, to: '/logistics', roles: ['CEO', 'Admin', 'Logistics'],
-      subItems: [
-        { label: 'Fleet Registry', to: '/logistics/fleet' },
-        { label: 'Trips Board', to: '/logistics/trips' },
-        { label: 'Maintenance Log', to: '/logistics/maintenance' },
-        { label: 'Driver Registry', to: '/logistics/drivers' },
-        { label: 'Waybills', to: '/logistics/waybills' },
-      ]
-    },
-    { 
-      label: 'Finance', icon: DollarSign, to: '/finance', roles: ['CEO', 'Admin', 'Finance'],
-      subItems: [
-        { label: 'Overview', to: '/finance/overview' },
-        { label: 'Sales & Revenue', to: '/finance/sales' },
-        { label: 'Invoices', to: '/finance/invoices' },
-        { label: 'Expenses', to: '/finance/expenses' },
-        { label: 'Payroll', to: '/finance/payroll' },
-        { label: 'Supplier Payments', to: '/finance/supplier-payments' },
-      ]
-    },
-    { 
-      label: 'Settings', icon: SettingsIcon, to: '/settings', roles: ['CEO', 'Admin', 'Security', 'Warehouse', 'Logistics', 'Finance'],
-      subItems: [
-        { label: 'My Profile', to: '/settings/profile' },
-        { label: 'User Management', to: '/settings/user-management', roles: ['CEO','Super_Admin'] },
-        { label: 'RBAC & Permissions', to: '/settings/rbac', roles: ['CEO','Super_Admin'] },
-        { label: 'Org Settings', to: '/settings/org-settings', roles: ['CEO','Super_Admin'] },
-      ]
-    },
-  ]
-
-  const navItems = allNavItems.filter(item => item.roles.includes(role))
+  const navItems = ALL_NAV.filter(item => item.roles.includes(role as any))
 
   return (
     <aside className={clsx(
-      "bg-surface text-text-primary border-r border-surface-border flex flex-col z-30 shadow-sm overflow-y-auto transition-transform duration-300 md:translate-x-0 fixed md:static inset-y-0 left-0 w-64",
-      isOpen ? "translate-x-0" : "-translate-x-full"
+      'bg-surface-raised border-r border-surface-border flex flex-col z-30',
+      'overflow-y-auto transition-transform duration-300',
+      'fixed md:static inset-y-0 left-0 w-64',
+      isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
     )}>
-      <div className="h-16 md:h-20 flex flex-row items-center justify-between px-6 border-b border-surface-border bg-surface sticky top-0 z-20 shrink-0">
-          <img src="/logo.png" alt="Loryb Group of Companies" className="h-8 md:h-10 w-auto" />
-          <button className="md:hidden p-3 text-text-secondary hover:text-primary" onClick={() => setIsOpen(false)} aria-label="Close sidebar">
-            <X size={20} />
-          </button>
-      </div>
-      
-      <div className="px-6 mt-2">
-        <hr className="border-t border-surface-border my-2" />
+      {/* Logo row */}
+      <div className="h-16 flex items-center justify-between px-4 border-b border-surface-border shrink-0 hazard-tape-border-top">
+        <img src="/logo.png" alt="Loryb Group" className="h-8 w-auto object-contain" />
+        <button
+          className="md:hidden p-2 rounded-sm text-text-secondary hover:text-primary hover:bg-surface-active transition-colors"
+          onClick={() => setIsOpen(false)}
+          aria-label="Close sidebar"
+        >
+          <X size={18} />
+        </button>
       </div>
 
-      <nav className="flex-1 py-2 overflow-y-auto">
-        <ul className="flex flex-col gap-1 px-4">
-          {navItems.map((item) => {
+      {/* Nav */}
+      <nav className="flex-1 py-3 overflow-y-auto" aria-label="Main navigation">
+        <ul className="flex flex-col px-2">
+          {navItems.map(item => {
             const Icon = item.icon
             const isModuleActive = currentPath.startsWith(item.to)
-            const isExpanded = expandedMenus[item.to]
+            const isExpanded = expanded[item.to]
 
             return (
-              <li key={item.to} className="flex flex-col mb-1">
-              <button
-                onClick={() => toggleMenu(item.to)}
-                aria-expanded={isExpanded}
-                className={clsx(
-                  'flex items-center justify-between px-3 py-2.5 transition-all text-sm font-medium w-full border-l-2',
-                  isModuleActive
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-transparent text-text-secondary hover:bg-surface-active hover:text-primary'
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <Icon size={18} className={clsx(isModuleActive ? "text-primary" : "opacity-70")} />
-                  <span className="font-header tracking-wide">{item.label}</span>
-                </div>
-                <div className="opacity-50">
-                  {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                </div>
-              </button>
-              
-              {isExpanded && item.subItems && (
-                <ul className="ml-9 mt-1 flex flex-col gap-0.5 border-l-2 border-surface-border pl-2">
-                  {item.subItems.map(subItem => {
-                    // Filter sub-items by role if subItem has roles array
-                    if (subItem.roles && !subItem.roles.includes(role)) return null;
+              <li key={item.to}>
+                {/* Section header button */}
+                <button
+                  onClick={() => setExpanded(prev => ({ ...prev, [item.to]: !prev[item.to] }))}
+                  aria-expanded={isExpanded}
+                  className={clsx(
+                    'flex w-full items-center justify-between px-3 py-2 rounded-sm',
+                    'text-sm font-semibold transition-colors group',
+                    isModuleActive
+                      ? 'text-primary'
+                      : 'text-text-secondary hover:bg-surface-active hover:text-text-primary',
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    <Icon
+                      size={17}
+                      className={clsx(
+                        'transition-transform group-hover:scale-105',
+                        isModuleActive ? 'text-primary' : 'opacity-60',
+                      )}
+                    />
+                    {item.label}
+                  </span>
+                  {isExpanded
+                    ? <ChevronDown size={14} className="opacity-40" />
+                    : <ChevronRight size={14} className="opacity-40" />
+                  }
+                </button>
 
-                    const isSubActive = currentPath === subItem.to
-                    return (
-                      <li key={subItem.to}>
-                        <Link
-                          to={subItem.to}
-                          className={clsx(
-                            'block px-3 py-1.5 transition-all text-xs font-medium',
-                            isSubActive
-                              ? 'bg-primary text-white font-bold hazard-tape shadow-none'
-                              : 'text-text-secondary hover:bg-surface-active hover:text-primary'
-                          )}
-                        >
-                          {subItem.label}
-                        </Link>
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
-            </li>
-          )
-        })}
+                {/* Sub-items */}
+                {isExpanded && (
+                  <ul className="mt-1 mb-2 ml-6 pl-3 border-l border-surface-border flex flex-col gap-px">
+                    {item.subItems.map((sub: any) => {
+                      if (sub.roles && !sub.roles.includes(role)) return null
+                      const isActive = currentPath === sub.to
+                      return (
+                        <li key={sub.to}>
+                          <Link
+                            to={sub.to}
+                            className={clsx(
+                              'block px-3 py-1.5 rounded-sm text-sm transition-colors',
+                              isActive
+                                ? 'bg-primary/10 text-primary font-medium'
+                                : 'text-text-secondary hover:bg-surface-active hover:text-text-primary',
+                            )}
+                          >
+                            {sub.label}
+                          </Link>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
+              </li>
+            )
+          })}
         </ul>
       </nav>
-      <div className="p-4 border-t border-surface-border bg-surface-muted/50 text-xs text-text-muted flex justify-between items-center sticky bottom-0 z-20">
-        <div className="flex flex-col">
-          <span className="flex items-center gap-1.5 mb-1">
-            <div className="w-2 h-2 rounded-full bg-status-success animate-pulse" />
-            <span>Logged in as <strong>{role}</strong></span>
-          </span>
+
+      {/* Footer: user + logout */}
+      <div className="px-3 py-3 border-t border-surface-border flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="status-dot status-dot-success" />
+          <span className="text-sm font-medium text-text-secondary">{role}</span>
         </div>
-        <button 
+        <button
           onClick={() => navigate({ to: '/login' as any })}
-          className="p-3 text-text-secondary hover:text-status-error hover:bg-status-error/10 rounded-md transition-colors"
-          title="Log out"
-          aria-label="Log out"
+          className="p-2 rounded-sm text-text-muted hover:text-status-danger hover:bg-status-danger/10 transition-colors"
+          title="Sign out"
+          aria-label="Sign out"
         >
           <LogOut size={16} />
         </button>
@@ -264,30 +279,43 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role, isOpen: boolean, set
   )
 }
 
-function TopNav({ role, toggleSidebar, isDarkMode, toggleDarkMode }: { role: Role, toggleSidebar: () => void, isDarkMode: boolean, toggleDarkMode: () => void }) {
+// ─── Top Nav ──────────────────────────────────────────────────────────────────
+
+function TopNav({
+  role, toggleSidebar, isDarkMode, toggleDarkMode,
+}: {
+  role: Role
+  toggleSidebar: () => void
+  isDarkMode: boolean
+  toggleDarkMode: () => void
+}) {
   return (
-    <header className="h-16 bg-surface border-b border-surface-border flex items-center px-4 md:px-6 justify-between shrink-0 shadow-sm z-10 transition-colors duration-200">
-      <div className="flex items-center gap-2 md:gap-4">
-        <button 
+    <header className="h-16 bg-surface-raised border-b border-surface-border flex items-center px-4 md:px-6 justify-between shrink-0 shadow-sm z-10">
+      <div className="flex items-center gap-3">
+        <button
           onClick={toggleSidebar}
-          className="p-3 md:hidden text-text-secondary hover:text-primary transition-colors"
-          aria-label="Open sidebar"
+          className="md:hidden p-2 rounded-sm text-text-secondary hover:text-primary hover:bg-surface-active transition-colors"
+          aria-label="Toggle sidebar"
         >
           <Menu size={20} />
         </button>
-        <span className="hidden md:block w-2 h-4 bg-accent rounded-sm" />
-        <div className="text-sm font-semibold text-primary font-header truncate">Loryb Group of Companies</div>
+        {/* Brand accent bar */}
+        <span className="hidden md:block w-1 h-6 rounded-full bg-accent" />
+        <span className="text-base font-semibold text-text-primary">Loryb Group</span>
       </div>
-      <div className="flex items-center gap-3">
+
+      <div className="flex items-center gap-2">
         <button
           onClick={toggleDarkMode}
-          className="p-2 rounded-full text-text-secondary hover:bg-surface-active hover:text-primary transition-colors"
-          aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+          className="p-2 rounded-full text-text-secondary hover:bg-surface-active hover:text-text-primary transition-colors"
+          aria-label={isDarkMode ? 'Light mode' : 'Dark mode'}
         >
-          {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+          {isDarkMode ? <Sun size={17} /> : <Moon size={17} />}
         </button>
-        <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold font-header shadow-sm border border-primary-light text-sm">
-          {role.charAt(0)}
+
+        {/* Avatar */}
+        <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold ring-2 ring-primary/20">
+          {role.charAt(0).toUpperCase()}
         </div>
       </div>
     </header>

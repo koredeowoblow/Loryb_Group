@@ -164,10 +164,10 @@ function UserManagementPage() {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-bold font-header tracking-tight text-primary">User Management</h2>
+          <h2 className="text-xl font-bold font-header tracking-tight text-text-primary">User Management</h2>
           <p className="text-sm text-text-secondary mt-1">Manage staff access and active platform accounts.</p>
         </div>
-        <button onClick={handleCreate} className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light">
+        <button onClick={handleCreate} className="btn btn-primary font-header uppercase tracking-wider">
           Invite User
         </button>
       </div>
@@ -269,11 +269,11 @@ function UserManagementPage() {
           {errorMsg && <div className="text-status-error text-sm mt-2">{errorMsg}</div>}
           
           <div className="pt-4 border-t border-surface-border flex justify-end gap-2">
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">
+            <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-ghost font-header uppercase tracking-wider">
               Cancel
             </button>
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
-              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-4 py-2 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light transition-colors disabled:opacity-50">
+              <button type="submit" disabled={!canSubmit || isSubmitting} className="btn btn-primary font-header uppercase tracking-wider">
                 {isSubmitting ? 'Saving...' : (editingUser ? 'Update User' : 'Create User')}
               </button>
             )} />

@@ -27,7 +27,7 @@ function SecurityLayout() {
                 key={tab.to}
                 to={tab.to}
                 className={clsx(
-                  'whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm',
+                  'whitespace-nowrap pb-4 px-1 border-b-2 font-bold font-header uppercase tracking-wider text-xs transition-colors',
                   isActive
                     ? 'border-primary text-primary'
                     : 'border-transparent text-text-muted hover:text-text-primary hover:border-surface-border'

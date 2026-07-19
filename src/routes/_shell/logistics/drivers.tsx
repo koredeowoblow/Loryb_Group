@@ -5,7 +5,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { drivers, trucks as trucksApi } from '../../../api/logistics'
 import { Driver } from '../../../types'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { DataTable, Column } from '../../../components/ui/DataTable'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
 import { Modal } from '../../../components/ui/Modal'
@@ -17,18 +17,13 @@ export const Route = createFileRoute('/_shell/logistics/drivers')({
   component: DriversPage,
 })
 
-const columnHelper = createColumnHelper<Driver>()
-
-const columns = [
-  columnHelper.accessor('driverName', { header: 'Driver Name' }),
-  columnHelper.accessor('phoneNo', { header: 'Phone' }),
-  columnHelper.accessor('licenseNo', { header: 'License No' }),
-  columnHelper.accessor('licenseExpiry', { header: 'License Expiry' }),
-  columnHelper.accessor('assignedTruckNo', { header: 'Assigned Truck' }),
-  columnHelper.accessor('status', {
-  header: 'Status',
-  cell: info => <Badge status={info.getValue() as string} />
-}),
+const columns: Column<Driver>[] = [
+  { key: 'driverName', header: 'Driver Name', sortable: true },
+  { key: 'phoneNo', header: 'Phone' },
+  { key: 'licenseNo', header: 'License No' },
+  { key: 'licenseExpiry', header: 'License Expiry', sortable: true },
+  { key: 'assignedTruckNo', header: 'Assigned Truck', sortable: true },
+  { key: 'status', header: 'Status', render: (row: Driver) => <Badge status={row.status as any} /> },
 ]
 
 const schema = z.object({
@@ -89,12 +84,6 @@ function DriversPage() {
     }
   })
 
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
-
   const form = useForm({
     defaultValues: {
       driverName: '',
@@ -102,7 +91,7 @@ function DriversPage() {
       licenseNo: '',
       licenseExpiry: '',
       assignedTruckNo: '',
-      status: 'active' as 'active' | 'inactive',
+      status: 'active' as const,
     },
     validators: {
       onChange: validateFormWithZod(schema),
@@ -129,7 +118,7 @@ function DriversPage() {
       </div>
 
       {/* Summary Strip & Filters */}
-      <div className="bg-surface p-3 rounded-none shadow-none border-2 border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
             <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Drivers</div>
@@ -161,61 +150,28 @@ function DriversPage() {
         </div>
       </div>
 
-      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
-        {isLoading ? (
-          <div className="p-12 flex flex-col items-center justify-center space-y-4">
-            <div className="w-8 h-8 border-4 border-surface-border border-t-primary rounded-full animate-spin"></div>
-            <div className="text-sm font-medium text-text-muted">Loading registry...</div>
-          </div>
-        ) : (
-          <table className="min-w-full divide-y divide-surface-border border-b border-surface-border">
-            <thead className="bg-surface-muted">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id} className="px-4 py-3 text-left text-[0.7rem] font-bold text-text-secondary uppercase tracking-wider border-b border-surface-border font-header">
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-surface divide-y divide-surface-border text-sm">
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-surface-active/60 transition-colors group cursor-pointer">
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-4 py-3 whitespace-nowrap text-sm text-text-primary border-b border-surface-border/50">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-              {table.getRowModel().rows.length === 0 && (
-                <tr>
-                  <td colSpan={columns.length} className="px-4 py-16 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-2">
-                      <UserCircle size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />
-                      <h3 className="text-base font-bold text-primary font-header">No drivers found</h3>
-                      <p className="text-sm text-text-muted max-w-sm">
-                        {searchTerm || statusFilter !== 'All' 
-                          ? "We couldn't find any drivers matching your current filters. Try adjusting your search criteria."
-                          : "There are currently no drivers in the registry. Register the first driver to assign them to a truck."}
-                      </p>
-                      {(!searchTerm && statusFilter === 'All') && (
-                        <button
-                          onClick={() => setIsModalOpen(true)}
-                          className="mt-4 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
-                        >
-                          Register Driver
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        )}
+      <div className="panel-table flex flex-col min-h-[500px]">
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          rowKey="id"
+          isLoading={isLoading}
+          emptyMessage={searchTerm || statusFilter !== 'All' 
+            ? "We couldn't find any drivers matching your current filters. Try adjusting your search criteria."
+            : "There are currently no drivers in the registry. Register the first driver to assign them to a truck."}
+          emptyIcon={<UserCircle size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />}
+          actions={
+            (!searchTerm && statusFilter === 'All') && (
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
+              >
+                Register Driver
+              </button>
+            )
+          }
+          className="rounded-none shadow-none border-2 border-surface-border"
+        />
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Driver">
@@ -270,4 +226,3 @@ function DriversPage() {
     </div>
   )
 }
-

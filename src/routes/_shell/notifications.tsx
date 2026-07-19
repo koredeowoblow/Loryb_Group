@@ -95,7 +95,7 @@ function NotificationsPage() {
         </button>
       </div>
 
-      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden flex flex-col min-h-[500px]">
+      <div className="panel-table flex flex-col min-h-[500px]">
         <div className="flex border-b border-surface-border">
           <button 
             onClick={() => setFilter('all')}

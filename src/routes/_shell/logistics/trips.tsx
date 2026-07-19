@@ -105,7 +105,7 @@ function TripsPage() {
       </div>
 
       {/* Summary Strip & Filters */}
-      <div className="bg-surface p-3 rounded-none shadow-none border-2 border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
             <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Active Trips</div>
@@ -125,7 +125,7 @@ function TripsPage() {
       </div>
 
       {isLoading ? (
-        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden p-12 flex flex-col items-center justify-center space-y-4">
+        <div className="bg-surface panel-table overflow-hidden p-12 flex flex-col items-center justify-center space-y-4">
           <div className="w-8 h-8 border-4 border-surface-border border-t-primary rounded-full animate-spin"></div>
           <div className="text-sm font-medium text-text-muted">Loading trip board...</div>
         </div>

@@ -4,30 +4,25 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { trucks, trips as tripsApi } from '../../../api/logistics'
 import { Truck } from '../../../types'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { DataTable, Column } from '../../../components/ui/DataTable'
+import { Badge } from '../../../components/ui/Badge'
 import { z } from 'zod'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { useForm } from '@tanstack/react-form'
 import { Modal } from '../../../components/ui/Modal'
 import { FormField } from '../../../components/ui/FormField'
 import { SelectField } from '../../../components/ui/SelectField'
-import { Badge } from '../../../components/ui/Badge'
 import { Truck as TruckIcon, MapPin, Navigation, Clock, Activity } from 'lucide-react'
 
 export const Route = createFileRoute('/_shell/logistics/fleet')({
   component: FleetPage,
 })
 
-const columnHelper = createColumnHelper<Truck>()
-
-const columns = [
-  columnHelper.accessor('truckNo', { header: 'Truck No', cell: info => <span className="font-bold text-primary">{info.getValue()}</span> }),
-  columnHelper.accessor('capacity', { header: 'Capacity', cell: info => `${info.getValue().toLocaleString()} kg` }),
-  columnHelper.accessor('status', {
-    header: 'Status',
-    cell: info => <Badge status={info.getValue() as string} />
-  }),
-  columnHelper.accessor('assignedDriver', { header: 'Assigned Driver' }),
+const columns: Column<Truck>[] = [
+  { key: 'truckNo', header: 'Truck No', sortable: true, render: (row) => <span className="font-bold text-primary">{row.truckNo}</span> },
+  { key: 'capacity', header: 'Capacity', render: (row) => `${row.capacity.toLocaleString()} kg` },
+  { key: 'status', header: 'Status', render: (row) => <Badge status={row.status} /> },
+  { key: 'assignedDriver', header: 'Assigned Driver' },
 ]
 
 const schema = z.object({
@@ -69,11 +64,7 @@ function FleetPage() {
     }
   })
 
-  const table = useReactTable({
-    data: data || [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
+
 
   const form = useForm({
     defaultValues: {
@@ -97,7 +88,7 @@ function FleetPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-surface p-4 rounded-none shadow-none border-2 border-surface-border">
+      <div className="flex justify-between items-center panel p-4">
         <div>
           <h2 className="text-xl font-bold font-header tracking-tight text-primary flex items-center gap-2">
             <TruckIcon size={24} /> Fleet & Logistics Command Center
@@ -113,22 +104,22 @@ function FleetPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-4 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Active Fleet</div>
           <div className="text-3xl font-bold text-primary">{activeTrucks}</div>
           <div className="text-xs text-text-secondary mt-1">Out of {data?.length || 0} Total</div>
         </div>
-        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-4 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Total Capacity</div>
           <div className="text-3xl font-bold text-primary">{totalCapacity.toLocaleString()} kg</div>
           <div className="text-xs text-text-secondary mt-1">Combined fleet volume</div>
         </div>
-        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-4 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">In Maintenance</div>
           <div className="text-3xl font-bold text-status-error-dark">{maintenanceTrucks}</div>
           <div className="text-xs text-status-error-dark mt-1">Currently unavailable</div>
         </div>
-        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-4 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Active Trips</div>
           <div className="text-3xl font-bold text-status-intransit-dark">{activeTripsCount}</div>
           <div className="text-xs text-status-intransit-dark mt-1">Trips currently running</div>
@@ -139,7 +130,7 @@ function FleetPage() {
         
         {/* Left Col: Charts & Status */}
         <div className="space-y-6">
-          <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border flex flex-col h-64 hover:border-primary/30 transition-all">
+          <div className="panel p-4 flex flex-col h-64 hover:border-primary/30 transition-all">
             <div className="text-sm uppercase tracking-wider font-bold text-text-secondary mb-4 font-header border-b border-surface-border pb-2 flex items-center gap-2">
                <Activity size={16} /> Fleet Status
             </div>
@@ -183,7 +174,7 @@ function FleetPage() {
             </div>
           </div>
           
-          <div className="bg-surface rounded-none shadow-none border-2 border-surface-border flex flex-col h-80 hover:border-primary/30 transition-all">
+          <div className="bg-surface panel-table flex flex-col h-80 hover:border-primary/30 transition-all">
             <div className="p-4 border-b border-surface-border flex items-center gap-2 text-primary bg-surface-muted/30">
                <Navigation size={18} />
                <h3 className="font-header font-bold uppercase tracking-wide text-sm">Active Trips Tracking</h3>
@@ -219,45 +210,15 @@ function FleetPage() {
         </div>
 
         {/* Right Col: Fleet Registry Table */}
-        <div className="xl:col-span-2 bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden flex flex-col h-full min-h-[500px] hover:border-primary/30 transition-all">
-          <div className="p-4 text-sm uppercase tracking-wider font-bold text-text-secondary font-header border-b border-surface-border shrink-0 bg-surface-muted/30">Fleet Registry Database</div>
-          <div className="flex-1 overflow-auto">
-            {isLoading ? (
-              <div className="p-8 text-center text-text-muted">Loading...</div>
-            ) : (
-              <table className="min-w-full divide-y divide-surface-border border-b border-surface-border">
-                <thead className="bg-surface-muted">
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map(header => (
-                        <th key={header.id} className="px-4 py-3 text-left text-[0.7rem] font-bold text-text-secondary uppercase tracking-wider bg-surface-muted border-b border-surface-border font-header">
-                          {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody className="bg-surface divide-y divide-surface-border text-sm">
-                  {table.getRowModel().rows.map(row => (
-                    <tr key={row.id} className="hover:bg-surface-active/60 transition-colors">
-                      {row.getVisibleCells().map(cell => (
-                        <td key={cell.id} className="px-4 py-3 whitespace-nowrap text-sm text-text-primary border-b border-surface-border/50">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                  {table.getRowModel().rows.length === 0 && (
-                    <tr>
-                      <td colSpan={columns.length} className="px-4 py-8 text-center text-sm text-text-muted">
-                        No records found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            )}
-          </div>
+        <div className="xl:col-span-2 flex flex-col h-full min-h-[500px]">
+          <DataTable
+            columns={columns}
+            data={data || []}
+            rowKey="id"
+            isLoading={isLoading}
+            emptyMessage="No trucks registered in the fleet."
+            className="h-full border-2 border-surface-border hover:border-primary/30 transition-all rounded-none shadow-none"
+          />
         </div>
       </div>
 

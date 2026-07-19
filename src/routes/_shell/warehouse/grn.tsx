@@ -5,7 +5,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { grn } from '../../../api/warehouse'
 import { GoodsReceivedNote } from '../../../types'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { DataTable, Column } from '../../../components/ui/DataTable'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
 import { Modal } from '../../../components/ui/Modal'
@@ -17,14 +17,12 @@ export const Route = createFileRoute('/_shell/warehouse/grn')({
   component: GRNPage,
 })
 
-const columnHelper = createColumnHelper<GoodsReceivedNote>()
-
-const columns = [
-  columnHelper.accessor('date', { header: 'Date' }),
-  columnHelper.accessor('grainType', { header: 'Grain Type' }),
-  columnHelper.accessor('noOfBagsReceived', { header: 'Bags' }),
-  columnHelper.accessor('netWeight', { header: 'Net Weight (kg)' }),
-  columnHelper.accessor('binCardRef', { header: 'Bin Card Ref' }),
+const columns: Column<GoodsReceivedNote>[] = [
+  { key: 'date', header: 'Date', sortable: true },
+  { key: 'grainType', header: 'Grain Type', sortable: true },
+  { key: 'noOfBagsReceived', header: 'Bags', render: (row: GoodsReceivedNote) => row.noOfBagsReceived.toLocaleString() },
+  { key: 'netWeight', header: 'Net Weight (kg)', sortable: true, render: (row: GoodsReceivedNote) => row.netWeight.toLocaleString() },
+  { key: 'binCardRef', header: 'Bin Card Ref', sortable: true },
 ]
 
 const schema = z.object({
@@ -57,7 +55,7 @@ function GRNPage() {
   const totalIntake = filteredData.reduce((acc, row) => acc + row.netWeight, 0)
 
   const mutation = useMutation({
-    mutationFn: (data: Omit<GoodsReceivedNote, 'id'>) => grn.create ? grn.create(data) : Promise.resolve(data), // Using conditional because grn.create might need to be mocked if not fully there
+    mutationFn: (payload: Omit<GoodsReceivedNote, 'id'>) => grn.create ? grn.create(payload) : Promise.resolve(payload), // Using conditional because grn.create might need to be mocked if not fully there
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['grn'] })
       setIsModalOpen(false)
@@ -65,12 +63,6 @@ function GRNPage() {
     onError: () => {
       setErrorMsg('Failed to save record. Please try again.')
     }
-  })
-
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   const form = useForm({
@@ -106,7 +98,7 @@ function GRNPage() {
       </div>
 
       {/* Summary Strip & Filters */}
-      <div className="bg-surface p-3 rounded-none shadow-none border-2 border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
             <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Records</div>
@@ -139,61 +131,28 @@ function GRNPage() {
         </div>
       </div>
 
-      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
-        {isLoading ? (
-          <div className="p-12 flex flex-col items-center justify-center space-y-4">
-            <div className="w-8 h-8 border-4 border-surface-border border-t-primary rounded-full animate-spin"></div>
-            <div className="text-sm font-medium text-text-muted">Loading GRN records...</div>
-          </div>
-        ) : (
-          <table className="min-w-full divide-y divide-surface-border border-b border-surface-border">
-            <thead className="bg-surface-muted">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id} className="px-4 py-3 text-left text-[0.7rem] font-bold text-text-secondary uppercase tracking-wider border-b border-surface-border font-header">
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-surface divide-y divide-surface-border text-sm">
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-surface-active/60 transition-colors group cursor-pointer">
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-4 py-3 whitespace-nowrap text-sm text-text-primary border-b border-surface-border/50">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-              {table.getRowModel().rows.length === 0 && (
-                <tr>
-                  <td colSpan={columns.length} className="px-4 py-16 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-2">
-                      <PackagePlus size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />
-                      <h3 className="text-base font-bold text-primary font-header">No GRN records found</h3>
-                      <p className="text-sm text-text-muted max-w-sm">
-                        {searchTerm || grainFilter !== 'All' 
-                          ? "We couldn't find any records matching your current filters. Try adjusting your search criteria."
-                          : "There are currently no Goods Received Notes. Log the first GRN when inventory arrives."}
-                      </p>
-                      {(!searchTerm && grainFilter === 'All') && (
-                        <button
-                          onClick={() => setIsModalOpen(true)}
-                          className="mt-4 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
-                        >
-                          Log GRN
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        )}
+      <div className="panel-table flex flex-col min-h-[500px]">
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          rowKey="id"
+          isLoading={isLoading}
+          emptyMessage={searchTerm || grainFilter !== 'All' 
+            ? "We couldn't find any records matching your current filters. Try adjusting your search criteria."
+            : "There are currently no Goods Received Notes. Log the first GRN when inventory arrives."}
+          emptyIcon={<PackagePlus size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />}
+          actions={
+            (!searchTerm && grainFilter === 'All') && (
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
+              >
+                Log GRN
+              </button>
+            )
+          }
+          className="rounded-none shadow-none border-2 border-surface-border"
+        />
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add GRN">
@@ -244,4 +203,3 @@ function GRNPage() {
     </div>
   )
 }
-

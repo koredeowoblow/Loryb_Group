@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
+import { Mail, AlertCircle, ArrowLeft, CheckCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/forgot-password')({
   component: ForgotPasswordPage,
@@ -17,65 +18,97 @@ function ForgotPasswordPage() {
       return
     }
     setError('')
-    // Simulation: Success
     setIsSubmitted(true)
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface-muted px-4 font-sans text-text-primary">
-      <div className="card max-w-md w-full space-y-8 p-10">
-        <div className="flex flex-col items-center">
-          <img src="/logo.png" alt="Loryb Group of Companies" className="h-16 w-auto mb-4" />
-          <h2 className="mt-2 text-center text-3xl font-bold font-header tracking-tight text-text-primary">
-            Reset Password
-          </h2>
-          <p className="mt-2 text-center text-sm text-text-secondary">
-            Enter your email to receive recovery instructions
-          </p>
-        </div>
+    <div
+      className="min-h-screen flex items-center justify-center px-4 font-sans"
+      style={{
+        background: `
+          radial-gradient(ellipse at 60% 0%, rgb(var(--color-primary) / 0.12) 0%, transparent 60%),
+          radial-gradient(ellipse at 0% 100%, rgb(var(--color-primary) / 0.08) 0%, transparent 50%),
+          rgb(var(--color-surface-base))
+        `,
+      }}
+    >
+      <div className="w-full max-w-sm flex flex-col gap-6">
 
-        {!isSubmitted ? (
-          <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-status-error/10 text-status-error border border-status-error/20 p-3 rounded text-sm font-medium text-center">
-                {error}
-              </div>
-            )}
-            
-            <div>
-              <label className="block text-sm font-bold text-text-primary mb-1">Email address</label>
-              <input
-                type="email"
-                required
-                className="appearance-none block w-full px-3 py-2 border border-surface-border rounded-md shadow-sm placeholder-text-muted focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-surface-muted focus:bg-surface transition-colors"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="btn btn-primary w-full py-2.5"
-              >
-                Send Reset Link
-              </button>
-            </div>
-          </form>
-        ) : (
-          <div className="mt-8 bg-status-success/10 border border-status-success/20 p-4 rounded text-center">
-            <h3 className="text-status-success font-bold font-header text-lg mb-2">Check your email</h3>
-            <p className="text-sm text-text-secondary">
-              If an account exists for {email}, you will receive a password reset link shortly.
+        {/* Brand mark */}
+        <div className="flex flex-col items-center gap-3">
+          <img src="/logo.png" alt="Loryb Group of Companies" className="h-12 w-auto object-contain" />
+          <div className="text-center">
+            <h1 className="text-xl font-bold tracking-tight text-text-primary">Reset password</h1>
+            <p className="text-sm text-text-secondary mt-0.5">
+              Enter your email to receive recovery instructions
             </p>
           </div>
-        )}
-        
-        <div className="text-center text-sm mt-6">
-          <Link to="/login" className="font-bold text-primary hover:text-primary-hover transition-colors flex items-center justify-center gap-1">
-            <span>&larr;</span> Back to login
-          </Link>
         </div>
+
+        {/* Card */}
+        <div className="card p-8 flex flex-col gap-5">
+          {!isSubmitted ? (
+            <>
+              {error && (
+                <div className="alert alert-danger flex items-center gap-2">
+                  <AlertCircle size={15} className="shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="email" className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
+                    Email address
+                  </label>
+                  <div className="relative">
+                    <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                    <input
+                      id="email"
+                      type="email"
+                      required
+                      autoComplete="email"
+                      placeholder="you@lorybgroup.com"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      className="
+                        w-full pl-9 pr-3 py-2.5 text-sm
+                        bg-surface-base border border-surface-border rounded-sm
+                        text-text-primary placeholder:text-text-muted
+                        focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/60
+                        transition-colors
+                      "
+                    />
+                  </div>
+                </div>
+
+                <button type="submit" className="btn btn-primary w-full py-2.5 justify-center font-semibold tracking-wide">
+                  Send reset link
+                </button>
+              </form>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-3 py-4 text-center">
+              <CheckCircle size={40} className="text-status-success" strokeWidth={1.5} />
+              <div>
+                <p className="font-semibold text-text-primary">Check your inbox</p>
+                <p className="text-sm text-text-secondary mt-1">
+                  If an account exists for <span className="font-medium text-text-primary">{email}</span>, 
+                  you'll receive a reset link shortly.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Back link */}
+        <Link
+          to="/login"
+          className="flex items-center justify-center gap-1.5 text-xs font-semibold text-text-secondary hover:text-primary transition-colors"
+        >
+          <ArrowLeft size={14} />
+          Back to login
+        </Link>
       </div>
     </div>
   )

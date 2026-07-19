@@ -5,7 +5,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { binCard } from '../../../api/warehouse'
 import { BinCardEntry } from '../../../types'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { DataTable, Column } from '../../../components/ui/DataTable'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
 import { Modal } from '../../../components/ui/Modal'
@@ -16,15 +16,13 @@ export const Route = createFileRoute('/_shell/warehouse/bin-card')({
   component: BinCardPage,
 })
 
-const columnHelper = createColumnHelper<BinCardEntry>()
-
-const columns = [
-  columnHelper.accessor('date', { header: 'Date' }),
-  columnHelper.accessor('grainType', { header: 'Grain Type' }),
-  columnHelper.accessor('reference', { header: 'Reference' }),
-  columnHelper.accessor('qtyIn', { header: 'Qty In' }),
-  columnHelper.accessor('qtyOut', { header: 'Qty Out' }),
-  columnHelper.accessor('balance', { header: 'Balance' }),
+const columns: Column<BinCardEntry>[] = [
+  { key: 'date', header: 'Date', sortable: true },
+  { key: 'grainType', header: 'Grain Type', sortable: true },
+  { key: 'reference', header: 'Reference', sortable: true },
+  { key: 'qtyIn', header: 'Qty In', render: (row: BinCardEntry) => row.qtyIn.toLocaleString() },
+  { key: 'qtyOut', header: 'Qty Out', render: (row: BinCardEntry) => row.qtyOut.toLocaleString() },
+  { key: 'balance', header: 'Balance', render: (row: BinCardEntry) => <span className="font-bold">{row.balance.toLocaleString()}</span> },
 ]
 
 const schema = z.object({
@@ -48,17 +46,17 @@ function BinCardPage() {
     queryFn: binCard.list,
   })
 
-  const filteredData = data?.filter(row => {
+  const filteredData = (data?.filter(row => {
     const matchesSearch = row.reference.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesGrain = grainFilter === 'All' || row.grainType === grainFilter
     return matchesSearch && matchesGrain
-  }) || []
+  }) || []).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   const totalIn = filteredData.reduce((acc, row) => acc + row.qtyIn, 0)
   const totalOut = filteredData.reduce((acc, row) => acc + row.qtyOut, 0)
 
   const mutation = useMutation({
-    mutationFn: (data: Omit<BinCardEntry, 'id'>) => binCard.create(data),
+    mutationFn: (payload: Omit<BinCardEntry, 'id'>) => binCard.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['binCard'] })
       setIsModalOpen(false)
@@ -66,12 +64,6 @@ function BinCardPage() {
     onError: () => {
       setErrorMsg('Failed to save record. Please try again.')
     }
-  })
-
-  const table = useReactTable({
-    data: filteredData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
-    columns,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   const form = useForm({
@@ -117,7 +109,7 @@ function BinCardPage() {
       </div>
 
       {/* Summary Strip & Filters */}
-      <div className="bg-surface p-3 rounded-none shadow-none border-2 border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
             <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Records</div>
@@ -154,61 +146,28 @@ function BinCardPage() {
         </div>
       </div>
 
-      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
-        {isLoading ? (
-          <div className="p-12 flex flex-col items-center justify-center space-y-4">
-            <div className="w-8 h-8 border-4 border-surface-border border-t-primary rounded-full animate-spin"></div>
-            <div className="text-sm font-medium text-text-muted">Loading bin card entries...</div>
-          </div>
-        ) : (
-          <table className="min-w-full divide-y divide-surface-border border-b border-surface-border">
-            <thead className="bg-surface-muted">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id} className="px-4 py-3 text-left text-[0.7rem] font-bold text-text-secondary uppercase tracking-wider border-b border-surface-border font-header">
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-surface divide-y divide-surface-border text-sm">
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-surface-active/60 transition-colors group cursor-pointer">
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-4 py-3 whitespace-nowrap text-sm text-text-primary border-b border-surface-border/50">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-              {table.getRowModel().rows.length === 0 && (
-                <tr>
-                  <td colSpan={columns.length} className="px-4 py-16 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-2">
-                      <ClipboardList size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />
-                      <h3 className="text-base font-bold text-primary font-header">No bin card entries found</h3>
-                      <p className="text-sm text-text-muted max-w-sm">
-                        {searchTerm || grainFilter !== 'All' 
-                          ? "We couldn't find any entries matching your current filters. Try adjusting your search criteria."
-                          : "There are currently no bin card ledger entries. Log the first entry to track stock movement."}
-                      </p>
-                      {(!searchTerm && grainFilter === 'All') && (
-                        <button
-                          onClick={() => setIsModalOpen(true)}
-                          className="mt-4 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
-                        >
-                          Log Entry
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        )}
+      <div className="panel-table flex flex-col min-h-[500px]">
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          rowKey="id"
+          isLoading={isLoading}
+          emptyMessage={searchTerm || grainFilter !== 'All' 
+            ? "We couldn't find any entries matching your current filters. Try adjusting your search criteria."
+            : "There are currently no bin card ledger entries. Log the first entry to track stock movement."}
+          emptyIcon={<ClipboardList size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />}
+          actions={
+            (!searchTerm && grainFilter === 'All') && (
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
+              >
+                Log Entry
+              </button>
+            )
+          }
+          className="rounded-none shadow-none border-2 border-surface-border"
+        />
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Bin Card Entry">
@@ -259,4 +218,3 @@ function BinCardPage() {
     </div>
   )
 }
-

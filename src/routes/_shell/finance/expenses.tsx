@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { expenses as expensesApi } from '../../../api/finance'
 import { trucks as trucksApi } from '../../../api/logistics'
 import { Expense } from '../../../types'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { DataTable, Column } from '../../../components/ui/DataTable'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
 import { Modal } from '../../../components/ui/Modal'
@@ -17,15 +17,13 @@ export const Route = createFileRoute('/_shell/finance/expenses')({
   component: ExpensesPage,
 })
 
-const columnHelper = createColumnHelper<Expense>()
-
-const columns = [
-  columnHelper.accessor('date', { header: 'Date' }),
-  columnHelper.accessor('category', { header: 'Category' }),
-  columnHelper.accessor('description', { header: 'Description' }),
-  columnHelper.accessor('amount', { header: 'Amount (₦)' }),
-  columnHelper.accessor('paidBy', { header: 'Paid By' }),
-  columnHelper.accessor('linkedTruckNo', { header: 'Linked Truck' }),
+const columns: Column<Expense>[] = [
+  { key: 'date', header: 'Date', sortable: true },
+  { key: 'category', header: 'Category', sortable: true },
+  { key: 'description', header: 'Description' },
+  { key: 'amount', header: 'Amount (₦)', sortable: true, render: (row: Expense) => `₦ ${row.amount.toLocaleString()}` },
+  { key: 'paidBy', header: 'Paid By' },
+  { key: 'linkedTruckNo', header: 'Linked Truck' },
 ]
 
 const schema = z.object({
@@ -88,12 +86,6 @@ function ExpensesPage() {
     }
   })
 
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
-
   const form = useForm({
     defaultValues: {
       category: '',
@@ -128,7 +120,7 @@ function ExpensesPage() {
       </div>
 
       {/* Summary Strip & Filters */}
-      <div className="bg-surface p-3 rounded-none shadow-none border-2 border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
             <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Expenses</div>
@@ -161,61 +153,28 @@ function ExpensesPage() {
         </div>
       </div>
 
-      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
-        {isLoading ? (
-          <div className="p-12 flex flex-col items-center justify-center space-y-4">
-            <div className="w-8 h-8 border-4 border-surface-border border-t-primary rounded-full animate-spin"></div>
-            <div className="text-sm font-medium text-text-muted">Loading expenses...</div>
-          </div>
-        ) : (
-          <table className="min-w-full divide-y divide-surface-border border-b border-surface-border">
-            <thead className="bg-surface-muted">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id} className="px-4 py-3 text-left text-[0.7rem] font-bold text-text-secondary uppercase tracking-wider border-b border-surface-border font-header">
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-surface divide-y divide-surface-border text-sm">
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-surface-active/60 transition-colors group cursor-pointer">
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-4 py-3 whitespace-nowrap text-sm text-text-primary border-b border-surface-border/50">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-              {table.getRowModel().rows.length === 0 && (
-                <tr>
-                  <td colSpan={columns.length} className="px-4 py-16 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-2">
-                      <Receipt size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />
-                      <h3 className="text-base font-bold text-primary font-header">No expenses found</h3>
-                      <p className="text-sm text-text-muted max-w-sm">
-                        {searchTerm || categoryFilter !== 'All' 
-                          ? "We couldn't find any expenses matching your current filters. Try adjusting your search criteria."
-                          : "There are currently no operating expenses logged."}
-                      </p>
-                      {(!searchTerm && categoryFilter === 'All') && (
-                        <button
-                          onClick={() => setIsModalOpen(true)}
-                          className="mt-4 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
-                        >
-                          Log Expense
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        )}
+      <div className="panel-table flex flex-col min-h-[500px]">
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          rowKey="id"
+          isLoading={isLoading}
+          emptyMessage={searchTerm || categoryFilter !== 'All' 
+            ? "We couldn't find any expenses matching your current filters. Try adjusting your search criteria."
+            : "There are currently no operating expenses logged."}
+          emptyIcon={<Receipt size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />}
+          actions={
+            (!searchTerm && categoryFilter === 'All') && (
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
+              >
+                Log Expense
+              </button>
+            )
+          }
+          className="rounded-none shadow-none border-2 border-surface-border"
+        />
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Expense">
@@ -265,4 +224,3 @@ function ExpensesPage() {
     </div>
   )
 }
-

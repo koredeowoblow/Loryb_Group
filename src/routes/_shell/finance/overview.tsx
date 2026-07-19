@@ -41,7 +41,7 @@ function FinancialOverviewPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-surface p-4 rounded-none shadow-none border-2 border-surface-border">
+      <div className="flex justify-between items-center panel p-4">
         <div>
           <h2 className="text-xl font-bold font-header tracking-tight text-primary flex items-center gap-2">
             <DollarSign size={24} /> Financial Command Center
@@ -51,7 +51,7 @@ function FinancialOverviewPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-surface p-5 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-5 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="flex justify-between items-center mb-2">
             <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted">Net Cashflow</div>
             <TrendingUp size={16} className="text-status-success-dark" />
@@ -62,7 +62,7 @@ function FinancialOverviewPage() {
           </div>
         </div>
 
-        <div className="bg-surface p-5 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-5 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="flex justify-between items-center mb-2">
             <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted">Total Revenue</div>
             <Wallet size={16} className="text-status-success-dark" />
@@ -71,7 +71,7 @@ function FinancialOverviewPage() {
           <div className="text-xs text-text-secondary mt-2">Inbound Sales Revenue</div>
         </div>
 
-        <div className="bg-surface p-5 rounded-none shadow-none border-2 border-surface-border hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-5 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="flex justify-between items-center mb-2">
             <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted">Total Expenditures</div>
             <Receipt size={16} className="text-status-error-dark" />
@@ -80,7 +80,7 @@ function FinancialOverviewPage() {
           <div className="text-xs text-text-secondary mt-2">Combined Outbound Costs</div>
         </div>
 
-        <div className="bg-surface p-5 rounded-none shadow-none border-2 border-surface-border bg-surface-muted/30 hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-5 bg-surface-muted/30 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="flex justify-between items-center mb-2">
             <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted">Outstanding Payables</div>
             <CreditCard size={16} className="text-status-pending-dark" />
@@ -93,7 +93,7 @@ function FinancialOverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* 6 Month Trend */}
-        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border lg:col-span-2 flex flex-col h-80 hover:border-primary/30 transition-all">
+        <div className="bg-surface panel-table lg:col-span-2 flex flex-col h-80 hover:border-primary/30 transition-all">
           <div className="p-4 border-b border-surface-border flex items-center gap-2 text-primary">
             <TrendingUp size={18} />
             <h3 className="font-header font-bold uppercase tracking-wide text-sm">Revenue vs Expenses (6 Months)</h3>
@@ -124,7 +124,7 @@ function FinancialOverviewPage() {
         </div>
 
         {/* Cashflow Breakdown Bar Chart */}
-        <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border h-80 flex flex-col hover:border-primary/30 transition-all">
+        <div className="panel p-4 h-80 flex flex-col hover:border-primary/30 transition-all">
           <div className="text-sm uppercase tracking-wider font-bold text-text-secondary mb-4 font-header border-b border-surface-border pb-2 flex items-center gap-2">
             <Activity size={16} /> Fund Allocation Breakdown
           </div>
@@ -160,7 +160,7 @@ function FinancialOverviewPage() {
 
       </div>
 
-      <div className="bg-surface p-4 rounded-none shadow-none border-2 border-surface-border flex flex-col hover:border-primary/30 transition-all">
+      <div className="panel p-4 flex flex-col hover:border-primary/30 transition-all">
         <div className="text-sm uppercase tracking-wider font-bold text-text-secondary mb-4 font-header border-b border-surface-border pb-2">Recent Supplier Payments</div>
         <div className="flex-1 overflow-y-auto pr-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {!supplierPayments || supplierPayments.length === 0 ? (

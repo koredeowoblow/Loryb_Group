@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
 import {
   BarChart,
@@ -81,7 +82,7 @@ function SnapshotCard({
           {linkLabel} <ChevronRight size={13} />
         </Link>
       </div>
-      <div className="p-4 flex-1 flex flex-col">{children}</div>
+      <div className="p-4 flex-1 flex flex-col min-w-0 overflow-hidden">{children}</div>
     </div>
   );
 }
@@ -360,17 +361,17 @@ function CEOOverviewPage() {
           title="Logistics Snapshot"
           linkTo="/logistics/fleet"
         >
-          <div className="flex flex-col sm:flex-row gap-4 items-center">
-            {/* Donut */}
-            <div className="w-full sm:w-48 shrink-0">
-              <ResponsiveContainer width="100%" height={160}>
+          <div className="flex flex-col sm:flex-row gap-4 items-start overflow-hidden">
+            {/* Donut — fixed width, never shrinks */}
+            <div className="w-full sm:w-40 sm:shrink-0">
+              <ResponsiveContainer width="100%" height={150}>
                 <PieChart>
                   <Pie
                     data={fleetData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={48}
-                    outerRadius={68}
+                    innerRadius={44}
+                    outerRadius={64}
                     paddingAngle={3}
                     dataKey="value"
                     stroke="none"
@@ -384,26 +385,26 @@ function CEOOverviewPage() {
               </ResponsiveContainer>
             </div>
 
-            {/* Legend + trend */}
-            <div className="flex-1 flex flex-col gap-3">
+            {/* Legend + trend — flex-1 with min-w-0 so it can shrink below intrinsic width */}
+            <div className="flex-1 min-w-0 flex flex-col gap-3 sm:py-2">
               <div>
                 <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-2">
                   Fleet Status
                 </p>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1.5">
                   {fleetData.map((f) => (
                     <div
                       key={f.name}
-                      className="flex items-center justify-between text-sm"
+                      className="flex items-center justify-between gap-2 text-sm min-w-0"
                     >
-                      <span className="flex items-center gap-2 text-text-secondary">
+                      <span className="flex items-center gap-2 text-text-secondary min-w-0">
                         <span
                           className="w-2 h-2 rounded-full shrink-0"
                           style={{ background: f.fill }}
                         />
-                        {f.name}
+                        <span className="truncate">{f.name}</span>
                       </span>
-                      <span className="font-semibold text-text-primary">
+                      <span className="font-semibold text-text-primary shrink-0">
                         {f.value}
                       </span>
                     </div>
@@ -414,18 +415,18 @@ function CEOOverviewPage() {
                 <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-1">
                   Weekly Trips
                 </p>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-2xl font-bold text-text-primary">
                     {completedThisWeek}
                   </span>
-                  <Badge
-                    status={
-                      tripDelta >= 0
-                        ? `+${tripDelta} vs last wk`
-                        : `${tripDelta} vs last wk`
-                    }
-                    withDot={false}
-                  />
+                  <span className={clsx(
+                    'inline-flex items-center text-xs font-semibold px-1.5 py-0.5 rounded-sm',
+                    tripDelta >= 0
+                      ? 'text-status-success bg-status-success/10'
+                      : 'text-status-danger bg-status-danger/10'
+                  )}>
+                    {tripDelta >= 0 ? '↑' : '↓'} {Math.abs(tripDelta)} vs last wk
+                  </span>
                 </div>
               </div>
             </div>

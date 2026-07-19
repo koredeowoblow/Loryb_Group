@@ -136,7 +136,7 @@ function RbacPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
         {/* Roles Sidebar */}
-        <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden flex flex-col h-[calc(100vh-12rem)]">
+        <div className="bg-surface panel-table overflow-hidden flex flex-col h-[calc(100vh-12rem)]">
           <div className="p-4 border-b border-surface-border bg-surface-muted/30">
             <h3 className="font-header font-bold uppercase tracking-wide text-sm text-primary flex items-center gap-2">
               <Users size={16} /> User Roles
@@ -167,7 +167,7 @@ function RbacPage() {
         </div>
 
         {/* Permissions Configuration */}
-        <div className="lg:col-span-3 bg-surface rounded-none shadow-none border-2 border-surface-border flex flex-col h-[calc(100vh-12rem)]">
+        <div className="lg:col-span-3 bg-surface panel-table flex flex-col h-[calc(100vh-12rem)]">
           <div className="p-6 border-b border-surface-border flex justify-between items-start bg-surface-muted/10">
             <div>
               <div className="flex items-center gap-2 mb-1">

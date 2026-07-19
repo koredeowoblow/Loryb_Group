@@ -262,6 +262,28 @@
     @apply transition-all duration-200 hover:shadow-lg;
   }
 
+  /* ── PANEL ───────────────────────────────────────────────────────────────
+   * Flat container used for summary strips / filter bars above tables.
+   * Intentionally flatter than .card (no shadow, no radius) to read as a
+   * toolbar band rather than a floating card.
+   */
+  .panel {
+    background-color: rgb(var(--color-surface));
+    border: 1px solid rgb(var(--color-surface-border));
+  }
+
+  /* ── PANEL-TABLE ──────────────────────────────────────────────────────────
+   * Container wrapping a DataTable. Clips overflow, provides consistent
+   * border treatment. Matches .panel visually to form a unified band+table
+   * compound element on each data page.
+   */
+  .panel-table {
+    background-color: rgb(var(--color-surface));
+    border: 1px solid rgb(var(--color-surface-border));
+    overflow: hidden;
+  }
+
+
   /* ── BADGE ───────────────────────────────────────────────────────────────
    * Badge source of truth. Consumed by every status indicator:
    * fleet legend dots, gate log status, alert strips, dispatch column.
@@ -347,25 +369,6 @@
   .status-dot-info    { background-color: rgb(var(--color-status-info)); }
   .status-dot-neutral { background-color: rgb(var(--color-status-neutral)); }
 
-  /* ── HAZARD TAPE (brand motif — use sparingly) ───────────────────────────
-   * Retained as brand identity but scoped to intentional uses only.
-   * E.g. top edge of the sidebar logo block. NOT on active nav items.
-   */
-  .hazard-tape-border-top {
-    position: relative;
-  }
-  .hazard-tape-border-top::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 3px;
-    background-image: repeating-linear-gradient(
-      -45deg,
-      transparent 0px, transparent 6px,
-      rgb(var(--color-primary)) 6px, rgb(var(--color-primary)) 12px
-    );
-    opacity: 0.6;
-  }
 
   /* ── TABLE BASE ──────────────────────────────────────────────────────────*/
   .table-base {

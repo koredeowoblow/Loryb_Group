@@ -181,7 +181,7 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
       isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
     )}>
       {/* Logo row */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-surface-border shrink-0 hazard-tape-border-top">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-surface-border shrink-0 overflow-hidden">
         <img src="/logo.png" alt="Loryb Group" className="h-8 w-auto object-contain" />
         <button
           className="md:hidden p-2 rounded-sm text-text-secondary hover:text-primary hover:bg-surface-active transition-colors"

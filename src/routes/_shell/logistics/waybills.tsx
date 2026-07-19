@@ -4,25 +4,20 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { waybills } from '../../../api/logistics'
 import { Waybill } from '../../../types'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { DataTable, Column } from '../../../components/ui/DataTable'
 import { Badge } from '../../../components/ui/Badge'
 
 export const Route = createFileRoute('/_shell/logistics/waybills')({
   component: WaybillsPage,
 })
 
-const columnHelper = createColumnHelper<Waybill>()
-
-const columns = [
-  columnHelper.accessor('continentalWaybillNo', { header: 'Continental Waybill' }),
-  columnHelper.accessor('lbWaybillNo', { header: 'Loryb Waybill' }),
-  columnHelper.accessor('truckNo', { header: 'Truck No' }),
-  columnHelper.accessor('destination', { header: 'Destination' }),
-  columnHelper.accessor('dateIssued', { header: 'Date Issued' }),
-  columnHelper.accessor('status', {
-    header: 'Status',
-    cell: info => <Badge status={info.getValue()} />
-  }),
+const columns: Column<Waybill>[] = [
+  { key: 'continentalWaybillNo', header: 'Continental Waybill', sortable: true },
+  { key: 'lbWaybillNo', header: 'Loryb Waybill', sortable: true },
+  { key: 'truckNo', header: 'Truck No', sortable: true, render: (row: Waybill) => <span className="font-bold text-primary">{row.truckNo}</span> },
+  { key: 'destination', header: 'Destination' },
+  { key: 'dateIssued', header: 'Date Issued', sortable: true },
+  { key: 'status', header: 'Status', render: (row: Waybill) => <Badge status={row.status as any} /> },
 ]
 
 function WaybillsPage() {
@@ -46,12 +41,6 @@ function WaybillsPage() {
 
   const activeWaybills = filteredData.filter(w => (w.status as string) === 'in-transit').length
 
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -62,7 +51,7 @@ function WaybillsPage() {
       </div>
 
       {/* Summary Strip & Filters */}
-      <div className="bg-surface p-3 rounded-none shadow-none border-2 border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
             <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Waybills</div>
@@ -95,55 +84,19 @@ function WaybillsPage() {
         </div>
       </div>
 
-      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
-        {isLoading ? (
-          <div className="p-12 flex flex-col items-center justify-center space-y-4">
-            <div className="w-8 h-8 border-4 border-surface-border border-t-primary rounded-full animate-spin"></div>
-            <div className="text-sm font-medium text-text-muted">Loading waybills...</div>
-          </div>
-        ) : (
-          <table className="min-w-full divide-y divide-surface-border border-b border-surface-border">
-            <thead className="bg-surface-muted">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id} className="px-4 py-3 text-left text-[0.7rem] font-bold text-text-secondary uppercase tracking-wider border-b border-surface-border font-header">
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-surface divide-y divide-surface-border text-sm">
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-surface-active/60 transition-colors group cursor-pointer">
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-4 py-3 whitespace-nowrap text-sm text-text-primary border-b border-surface-border/50">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-              {table.getRowModel().rows.length === 0 && (
-                <tr>
-                  <td colSpan={columns.length} className="px-4 py-16 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-2">
-                      <FileSpreadsheet size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />
-                      <h3 className="text-base font-bold text-primary font-header">No waybills found</h3>
-                      <p className="text-sm text-text-muted max-w-sm">
-                        {searchTerm || statusFilter !== 'All'
-                          ? "No waybills match your current filters."
-                          : "There are currently no generated waybills in the system."}
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        )}
+      <div className="panel-table flex flex-col min-h-[500px]">
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          rowKey="id"
+          isLoading={isLoading}
+          emptyMessage={searchTerm || statusFilter !== 'All' 
+            ? "No waybills match your current filters."
+            : "There are currently no generated waybills in the system."}
+          emptyIcon={<FileSpreadsheet size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />}
+          className="rounded-none shadow-none border-2 border-surface-border"
+        />
       </div>
     </div>
   )
 }
-

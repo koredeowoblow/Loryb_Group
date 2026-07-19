@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { sales } from '../../../api/finance'
 import { dispatchRecord } from '../../../api/security'
 import { Sale } from '../../../types'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { DataTable, Column } from '../../../components/ui/DataTable'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
 import { Modal } from '../../../components/ui/Modal'
@@ -17,13 +17,11 @@ export const Route = createFileRoute('/_shell/finance/sales')({
   component: SalesPage,
 })
 
-const columnHelper = createColumnHelper<Sale>()
-
-const columns = [
-  columnHelper.accessor('date', { header: 'Date' }),
-  columnHelper.accessor('transporterName', { header: 'Transporter' }),
-  columnHelper.accessor('amount', { header: 'Amount (₦)' }),
-  columnHelper.accessor('linkedDispatchRecordId', { header: 'Dispatch Record Ref' }),
+const columns: Column<Sale>[] = [
+  { key: 'date', header: 'Date', sortable: true },
+  { key: 'transporterName', header: 'Transporter', sortable: true },
+  { key: 'amount', header: 'Amount (₦)', sortable: true, render: (row: Sale) => `₦ ${row.amount.toLocaleString()}` },
+  { key: 'linkedDispatchRecordId', header: 'Dispatch Record Ref' },
 ]
 
 const schema = z.object({
@@ -37,18 +35,10 @@ function SalesPage() {
   const queryClient = useQueryClient()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
-
   const [searchTerm, setSearchTerm] = useState('')
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['sales'],
-    queryFn: sales.list,
-  })
-
-  const { data: dispatchRecords } = useQuery({
-    queryKey: ['dispatchRecord'],
-    queryFn: dispatchRecord.list,
-  })
+  const { data, isLoading } = useQuery({ queryKey: ['sales'], queryFn: sales.list })
+  const { data: dispatchRecords } = useQuery({ queryKey: ['dispatchRecord'], queryFn: dispatchRecord.list })
 
   const dispatchOptions = useMemo(() => {
     return (dispatchRecords || []).map(d => ({
@@ -57,43 +47,19 @@ function SalesPage() {
     }))
   }, [dispatchRecords])
 
-  const filteredData = data?.filter(row => {
-    return row.transporterName.toLowerCase().includes(searchTerm.toLowerCase())
-  }) || []
-
+  const filteredData = data?.filter(row => row.transporterName.toLowerCase().includes(searchTerm.toLowerCase())) || []
   const totalRevenue = filteredData.reduce((acc, row) => acc + row.amount, 0)
 
   const mutation = useMutation({
     mutationFn: (payload: Omit<Sale, 'id'>) => sales.create(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sales'] })
-      setIsModalOpen(false)
-    },
-    onError: () => {
-      setErrorMsg('Failed to save record. Please try again.')
-    }
-  })
-
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['sales'] }); setIsModalOpen(false) },
+    onError: () => setErrorMsg('Failed to save record. Please try again.')
   })
 
   const form = useForm({
-    defaultValues: {
-      linkedDispatchRecordId: '',
-      transporterName: '',
-      amount: 0,
-      date: '',
-    },
-    validators: {
-      onChange: validateFormWithZod(schema),
-    },
-    onSubmit: async ({ value }) => {
-      setErrorMsg('')
-      await mutation.mutateAsync(value)
-    },
+    defaultValues: { linkedDispatchRecordId: '', transporterName: '', amount: 0, date: '' },
+    validators: { onChange: validateFormWithZod(schema) },
+    onSubmit: async ({ value }) => { setErrorMsg(''); await mutation.mutateAsync(value) },
   })
 
   return (
@@ -103,16 +69,12 @@ function SalesPage() {
           <h2 className="text-xl font-bold font-header tracking-tight text-primary">Sales Record</h2>
           <p className="text-sm text-text-secondary mt-1">Track revenue from dispatch and delivery operations.</p>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
-        >
+        <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light">
           Log Sale
         </button>
       </div>
 
-      {/* Summary Strip & Filters */}
-      <div className="bg-surface p-3 rounded-none shadow-none border-2 border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
             <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Revenue</div>
@@ -123,118 +85,41 @@ function SalesPage() {
             <div className="text-lg font-bold text-primary">{filteredData.length}</div>
           </div>
         </div>
-        
         <div className="flex gap-2 w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Search transporter..."
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-          />
+          <input type="text" placeholder="Search transporter..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
         </div>
       </div>
 
-      <div className="bg-surface rounded-none shadow-none border-2 border-surface-border overflow-hidden overflow-x-auto">
-        {isLoading ? (
-          <div className="p-12 flex flex-col items-center justify-center space-y-4">
-            <div className="w-8 h-8 border-4 border-surface-border border-t-primary rounded-full animate-spin"></div>
-            <div className="text-sm font-medium text-text-muted">Loading sales...</div>
-          </div>
-        ) : (
-          <table className="min-w-full divide-y divide-surface-border border-b border-surface-border">
-            <thead className="bg-surface-muted">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id} className="px-4 py-3 text-left text-[0.7rem] font-bold text-text-secondary uppercase tracking-wider border-b border-surface-border font-header">
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-surface divide-y divide-surface-border text-sm">
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-surface-active/60 transition-colors group cursor-pointer">
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-4 py-3 whitespace-nowrap text-sm text-text-primary border-b border-surface-border/50">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-              {table.getRowModel().rows.length === 0 && (
-                <tr>
-                  <td colSpan={columns.length} className="px-4 py-16 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-2">
-                      <TrendingUp size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />
-                      <h3 className="text-base font-bold text-primary font-header">No sales found</h3>
-                      <p className="text-sm text-text-muted max-w-sm">
-                        {searchTerm
-                          ? "We couldn't find any sales matching your current search."
-                          : "There are currently no sales recorded in the system."}
-                      </p>
-                      {!searchTerm && (
-                        <button
-                          onClick={() => setIsModalOpen(true)}
-                          className="mt-4 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
-                        >
-                          Log Sale
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        )}
+      <div className="panel-table flex flex-col min-h-[500px]">
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          rowKey="id"
+          isLoading={isLoading}
+          emptyMessage={searchTerm ? "We couldn't find any sales matching your current search." : "There are currently no sales recorded in the system."}
+          emptyIcon={<TrendingUp size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />}
+          actions={!searchTerm && (<button onClick={() => setIsModalOpen(true)} className="text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors">Log Sale</button>)}
+          className="rounded-none shadow-none border-2 border-surface-border"
+        />
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Sale">
         {errorMsg && <div className="mb-4 text-sm bg-status-error/10 border border-status-error/20 text-status-error font-medium p-2 rounded">{errorMsg}</div>}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            form.handleSubmit()
-          }}
-          className="space-y-4"
-        >
+        <form onSubmit={(e) => { e.preventDefault(); e.stopPropagation(); form.handleSubmit() }} className="space-y-4">
           <form.Field name="date" children={(field) => <FormField field={field as any} label="Date" type="date" />} />
           <form.Field name="transporterName" children={(field) => <FormField field={field as any} label="Transporter Name" />} />
-          
-          <form.Field name="linkedDispatchRecordId" children={(field) => (
-            <SelectField field={field as any} label="Linked Dispatch Record (Optional)" options={[{ label: 'None', value: '' }, ...dispatchOptions]} />
-          )} />
-          
+          <form.Field name="linkedDispatchRecordId" children={(field) => (<SelectField field={field as any} label="Linked Dispatch Record (Optional)" options={[{ label: 'None', value: '' }, ...dispatchOptions]} />)} />
           <form.Field name="amount" children={(field) => <FormField field={field as any} label="Amount (₦)" type="number" />} />
-
           <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors"
-            >
-              Cancel
-            </button>
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <button
-                  type="submit"
-                  disabled={!canSubmit || isSubmitting}
-                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
-                >
-                  {isSubmitting ? 'Logging...' : 'Log Sale'}
-                </button>
-              )}
-            />
+            <button type="button" onClick={() => setIsModalOpen(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">Cancel</button>
+            <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
+              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
+                {isSubmitting ? 'Logging...' : 'Log Sale'}
+              </button>
+            )} />
           </div>
         </form>
       </Modal>
     </div>
   )
 }
-

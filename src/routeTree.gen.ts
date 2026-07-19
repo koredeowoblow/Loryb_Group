@@ -56,7 +56,6 @@ import { Route as ShellFinanceSalesRouteImport } from './routes/_shell/finance/s
 import { Route as ShellFinancePayrollRouteImport } from './routes/_shell/finance/payroll'
 import { Route as ShellFinanceOverviewRouteImport } from './routes/_shell/finance/overview'
 import { Route as ShellFinanceInvoicingRouteImport } from './routes/_shell/finance/invoicing'
-import { Route as ShellFinanceInvoicesRouteImport } from './routes/_shell/finance/invoices'
 import { Route as ShellFinanceExpensesRouteImport } from './routes/_shell/finance/expenses'
 import { Route as ShellCeoReportsRouteImport } from './routes/_shell/ceo/reports'
 import { Route as ShellCeoOverviewRouteImport } from './routes/_shell/ceo/overview'
@@ -305,11 +304,6 @@ const ShellFinanceInvoicingRoute = ShellFinanceInvoicingRouteImport.update({
   path: '/invoicing',
   getParentRoute: () => ShellFinanceRoute,
 } as any)
-const ShellFinanceInvoicesRoute = ShellFinanceInvoicesRouteImport.update({
-  id: '/invoices',
-  path: '/invoices',
-  getParentRoute: () => ShellFinanceRoute,
-} as any)
 const ShellFinanceExpensesRoute = ShellFinanceExpensesRouteImport.update({
   id: '/expenses',
   path: '/expenses',
@@ -342,7 +336,6 @@ export interface FileRoutesByFullPath {
   '/ceo/overview': typeof ShellCeoOverviewRoute
   '/ceo/reports': typeof ShellCeoReportsRoute
   '/finance/expenses': typeof ShellFinanceExpensesRoute
-  '/finance/invoices': typeof ShellFinanceInvoicesRoute
   '/finance/invoicing': typeof ShellFinanceInvoicingRoute
   '/finance/overview': typeof ShellFinanceOverviewRoute
   '/finance/payroll': typeof ShellFinancePayrollRoute
@@ -390,7 +383,6 @@ export interface FileRoutesByTo {
   '/ceo/overview': typeof ShellCeoOverviewRoute
   '/ceo/reports': typeof ShellCeoReportsRoute
   '/finance/expenses': typeof ShellFinanceExpensesRoute
-  '/finance/invoices': typeof ShellFinanceInvoicesRoute
   '/finance/invoicing': typeof ShellFinanceInvoicingRoute
   '/finance/overview': typeof ShellFinanceOverviewRoute
   '/finance/payroll': typeof ShellFinancePayrollRoute
@@ -444,7 +436,6 @@ export interface FileRoutesById {
   '/_shell/ceo/overview': typeof ShellCeoOverviewRoute
   '/_shell/ceo/reports': typeof ShellCeoReportsRoute
   '/_shell/finance/expenses': typeof ShellFinanceExpensesRoute
-  '/_shell/finance/invoices': typeof ShellFinanceInvoicesRoute
   '/_shell/finance/invoicing': typeof ShellFinanceInvoicingRoute
   '/_shell/finance/overview': typeof ShellFinanceOverviewRoute
   '/_shell/finance/payroll': typeof ShellFinancePayrollRoute
@@ -498,7 +489,6 @@ export interface FileRouteTypes {
     | '/ceo/overview'
     | '/ceo/reports'
     | '/finance/expenses'
-    | '/finance/invoices'
     | '/finance/invoicing'
     | '/finance/overview'
     | '/finance/payroll'
@@ -546,7 +536,6 @@ export interface FileRouteTypes {
     | '/ceo/overview'
     | '/ceo/reports'
     | '/finance/expenses'
-    | '/finance/invoices'
     | '/finance/invoicing'
     | '/finance/overview'
     | '/finance/payroll'
@@ -599,7 +588,6 @@ export interface FileRouteTypes {
     | '/_shell/ceo/overview'
     | '/_shell/ceo/reports'
     | '/_shell/finance/expenses'
-    | '/_shell/finance/invoices'
     | '/_shell/finance/invoicing'
     | '/_shell/finance/overview'
     | '/_shell/finance/payroll'
@@ -976,13 +964,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellFinanceInvoicingRouteImport
       parentRoute: typeof ShellFinanceRoute
     }
-    '/_shell/finance/invoices': {
-      id: '/_shell/finance/invoices'
-      path: '/invoices'
-      fullPath: '/finance/invoices'
-      preLoaderRoute: typeof ShellFinanceInvoicesRouteImport
-      parentRoute: typeof ShellFinanceRoute
-    }
     '/_shell/finance/expenses': {
       id: '/_shell/finance/expenses'
       path: '/expenses'
@@ -1009,7 +990,6 @@ declare module '@tanstack/react-router' {
 
 interface ShellFinanceRouteChildren {
   ShellFinanceExpensesRoute: typeof ShellFinanceExpensesRoute
-  ShellFinanceInvoicesRoute: typeof ShellFinanceInvoicesRoute
   ShellFinanceInvoicingRoute: typeof ShellFinanceInvoicingRoute
   ShellFinanceOverviewRoute: typeof ShellFinanceOverviewRoute
   ShellFinancePayrollRoute: typeof ShellFinancePayrollRoute
@@ -1020,7 +1000,6 @@ interface ShellFinanceRouteChildren {
 
 const ShellFinanceRouteChildren: ShellFinanceRouteChildren = {
   ShellFinanceExpensesRoute: ShellFinanceExpensesRoute,
-  ShellFinanceInvoicesRoute: ShellFinanceInvoicesRoute,
   ShellFinanceInvoicingRoute: ShellFinanceInvoicingRoute,
   ShellFinanceOverviewRoute: ShellFinanceOverviewRoute,
   ShellFinancePayrollRoute: ShellFinancePayrollRoute,

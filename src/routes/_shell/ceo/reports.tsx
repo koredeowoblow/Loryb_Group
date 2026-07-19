@@ -32,20 +32,21 @@ export const Route = createFileRoute('/_shell/ceo/reports')({
 })
 
 // ── Section wrapper ────────────────────────────────────────────────────────────
-// Uses .card (rounded-md shadow-md border) from the design system.
+// A transparent grouping container, NOT a card. 
+// Prevents "nested cards" when wrapping StatCards.
 function ReportSection({
   title, icon: Icon, children,
 }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
   return (
-    <div className="card flex flex-col">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-surface-border">
-        <Icon size={17} className="text-primary opacity-80" />
-        <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
+    <section className="flex flex-col gap-4">
+      <div className="flex items-center gap-2 border-b border-surface-border pb-3">
+        <Icon size={18} className="text-primary opacity-80" />
+        <h2 className="text-lg font-bold text-text-primary">{title}</h2>
       </div>
-      <div className="p-4 flex flex-col gap-5">
+      <div className="flex flex-col gap-5">
         {children}
       </div>
-    </div>
+    </section>
   )
 }
 
@@ -64,6 +65,7 @@ function ChartLegend({ items }: { items: { label: string; color: string }[] }) {
 }
 
 // ── Chart sub-section wrapper ──────────────────────────────────────────────────
+// Functions exactly like SnapshotCard on Overview: it IS a .card.
 function ChartBlock({
   title, icon: Icon, legend, children,
 }: {
@@ -73,13 +75,15 @@ function ChartBlock({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-1.5">
-        {Icon && <Icon size={14} className="text-text-muted" />}
-        <p className="text-xs font-semibold uppercase tracking-wide text-text-secondary">{title}</p>
+    <div className="card flex flex-col">
+      <div className="flex items-center px-4 py-3 border-b border-surface-border gap-2">
+        {Icon && <Icon size={15} className="text-primary opacity-80" />}
+        <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
       </div>
-      {children}
-      {legend && <ChartLegend items={legend} />}
+      <div className="p-4 flex flex-col gap-4 flex-1">
+        {children}
+        {legend && <ChartLegend items={legend} />}
+      </div>
     </div>
   )
 }
@@ -496,11 +500,7 @@ function ReportsPage() {
           </div>
 
           {/* Personnel metrics panel — no fixed height, content-sized */}
-          <div className="flex flex-col gap-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
-              Personnel & Security Metrics
-            </p>
-
+          <ChartBlock title="Personnel & Security Metrics" icon={Shield}>
             {/* Staff presence progress */}
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-baseline">
@@ -516,7 +516,7 @@ function ReportsPage() {
             </div>
 
             {/* Metric tiles — same styling as Overview mini-stat tiles */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 mt-auto">
               <div className="bg-surface-active rounded-sm p-3 border border-surface-border">
                 <p className="text-xs text-text-muted mb-1">Gate Incidents (30d)</p>
                 <div className="flex items-baseline gap-1.5">
@@ -532,7 +532,7 @@ function ReportsPage() {
                 <span className="text-xl font-bold text-text-primary">1,248</span>
               </div>
             </div>
-          </div>
+          </ChartBlock>
         </ReportSection>
       </div>
     </div>

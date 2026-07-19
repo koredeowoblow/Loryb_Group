@@ -16,6 +16,12 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
+@font-face {
+  font-family: 'NairaFallback';
+  src: local('Segoe UI'), local('Arial'), local('Helvetica'), local('sans-serif');
+  unicode-range: U+20A6;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    LIGHT MODE (default)
 ═══════════════════════════════════════════════════════════════════════════ */

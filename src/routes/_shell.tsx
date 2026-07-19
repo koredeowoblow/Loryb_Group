@@ -181,10 +181,20 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
       isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
     )}>
       {/* Logo row */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-surface-border shrink-0 overflow-hidden">
-        <img src="/logo.png" alt="Loryb Group" className="h-8 w-auto object-contain" />
+      <div className="h-16 flex items-center gap-3 px-4 border-b border-surface-border shrink-0 overflow-hidden">
+        <div className="w-8 h-8 shrink-0 overflow-hidden rounded-sm flex items-center justify-center">
+          <img src="/logo.png" alt="" className="h-8 w-auto object-cover object-left" />
+        </div>
+        <div className="flex flex-col justify-center">
+          <span className="text-[14px] font-bold text-text-primary leading-tight tracking-tight">
+            LORYB GROUP
+          </span>
+          <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider leading-none">
+            Of Companies
+          </span>
+        </div>
         <button
-          className="md:hidden p-2 rounded-sm text-text-secondary hover:text-primary hover:bg-surface-active transition-colors"
+          className="md:hidden ml-auto p-2 rounded-sm text-text-secondary hover:text-primary hover:bg-surface-active transition-colors"
           onClick={() => setIsOpen(false)}
           aria-label="Close sidebar"
         >
@@ -197,7 +207,6 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
         <ul className="flex flex-col px-2">
           {navItems.map(item => {
             const Icon = item.icon
-            const isModuleActive = currentPath.startsWith(item.to)
             const isExpanded = expanded[item.to]
 
             return (
@@ -208,19 +217,13 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
                   aria-expanded={isExpanded}
                   className={clsx(
                     'flex w-full items-center justify-between px-3 py-2 rounded-sm',
-                    'text-sm font-semibold transition-colors group',
-                    isModuleActive
-                      ? 'text-primary'
-                      : 'text-text-secondary hover:bg-surface-active hover:text-text-primary',
+                    'text-sm font-semibold transition-colors group text-text-secondary hover:bg-surface-active hover:text-text-primary',
                   )}
                 >
                   <span className="flex items-center gap-2">
                     <Icon
                       size={17}
-                      className={clsx(
-                        'transition-transform group-hover:scale-105',
-                        isModuleActive ? 'text-primary' : 'opacity-60',
-                      )}
+                      className="opacity-60 transition-transform group-hover:scale-105 group-hover:opacity-100"
                     />
                     {item.label}
                   </span>
@@ -232,18 +235,21 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
 
                 {/* Sub-items */}
                 {isExpanded && (
-                  <ul className="mt-1 mb-2 ml-6 pl-3 border-l border-surface-border flex flex-col gap-px">
+                  <ul className="mt-1 mb-2 ml-6 pl-3 border-l border-surface-border flex flex-col gap-px relative">
                     {item.subItems.map((sub: any) => {
                       if (sub.roles && !sub.roles.includes(role)) return null
                       const isActive = currentPath === sub.to
                       return (
-                        <li key={sub.to}>
+                        <li key={sub.to} className="relative">
+                          {isActive && (
+                            <span className="absolute -left-[13px] top-1/2 -translate-y-1/2 w-1 h-4 rounded-full bg-accent" />
+                          )}
                           <Link
                             to={sub.to}
                             className={clsx(
                               'block px-3 py-1.5 rounded-sm text-sm transition-colors',
                               isActive
-                                ? 'bg-primary/10 text-primary font-medium'
+                                ? 'bg-surface-active text-text-primary font-medium'
                                 : 'text-text-secondary hover:bg-surface-active hover:text-text-primary',
                             )}
                           >

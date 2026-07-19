@@ -38,11 +38,11 @@ function ReportSection({
 }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
   return (
     <div className="card flex flex-col">
-      <div className="flex items-center gap-2 px-5 py-4 border-b border-surface-border">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-surface-border">
         <Icon size={17} className="text-primary opacity-80" />
         <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
       </div>
-      <div className="p-5 flex flex-col gap-5">
+      <div className="p-4 flex flex-col gap-5">
         {children}
       </div>
     </div>

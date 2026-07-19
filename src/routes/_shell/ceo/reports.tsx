@@ -1,89 +1,177 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { sales as salesApi, expenses as expensesApi, payroll as payrollApi, supplierPayments as supplierPaymentsApi } from '../../../api/finance'
+import {
+  sales as salesApi, expenses as expensesApi,
+  payroll as payrollApi, supplierPayments as supplierPaymentsApi,
+} from '../../../api/finance'
 import { trucks as trucksApi } from '../../../api/logistics'
 import { grn as grnApi } from '../../../api/warehouse'
-import { dispatchRecord as dispatchRecordApi, visitorLog as visitorLogApi, staffAttendance as staffAttendanceApi } from '../../../api/security'
-import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts'
-import { Download, FileText, TrendingUp, TrendingDown, DollarSign, Package, Truck, Shield, Calendar, Sparkles, Filter, PieChart as PieChartIcon } from 'lucide-react'
+import {
+  dispatchRecord as dispatchRecordApi,
+  visitorLog as visitorLogApi,
+  staffAttendance as staffAttendanceApi,
+} from '../../../api/security'
+import {
+  BarChart, Bar, AreaChart, Area,
+  XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, PieChart, Pie, Cell, LabelList,
+} from 'recharts'
+import {
+  Download, FileText, DollarSign,
+  Package, Truck, Shield, Calendar,
+  TrendingUp, TrendingDown, PieChart as PieChartIcon,
+  Minus,
+} from 'lucide-react'
+import { StatCard } from '../../../components/ui/StatCard'
+import {
+  ChartTooltip, CHART_COLORS, chartGridProps, chartAxisProps,
+} from '../../../components/ui/ChartWrapper'
 
 export const Route = createFileRoute('/_shell/ceo/reports')({
   component: ReportsPage,
 })
 
-function ReportSection({ title, icon: Icon, children }: { title: string; icon: any; children: React.ReactNode }) {
+// ── Section wrapper ────────────────────────────────────────────────────────────
+// Uses .card (rounded-md shadow-md border) from the design system.
+function ReportSection({
+  title, icon: Icon, children,
+}: { title: string; icon: React.ElementType; children: React.ReactNode }) {
   return (
-    <div className="mb-8 bg-surface p-6 rounded-xl shadow-sm border border-surface-border">
-      <div className="flex items-center gap-2 mb-6 pb-3 border-b border-surface-border/50">
-        <div className="bg-primary/10 p-2 rounded-lg text-primary">
-          <Icon size={22} />
-        </div>
-        <h3 className="text-xl font-bold font-header text-text-primary tracking-tight">{title}</h3>
+    <div className="card flex flex-col">
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-surface-border">
+        <Icon size={17} className="text-primary opacity-80" />
+        <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
       </div>
-      {children}
+      <div className="p-5 flex flex-col gap-5">
+        {children}
+      </div>
     </div>
   )
 }
 
-function StatBox({ label, value, trend, trendValue, highlight = false }: { label: string; value: string | number; trend?: 'up' | 'down'; trendValue?: string; highlight?: boolean }) {
+// ── Inline chart legend ────────────────────────────────────────────────────────
+function ChartLegend({ items }: { items: { label: string; color: string }[] }) {
   return (
-    <div className={`p-5 rounded-xl border transition-all ${highlight ? 'bg-primary text-white border-primary shadow-md' : 'bg-surface-muted/30 border-surface-border hover:shadow-sm hover:bg-surface'}`}>
-      <p className={`text-xs uppercase tracking-wider font-bold mb-2 font-header ${highlight ? 'text-white/80' : 'text-text-muted'}`}>{label}</p>
-      <h4 className="text-3xl font-bold tracking-tight">{value}</h4>
-      {trend && trendValue && (
-        <div className={`text-xs mt-3 font-semibold flex items-center gap-1.5 ${highlight ? 'text-white/90' : trend === 'up' ? 'text-status-success' : 'text-status-error'}`}>
-          <div className={`p-1 rounded-full ${highlight ? 'bg-surface/20' : trend === 'up' ? 'bg-status-success/10' : 'bg-status-error/10'}`}>
-            {trend === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-          </div>
-          {trendValue}
-        </div>
-      )}
+    <div className="flex items-center gap-4 flex-wrap mt-2">
+      {items.map(({ label, color }) => (
+        <span key={label} className="flex items-center gap-1.5 text-xs text-text-muted">
+          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: color }} />
+          {label}
+        </span>
+      ))}
     </div>
   )
 }
+
+// ── Chart sub-section wrapper ──────────────────────────────────────────────────
+function ChartBlock({
+  title, icon: Icon, legend, children,
+}: {
+  title: string
+  icon?: React.ElementType
+  legend?: { label: string; color: string }[]
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-1.5">
+        {Icon && <Icon size={14} className="text-text-muted" />}
+        <p className="text-xs font-semibold uppercase tracking-wide text-text-secondary">{title}</p>
+      </div>
+      {children}
+      {legend && <ChartLegend items={legend} />}
+    </div>
+  )
+}
+
+// ── Progress bar ───────────────────────────────────────────────────────────────
+function ProgressBar({ value, max, color = CHART_COLORS.primary }: { value: number; max: number; color?: string }) {
+  const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0
+  return (
+    <div className="w-full bg-surface-active rounded-full h-2 overflow-hidden">
+      <div
+        className="h-2 rounded-full transition-all duration-500"
+        style={{ width: `${pct}%`, background: color }}
+      />
+    </div>
+  )
+}
+
+// ── Zero-value display ────────────────────────────────────────────────────────
+function ZeroState({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1 text-text-muted text-xs">
+      <Minus size={12} />
+      {label}
+    </span>
+  )
+}
+
+// ── Donut center label ────────────────────────────────────────────────────────
+function DonutLabel({ value, sub }: { value: string | number; sub?: string }) {
+  return (
+    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
+      <tspan
+        x="50%"
+        dy="-6"
+        style={{ fontSize: 22, fontWeight: 700, fill: '#0F1320' }}
+      >
+        {value}
+      </tspan>
+      {sub && (
+        <tspan
+          x="50%"
+          dy="18"
+          style={{ fontSize: 11, fill: '#6C7993' }}
+        >
+          {sub}
+        </tspan>
+      )}
+    </text>
+  )
+}
+
+// ── Page ───────────────────────────────────────────────────────────────────────
 
 function ReportsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['full-reports'],
     queryFn: async () => {
       const [
-        grn, dispatch, trucks, sales, expenses, 
-        payroll, supplierPayments, visitorLog, staff
+        grn, dispatch, trucks, sales, expenses,
+        payroll, supplierPayments, visitorLog, staff,
       ] = await Promise.all([
-        grnApi.list(), dispatchRecordApi.list(), trucksApi.list(), 
-        salesApi.list(), expensesApi.list(), payrollApi.list(), 
-        supplierPaymentsApi.list(), visitorLogApi.list(), 
-        staffAttendanceApi.list()
+        grnApi.list(), dispatchRecordApi.list(), trucksApi.list(),
+        salesApi.list(), expensesApi.list(), payrollApi.list(),
+        supplierPaymentsApi.list(), visitorLogApi.list(),
+        staffAttendanceApi.list(),
       ])
 
-      // Financials
-      const totalSales = sales.reduce((acc, s) => acc + s.amount, 0) || 12500000;
-      const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0) || 3400000;
-      const totalPayroll = payroll.reduce((acc, p) => acc + p.amount, 0) || 2100000;
-      const totalSupplierPaid = supplierPayments.reduce((acc, s) => acc + s.amountPaid, 0) || 4500000;
-      const totalCosts = totalExpenses + totalPayroll + totalSupplierPaid;
-      const netProfit = totalSales - totalCosts;
+      const totalSales        = sales.reduce((a, s) => a + s.amount, 0)            || 12_500_000
+      const totalExpenses     = expenses.reduce((a, e) => a + e.amount, 0)         || 3_400_000
+      const totalPayroll      = payroll.reduce((a, p) => a + p.amount, 0)          || 2_100_000
+      const totalSupplierPaid = supplierPayments.reduce((a, s) => a + s.amountPaid, 0) || 4_500_000
+      const totalCosts        = totalExpenses + totalPayroll + totalSupplierPaid
+      const netProfit         = totalSales - totalCosts
 
-      // Warehouse
-      const intakeVolume = grn.reduce((acc, g) => acc + g.netWeight, 0) || 374492;
-      const dispatchVolume = dispatch.reduce((acc, d) => acc + d.confirmedQty, 0) || 521327;
+      const intakeVolume   = grn.reduce((a, g) => a + g.netWeight, 0)              || 374_492
+      const dispatchVolume = dispatch.reduce((a, d) => a + d.confirmedQty, 0)      || 521_327
 
-      // Logistics
-      const activeTrucks = trucks.length > 0 ? trucks.filter(t => t.status === 'in-transit').length : 12;
-      const idleTrucks = trucks.length > 0 ? trucks.filter(t => t.status === 'idle').length : 4;
-      const maintenanceTrucks = trucks.length > 0 ? trucks.filter(t => t.status === 'maintenance').length : 2;
-      const fleetUtilization = trucks.length > 0 ? Math.round((activeTrucks / trucks.length) * 100) : 75;
+      const activeTrucks      = trucks.length > 0 ? trucks.filter(t => t.status === 'in-transit').length : 12
+      const idleTrucks        = trucks.length > 0 ? trucks.filter(t => t.status === 'idle').length       : 4
+      const maintenanceTrucks = trucks.length > 0 ? trucks.filter(t => t.status === 'maintenance').length : 2
+      const totalFleet        = trucks.length || (activeTrucks + idleTrucks + maintenanceTrucks)
+      const fleetUtilization  = Math.round((activeTrucks / totalFleet) * 100)
 
-      // Security
-      const activeVisitors = visitorLog.length > 0 ? visitorLog.filter(v => !v.timeOut).length : 12;
-      const totalStaff = staff.length > 0 ? staff.length : 145;
-      const staffPresent = staff.length > 0 ? staff.filter(s => !s.timeOut).length : 118;
+      const activeVisitors = visitorLog.length > 0 ? visitorLog.filter(v => !v.timeOut).length : 0
+      const totalStaff     = staff.length > 0 ? staff.length : 20
+      const staffPresent   = staff.length > 0 ? staff.filter(s => !s.timeOut).length : 0
 
       return {
         financials: { totalSales, totalCosts, netProfit, totalExpenses, totalPayroll, totalSupplierPaid },
-        warehouse: { intakeVolume, dispatchVolume },
-        logistics: { activeTrucks, idleTrucks, maintenanceTrucks, fleetUtilization },
-        security: { activeVisitors, totalStaff, staffPresent }
+        warehouse:  { intakeVolume, dispatchVolume },
+        logistics:  { activeTrucks, idleTrucks, maintenanceTrucks, totalFleet, fleetUtilization },
+        security:   { activeVisitors, totalStaff, staffPresent },
       }
     },
   })
@@ -91,21 +179,26 @@ function ReportsPage() {
   if (isLoading) return (
     <div className="flex h-64 items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-        <p className="text-sm font-semibold text-text-secondary animate-pulse">Compiling Enterprise Report...</p>
+        <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        <p className="text-sm text-text-secondary">Compiling report…</p>
       </div>
     </div>
   )
 
-  const { financials, warehouse, logistics, security } = data || {};
+  const { financials, warehouse, logistics, security } = data!
 
-  const costBreakdownData = [
-    { name: 'Ops Expenses', value: financials?.totalExpenses || 0, fill: '#EF4444' },
-    { name: 'Payroll', value: financials?.totalPayroll || 0, fill: '#F59E0B' },
-    { name: 'Suppliers', value: financials?.totalSupplierPaid || 0, fill: '#3B82F6' },
+  const fmt   = (n: number) => `₦${n.toLocaleString()}`
+  const margin = Math.round((financials.netProfit / financials.totalSales) * 100)
+  const staffPct = Math.round((security.staffPresent / security.totalStaff) * 100)
+
+  // ── Chart data ─────────────────────────────────────────────────────────────
+  const costBreakdown = [
+    { name: 'Ops Expenses', value: financials.totalExpenses,     fill: CHART_COLORS.danger },
+    { name: 'Payroll',      value: financials.totalPayroll,      fill: CHART_COLORS.warning },
+    { name: 'Suppliers',    value: financials.totalSupplierPaid, fill: CHART_COLORS.info },
   ]
 
-  const warehouseFlowData = [
+  const warehouseFlow = [
     { month: 'Jan', intake: 40000, dispatch: 24000 },
     { month: 'Feb', intake: 30000, dispatch: 13980 },
     { month: 'Mar', intake: 20000, dispatch: 98000 },
@@ -115,208 +208,333 @@ function ReportsPage() {
     { month: 'Jul', intake: 34900, dispatch: 43000 },
   ]
 
-  const fleetData = [
-    { name: 'Active', value: logistics?.activeTrucks || 0, fill: '#10B981' },
-    { name: 'Idle', value: logistics?.idleTrucks || 0, fill: '#9CA3AF' },
-    { name: 'Maintenance', value: logistics?.maintenanceTrucks || 0, fill: '#EF4444' },
+  // Revenue vs costs reuse same flow data keys (intake = revenue, dispatch = costs)
+  const revCostTrend = [
+    { wk: 'Wk 1', revenue: 1_200_000, costs: 800_000 },
+    { wk: 'Wk 2', revenue: 1_500_000, costs: 950_000 },
+    { wk: 'Wk 3', revenue: 1_800_000, costs: 850_000 },
+    { wk: 'Wk 4', revenue: 2_100_000, costs: 1_100_000 },
+  ]
+
+  const fleetBreakdown = [
+    { name: 'In-Transit',   value: logistics.activeTrucks,      fill: CHART_COLORS.inTransit },
+    { name: 'Idle',         value: logistics.idleTrucks,        fill: CHART_COLORS.idle },
+    { name: 'Maintenance',  value: logistics.maintenanceTrucks, fill: CHART_COLORS.maintenance },
   ]
 
   return (
     <div className="space-y-6 pb-12 font-sans">
-      
-      {/* Header & Controls */}
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4 bg-surface p-6 rounded-xl shadow-sm border border-surface-border relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 text-text-primary font-bold text-sm uppercase tracking-widest mb-2 font-header">
-            <FileText size={16} /> Enterprise Analytics
+
+      {/* ── Page header ───────────────────────────────────────────────────── */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-text-muted mb-1">
+            <FileText size={13} />
+            Enterprise Analytics
           </div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-text-primary">
-            Comprehensive Report
-          </h2>
-          <p className="text-sm text-text-secondary mt-1 max-w-lg">
-            A deep dive into cross-module performance metrics spanning finance, supply chain, and operations.
+          <h1 className="text-xl font-bold tracking-tight text-text-primary">Comprehensive Report</h1>
+          <p className="text-sm text-text-muted mt-0.5">
+            Cross-module performance — finance, supply chain, and operations
           </p>
         </div>
-        
-        <div className="flex flex-wrap items-center gap-3 relative z-10">
-          <div className="flex items-center bg-surface-muted border border-surface-border rounded-lg p-1">
-            <button className="px-4 py-1.5 text-sm font-semibold rounded-md bg-surface shadow-sm text-primary">Monthly</button>
-            <button className="px-4 py-1.5 text-sm font-semibold rounded-md text-text-muted hover:text-text-primary transition-colors">Quarterly</button>
-            <button className="px-4 py-1.5 text-sm font-semibold rounded-md text-text-muted hover:text-text-primary transition-colors">YTD</button>
-          </div>
-          
-          <button className="btn btn-secondary rounded-lg px-4 py-2">
-            <Filter size={16} /> Filters
-          </button>
-          
-          <button className="btn btn-primary rounded-lg px-5 py-2 font-header uppercase tracking-wider">
-            <Download size={16} /> Export PDF
-          </button>
-        </div>
+        <button className="btn btn-primary shrink-0 self-start sm:self-auto">
+          <Download size={15} />
+          Export PDF
+        </button>
       </div>
 
-      {/* AI Insights Banner */}
-      <div className="bg-gradient-to-r from-amber-50 to-amber-100/50 border border-amber-200 p-5 rounded-xl flex gap-4 items-start shadow-sm">
-        <div className="bg-amber-100 p-2 rounded-full shrink-0">
-          <Sparkles className="text-amber-600" size={20} />
+      {/* ── AI Executive Summary ──────────────────────────────────────────── */}
+      {/* Uses info semantic tokens — restrained, on-system, no amber gradient */}
+      <div className="card p-4 flex gap-3 items-start border-l-4" style={{ borderLeftColor: `rgb(var(--color-status-info))` }}>
+        <div
+          className="mt-0.5 shrink-0 w-7 h-7 rounded-sm flex items-center justify-center"
+          style={{ background: `rgb(var(--color-status-info-bg))` }}
+        >
+          <TrendingUp size={14} style={{ color: `rgb(var(--color-status-info))` }} />
         </div>
         <div>
-          <h4 className="font-bold text-amber-900 text-sm mb-1 font-header uppercase tracking-wider">AI Executive Summary</h4>
-          <p className="text-amber-800 text-sm leading-relaxed">
-            Revenue is up <strong className="font-bold">15.3%</strong> compared to last quarter, driven by higher dispatch volumes in March and April. 
-            Fleet utilization is optimal at <strong className="font-bold">{logistics?.fleetUtilization}%</strong>, though maintenance costs have slightly increased. 
-            Overall net profit margins remain extremely healthy at <strong className="font-bold">{Math.round(((financials?.netProfit || 0) / (financials?.totalSales || 1)) * 100)}%</strong>.
+          <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: `rgb(var(--color-status-info))` }}>
+            AI Executive Summary
+          </p>
+          <p className="text-sm text-text-secondary leading-relaxed">
+            Revenue is up{' '}
+            <span className="font-semibold text-text-primary">15.3%</span>{' '}
+            compared to last quarter, driven by higher dispatch volumes in March and April.
+            Fleet utilization stands at{' '}
+            <span className="font-semibold text-text-primary">{logistics.fleetUtilization}%</span>{' '}
+            (above the 65% industry average). Net profit margin is{' '}
+            <span className="font-semibold text-text-primary">{margin}%</span>.
           </p>
         </div>
       </div>
 
+      {/* ── Financial Performance ─────────────────────────────────────────── */}
       <ReportSection title="Financial Performance" icon={DollarSign}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-          <StatBox label="Gross Revenue" value={`₦${financials?.totalSales.toLocaleString()}`} trend="up" trendValue="+15.3% YoY" highlight />
-          <StatBox label="Total Costs" value={`₦${financials?.totalCosts.toLocaleString()}`} trend="down" trendValue="-2.1% YoY" />
-          <StatBox label="Net Profit" value={`₦${financials?.netProfit.toLocaleString()}`} trend="up" trendValue="+8.4% YoY" />
-          <StatBox label="Profit Margin" value={`${Math.round(((financials?.netProfit || 0) / (financials?.totalSales || 1)) * 100)}%`} trend="up" trendValue="+1.2% YoY" />
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 flex flex-col">
-            <h4 className="text-sm font-bold font-header uppercase tracking-wider text-text-secondary mb-4 flex items-center gap-2">
-              <Calendar size={16} /> Revenue vs Costs Trend
-            </h4>
-            <div className="bg-surface-muted/20 border border-surface-border rounded-xl p-4">
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={warehouseFlowData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#EF4444" stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor="#EF4444" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280', fontWeight: 600 }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280', fontWeight: 600 }} tickFormatter={(val) => `${val/1000}k`} />
-                  <Tooltip cursor={{ stroke: '#9CA3AF', strokeWidth: 1, strokeDasharray: '5 5' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }} formatter={(value: any) => `₦${Number(value).toLocaleString()}`} />
-                  <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '12px', fontWeight: 600 }} />
-                  <Area type="monotone" dataKey="intake" name="Revenue" stroke="#10B981" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
-                  <Area type="monotone" dataKey="dispatch" name="Costs" stroke="#EF4444" strokeWidth={3} fillOpacity={1} fill="url(#colorCost)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
+        {/*
+          All four KPI cards use StatCard.
+          Gross Revenue uses hero=true (same pattern as Overview).
+          The other three are equal weight — no arbitrary single highlight.
+        */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="lg:col-span-1">
+            <StatCard
+              hero
+              title="Gross Revenue"
+              value={fmt(financials.totalSales)}
+              subtitle="Year to Date"
+              icon={<TrendingUp size={18} />}
+              trend={{ delta: 15.3, label: 'YoY', higherIsBetter: true }}
+            />
           </div>
-          
-          <div className="flex flex-col">
-            <h4 className="text-sm font-bold font-header uppercase tracking-wider text-text-secondary mb-4 flex items-center gap-2">
-              <PieChartIcon size={16} /> Cost Breakdown
-            </h4>
-            <div className="bg-surface-muted/20 border border-surface-border rounded-xl p-4">
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie data={costBreakdownData} cx="50%" cy="45%" innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value" stroke="none">
-                    {costBreakdownData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
-                    ))}
-                  </Pie>
-                  <Tooltip cursor={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} formatter={(value: any) => `₦${Number(value).toLocaleString()}`} />
-                  <Legend layout="horizontal" verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ fontSize: '12px', fontWeight: 600 }} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          <StatCard
+            title="Total Costs"
+            value={fmt(financials.totalCosts)}
+            subtitle="YTD"
+            trend={{ delta: -2.1, label: 'YoY', higherIsBetter: false }}
+          />
+          <StatCard
+            title="Net Profit"
+            value={fmt(financials.netProfit)}
+            subtitle="YTD"
+            trend={{ delta: 8.4, label: 'YoY', higherIsBetter: true }}
+          />
+          <StatCard
+            title="Profit Margin"
+            value={`${margin}%`}
+            subtitle="Net margin"
+            trend={{ delta: 1.2, label: 'YoY', higherIsBetter: true }}
+          />
         </div>
-      </ReportSection>
 
-      <ReportSection title="Warehouse Operations" icon={Package}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-          <StatBox label="Total Intake (YTD)" value={`${(warehouse?.intakeVolume || 0).toLocaleString()} MT`} trend="up" trendValue="+5.2% vs Prev" />
-          <StatBox label="Total Dispatch (YTD)" value={`${(warehouse?.dispatchVolume || 0).toLocaleString()} MT`} trend="up" trendValue="+8.1% vs Prev" />
-          <StatBox label="Throughput Ratio" value={((warehouse?.dispatchVolume || 0) / ((warehouse?.intakeVolume || 1))).toFixed(2)} />
-          <StatBox label="Active Storage Utilization" value="82%" trend="up" trendValue="Near capacity" />
-        </div>
-        
-        <div className="flex flex-col">
-          <h4 className="text-sm font-bold font-header uppercase tracking-wider text-text-secondary mb-4">Monthly Intake vs Dispatch Volume</h4>
-          <div className="bg-surface-muted/20 border border-surface-border rounded-xl p-4">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={warehouseFlowData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }} barGap={8}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280', fontWeight: 600 }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280', fontWeight: 600 }} tickFormatter={(val) => `${val/1000}k`} />
-                <Tooltip cursor={{ fill: '#F3F4F6' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} formatter={(value: any) => `${Number(value).toLocaleString()} MT`} />
-                <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '12px', fontWeight: 600 }} />
-                <Bar dataKey="intake" name="Intake Volume" fill="#002B79" radius={[4, 4, 0, 0]} maxBarSize={40} />
-                <Bar dataKey="dispatch" name="Dispatch Volume" fill="#F59E0B" radius={[4, 4, 0, 0]} maxBarSize={40} />
-              </BarChart>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          {/* Revenue vs Costs trend — 2/3 width */}
+          <ChartBlock
+            title="Revenue vs Costs Trend"
+            icon={Calendar}
+            legend={[
+              { label: 'Revenue', color: CHART_COLORS.success },
+              { label: 'Costs',   color: CHART_COLORS.danger },
+            ]}
+          >
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={revCostTrend} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="gradRev" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={CHART_COLORS.success} stopOpacity={0.25} />
+                    <stop offset="100%" stopColor={CHART_COLORS.success} stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gradCost" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={CHART_COLORS.danger} stopOpacity={0.2} />
+                    <stop offset="100%" stopColor={CHART_COLORS.danger} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid {...chartGridProps} />
+                <XAxis dataKey="wk" {...chartAxisProps} />
+                <YAxis {...chartAxisProps} tickFormatter={v => `${v / 1_000_000}M`} width={36} />
+                <Tooltip content={<ChartTooltip formatValue={v => fmt(Number(v))} />} />
+                <Area type="monotone" dataKey="revenue" name="Revenue"
+                  stroke={CHART_COLORS.success} strokeWidth={2.5}
+                  fill="url(#gradRev)" dot={{ r: 3, fill: CHART_COLORS.success, strokeWidth: 0 }} />
+                <Area type="monotone" dataKey="costs" name="Costs"
+                  stroke={CHART_COLORS.danger} strokeWidth={2.5}
+                  fill="url(#gradCost)" dot={{ r: 3, fill: CHART_COLORS.danger, strokeWidth: 0 }} />
+              </AreaChart>
             </ResponsiveContainer>
-          </div>
+          </ChartBlock>
+
+          {/* Cost Breakdown donut — 1/3 width */}
+          <ChartBlock
+            title="Cost Breakdown"
+            icon={PieChartIcon}
+            legend={costBreakdown.map(d => ({ label: d.name, color: d.fill }))}
+          >
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie
+                  data={costBreakdown}
+                  cx="50%" cy="45%"
+                  innerRadius={58} outerRadius={82}
+                  paddingAngle={3}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  {costBreakdown.map((entry, i) => (
+                    <Cell key={i} fill={entry.fill} />
+                  ))}
+                  <LabelList
+                    dataKey="value"
+                    position="inside"
+                    formatter={(v: any) => {
+                      const pct = Math.round((Number(v) / financials.totalCosts) * 100)
+                      return pct >= 10 ? `${pct}%` : ''
+                    }}
+                    style={{ fontSize: 11, fontWeight: 700, fill: '#fff' }}
+                  />
+                </Pie>
+                <Tooltip content={<ChartTooltip formatValue={v => fmt(Number(v))} />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartBlock>
         </div>
       </ReportSection>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* ── Warehouse Operations ──────────────────────────────────────────── */}
+      <ReportSection title="Warehouse Operations" icon={Package}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard
+            title="Total Intake (YTD)"
+            value={`${warehouse.intakeVolume.toLocaleString()} MT`}
+            subtitle="Grain received"
+            trend={{ delta: 5.2, label: 'vs prev', higherIsBetter: true }}
+          />
+          <StatCard
+            title="Total Dispatch (YTD)"
+            value={`${warehouse.dispatchVolume.toLocaleString()} MT`}
+            subtitle="Grain dispatched"
+            trend={{ delta: 8.1, label: 'vs prev', higherIsBetter: true }}
+          />
+          <StatCard
+            title="Throughput Ratio"
+            value={(warehouse.dispatchVolume / warehouse.intakeVolume).toFixed(2)}
+            subtitle="Dispatch / Intake"
+          />
+          <StatCard
+            title="Storage Utilization"
+            value="82%"
+            subtitle="Near capacity"
+            trend={{ delta: 3.1, label: 'vs last mo', higherIsBetter: false }}
+          />
+        </div>
+
+        <ChartBlock
+          title="Monthly Intake vs Dispatch Volume"
+          legend={[
+            { label: 'Intake Volume',    color: CHART_COLORS.primary },
+            { label: 'Dispatch Volume',  color: CHART_COLORS.accent },
+          ]}
+        >
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={warehouseFlow} margin={{ top: 4, right: 8, left: 0, bottom: 0 }} barGap={4}>
+              <CartesianGrid {...chartGridProps} />
+              <XAxis dataKey="month" {...chartAxisProps} />
+              <YAxis {...chartAxisProps} tickFormatter={v => `${v / 1000}k`} width={32} />
+              <Tooltip content={<ChartTooltip formatValue={v => `${Number(v).toLocaleString()} MT`} />} />
+              <Bar dataKey="intake"   name="Intake Volume"   fill={CHART_COLORS.primary} radius={[3, 3, 0, 0]} maxBarSize={36} />
+              <Bar dataKey="dispatch" name="Dispatch Volume" fill={CHART_COLORS.accent}  radius={[3, 3, 0, 0]} maxBarSize={36} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartBlock>
+      </ReportSection>
+
+      {/* ── Logistics & Fleet + Security side-by-side ─────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        {/* Logistics & Fleet */}
         <ReportSection title="Logistics & Fleet" icon={Truck}>
-          <div className="grid grid-cols-2 gap-5 mb-6">
-            <StatBox label="Fleet Utilization" value={`${logistics?.fleetUtilization}%`} trend={logistics?.fleetUtilization && logistics.fleetUtilization > 70 ? 'up' : 'down'} trendValue="Industry Avg: 65%" />
-            <StatBox label="Active Trucks" value={logistics?.activeTrucks || 0} />
+          <div className="grid grid-cols-2 gap-4">
+            <StatCard
+              title="Fleet Utilization"
+              value={`${logistics.fleetUtilization}%`}
+              subtitle="Industry avg: 65%"
+              trend={{
+                delta: logistics.fleetUtilization - 65,
+                label: 'vs industry',
+                higherIsBetter: true,
+              }}
+            />
+            <StatCard
+              title="Active Trucks"
+              value={logistics.activeTrucks}
+              subtitle={`of ${logistics.totalFleet} total`}
+            />
           </div>
-          <div className="flex flex-col">
-             <h4 className="text-sm font-bold font-header uppercase tracking-wider text-text-secondary mb-4">Fleet Status Breakdown</h4>
-             <div className="bg-surface-muted/20 border border-surface-border rounded-xl p-4">
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie data={fleetData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={4} dataKey="value" stroke="none">
-                    {fleetData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
-                    ))}
-                  </Pie>
-                  <Tooltip cursor={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                  <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px', fontWeight: 600 }} />
-                </PieChart>
-              </ResponsiveContainer>
-             </div>
-          </div>
+
+          <ChartBlock
+            title="Fleet Status Breakdown"
+            legend={fleetBreakdown.map(d => ({ label: d.name, color: d.fill }))}
+          >
+            {/*
+              Donut sized to fill its column. innerRadius/outerRadius tuned so
+              the ring is proportional (ring thickness ≈ outerRadius × 0.35).
+              Using the svg <text> trick for a center label.
+            */}
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={fleetBreakdown}
+                  cx="50%" cy="50%"
+                  innerRadius={62} outerRadius={88}
+                  paddingAngle={3}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  {fleetBreakdown.map((entry, i) => (
+                    <Cell key={i} fill={entry.fill} />
+                  ))}
+                </Pie>
+                <DonutLabel value={logistics.totalFleet} sub="trucks" />
+                <Tooltip content={<ChartTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartBlock>
         </ReportSection>
 
+        {/* Security & Personnel */}
         <ReportSection title="Security & Personnel" icon={Shield}>
-          <div className="grid grid-cols-2 gap-5 mb-6">
-            <StatBox label="Active Visitors on Site" value={security?.activeVisitors || 0} />
-            <StatBox label="Staff Attendance Rate" value={`${Math.round(((security?.staffPresent || 0) / (security?.totalStaff || 1)) * 100)}%`} trend="up" trendValue="Healthy" />
+          <div className="grid grid-cols-2 gap-4">
+            <StatCard
+              title="Active Visitors"
+              value={security.activeVisitors === 0 ? '—' : security.activeVisitors}
+              subtitle={security.activeVisitors === 0 ? 'None on-site' : 'Currently on-site'}
+            />
+            <StatCard
+              title="Attendance Rate"
+              value={security.staffPresent === 0 ? '—' : `${staffPct}%`}
+              subtitle={security.staffPresent === 0 ? 'No data yet' : `${security.staffPresent} of ${security.totalStaff}`}
+              trend={security.staffPresent > 0 ? { delta: staffPct - 80, label: 'vs target', higherIsBetter: true } : undefined}
+            />
           </div>
-          <div className="flex flex-col">
-            <h4 className="text-sm font-bold font-header uppercase tracking-wider text-text-secondary mb-4">Personnel & Security Metrics</h4>
-            <div className="bg-surface-muted/20 border border-surface-border rounded-xl p-6 flex flex-col justify-center gap-6 h-[282px]">
-              
-              <div className="space-y-2">
-                <div className="flex justify-between items-end">
-                  <span className="text-sm font-bold font-header uppercase tracking-wider text-text-secondary">Staff Presence</span>
-                  <span className="font-bold text-primary text-lg">{security?.staffPresent} / {security?.totalStaff}</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div className="bg-primary h-2.5 rounded-full" style={{ width: `${Math.round(((security?.staffPresent || 0) / (security?.totalStaff || 1)) * 100)}%` }}></div>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                <div className="bg-surface border border-surface-border p-4 rounded-lg shadow-sm">
-                  <div className="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">Gate Incidents (30d)</div>
-                  <div className="text-2xl font-bold text-status-warning flex items-center gap-2">
-                    0 <span className="text-xs text-status-success flex items-center"><TrendingDown size={12} /> 100%</span>
-                  </div>
+          {/* Personnel metrics panel — no fixed height, content-sized */}
+          <div className="flex flex-col gap-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
+              Personnel & Security Metrics
+            </p>
+
+            {/* Staff presence progress */}
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-baseline">
+                <span className="text-xs text-text-secondary">Staff Presence</span>
+                <span className="text-sm font-bold text-text-primary">
+                  {security.staffPresent} / {security.totalStaff}
+                </span>
+              </div>
+              <ProgressBar value={security.staffPresent} max={security.totalStaff} />
+              {security.staffPresent === 0 && (
+                <ZeroState label="No attendance data recorded yet" />
+              )}
+            </div>
+
+            {/* Metric tiles — same styling as Overview mini-stat tiles */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-surface-active rounded-sm p-3 border border-surface-border">
+                <p className="text-xs text-text-muted mb-1">Gate Incidents (30d)</p>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-xl font-bold text-text-primary">0</span>
+                  <span className="text-xs text-status-success flex items-center gap-0.5">
+                    <TrendingDown size={11} /> 100% down
+                  </span>
                 </div>
-                <div className="bg-surface border border-surface-border p-4 rounded-lg shadow-sm">
-                  <div className="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">Clearances Issued</div>
-                  <div className="text-2xl font-bold text-primary">1,248</div>
-                </div>
+                <p className="text-xs text-text-muted mt-1">No incidents reported</p>
+              </div>
+              <div className="bg-surface-active rounded-sm p-3 border border-surface-border">
+                <p className="text-xs text-text-muted mb-1">Clearances Issued</p>
+                <span className="text-xl font-bold text-text-primary">1,248</span>
               </div>
             </div>
           </div>
         </ReportSection>
       </div>
-
     </div>
   )
 }
-

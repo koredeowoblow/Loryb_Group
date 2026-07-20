@@ -251,13 +251,13 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
                   onClick={() => setExpanded(prev => ({ ...prev, [item.to]: !prev[item.to] }))}
                   aria-expanded={isExpanded}
                   className={clsx(
-                    'flex w-full items-center justify-between px-3 py-2 rounded-sm',
-                    'text-sm font-semibold transition-colors group text-text-secondary hover:bg-surface-active hover:text-text-primary',
+                    'flex w-full min-h-[44px] items-center justify-between px-3 py-[10px] rounded-sm',
+                    'text-base font-bold transition-colors group text-text-secondary hover:bg-surface-active hover:text-text-primary',
                   )}
                 >
                   <span className="flex items-center gap-3">
                     <Icon
-                      size={16}
+                      size={18}
                       strokeWidth={2}
                       className="opacity-60 transition-transform group-hover:scale-105 group-hover:opacity-100"
                     />
@@ -280,16 +280,16 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
                           <Link
                             to={sub.to}
                             className={clsx(
-                              'relative block w-full py-2 rounded-sm text-sm transition-colors',
+                              'relative flex min-h-[44px] w-full items-center py-[10px] rounded-sm text-base transition-colors',
                               isActive
-                                ? 'bg-surface-active text-text-primary font-medium'
+                                ? 'bg-surface-active text-text-primary font-semibold'
                                 : 'text-text-secondary hover:bg-surface-active hover:text-text-primary',
                             )}
                           >
                             {isActive && (
                               <span className="absolute left-0 top-0 bottom-0 w-1 bg-accent rounded-r-sm" />
                             )}
-                            <span className="block pl-[40px] pr-3">
+                            <span className="block pl-[42px] pr-3">
                               {sub.label}
                             </span>
                           </Link>

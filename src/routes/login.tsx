@@ -40,7 +40,7 @@ function AuthInput({
       <div className="relative">
         <Icon
           size={16}
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none"
         />
         <input
           id={id}
@@ -51,7 +51,7 @@ function AuthInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="
-            w-full pl-10 pr-4 py-3 text-sm
+            w-full pl-[40px] pr-4 py-3 text-sm
             bg-white border rounded-sm
             text-text-primary placeholder:text-gray-400
             transition-colors
@@ -253,7 +253,7 @@ function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn btn-primary w-full py-3.5 mt-2 justify-center font-semibold tracking-wide disabled:opacity-60"
+                  className="btn btn-primary w-full py-[14px] mt-2 justify-center font-semibold tracking-wide disabled:opacity-60"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">

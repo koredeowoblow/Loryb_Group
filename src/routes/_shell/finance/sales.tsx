@@ -69,7 +69,7 @@ function SalesPage() {
           <h2 className="text-xl font-bold font-header tracking-tight text-primary">Sales Record</h2>
           <p className="text-sm text-text-secondary mt-1">Track revenue from dispatch and delivery operations.</p>
         </div>
-        <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light">
+        <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light">
           Log Sale
         </button>
       </div>
@@ -77,11 +77,11 @@ function SalesPage() {
       <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Revenue</div>
+            <div className="text-xs uppercase tracking-wider font-bold text-text-muted font-header">Total Revenue</div>
             <div className="text-lg font-bold text-status-success">₦ {totalRevenue.toLocaleString()}</div>
           </div>
           <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Transactions</div>
+            <div className="text-xs uppercase tracking-wider font-bold text-text-muted font-header">Transactions</div>
             <div className="text-lg font-bold text-primary">{filteredData.length}</div>
           </div>
         </div>
@@ -90,7 +90,7 @@ function SalesPage() {
         </div>
       </div>
 
-      <div className="panel-table flex flex-col min-h-[500px]">
+      <div className="panel-table flex flex-col flex-1 min-h-0">
         <DataTable
           columns={columns}
           data={filteredData}
@@ -104,7 +104,7 @@ function SalesPage() {
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Sale">
-        {errorMsg && <div className="mb-4 text-sm bg-status-error/10 border border-status-error/20 text-status-error font-medium p-2 rounded">{errorMsg}</div>}
+        {errorMsg && <div className="mb-4 text-sm bg-status-danger/10 border border-status-error/20 text-status-danger font-medium p-2 rounded">{errorMsg}</div>}
         <form onSubmit={(e) => { e.preventDefault(); e.stopPropagation(); form.handleSubmit() }} className="space-y-4">
           <form.Field name="date" children={(field) => <FormField field={field as any} label="Date" type="date" />} />
           <form.Field name="transporterName" children={(field) => <FormField field={field as any} label="Transporter Name" />} />
@@ -113,7 +113,7 @@ function SalesPage() {
           <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
             <button type="button" onClick={() => setIsModalOpen(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">Cancel</button>
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
-              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
+              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
                 {isSubmitting ? 'Logging...' : 'Log Sale'}
               </button>
             )} />

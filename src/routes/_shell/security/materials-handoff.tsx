@@ -150,15 +150,11 @@ function MaterialsHandoffPage() {
           }}
           className="space-y-4"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <form.Field name="vehicleNo" children={(field) => <FormField field={field} label="Vehicle No" />} />
             <form.Field name="driverName" children={(field) => <FormField field={field} label="Driver Name" />} />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
             <form.Field name="driverNo" children={(field) => <FormField field={field} label="Driver Contact No" />} />
             <form.Field name="materialQuality" children={(field) => <FormField field={field} label="Material Quality" />} />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
             <form.Field name="grainType" children={(field) => (
               <SelectField field={field} label="Grain Type" options={[
                 { label: 'Maize', value: 'Maize' },

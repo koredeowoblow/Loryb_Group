@@ -106,7 +106,7 @@ function GateLogDashboard() {
             <Clock size={15} className="text-text-muted" />
             <h3 className="text-sm font-semibold text-text-primary">Live Activity Feed</h3>
           </div>
-          <div className="flex-1 overflow-y-auto divide-y divide-surface-border max-h-[300px]">
+          <div className="flex-1 overflow-y-auto divide-y divide-surface-border flex-1 min-h-0">
             {isLoading
               ? Array.from({ length: 5 }).map((_, i) => (
                   <div key={i} className="px-4 py-3 animate-pulse flex justify-between">

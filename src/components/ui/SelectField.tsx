@@ -35,7 +35,7 @@ export function SelectField({
         ))}
       </select>
       {hasError ? (
-        <em id={errorId} className="text-status-error text-xs mt-1 block">
+        <em id={errorId} className="text-status-danger text-xs mt-1 block">
           {field.state.meta.errors.map((e: any) => typeof e === 'string' ? e : e?.message || 'Invalid input').join(', ')}
         </em>
       ) : null}

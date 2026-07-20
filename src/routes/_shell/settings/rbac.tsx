@@ -136,7 +136,7 @@ function RbacPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
         {/* Roles Sidebar */}
-        <div className="bg-surface panel-table overflow-hidden flex flex-col h-[calc(100vh-12rem)]">
+        <div className="bg-surface panel-table overflow-hidden flex flex-col flex-1 min-h-0">
           <div className="p-4 border-b border-surface-border bg-surface-muted/30">
             <h3 className="font-header font-bold uppercase tracking-wide text-sm text-primary flex items-center gap-2">
               <Users size={16} /> User Roles
@@ -153,7 +153,7 @@ function RbacPage() {
                 disabled={isEditing}
                 className={`w-full text-left px-4 py-3 rounded-md transition-colors ${
                   selectedRole === role.id 
-                    ? 'bg-primary text-white shadow-sm' 
+                    ? 'bg-primary text-text-inverse shadow-sm' 
                     : 'hover:bg-surface-active text-text-primary disabled:opacity-50 disabled:cursor-not-allowed'
                 }`}
               >
@@ -167,13 +167,13 @@ function RbacPage() {
         </div>
 
         {/* Permissions Configuration */}
-        <div className="lg:col-span-3 bg-surface panel-table flex flex-col h-[calc(100vh-12rem)]">
+        <div className="lg:col-span-3 bg-surface panel-table flex flex-col flex-1 min-h-0">
           <div className="p-6 border-b border-surface-border flex justify-between items-start bg-surface-muted/10">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="text-xl font-bold text-text-primary font-header">{activeRole.name}</h3>
                 {activeRole.isSystem && (
-                  <span className="px-2 py-0.5 bg-status-pending/20 text-status-pending-dark text-[0.65rem] font-bold uppercase tracking-wider rounded">System Role</span>
+                  <span className="px-2 py-0.5 bg-status-warning-bg text-status-warning text-xs font-bold uppercase tracking-wider rounded">System Role</span>
                 )}
               </div>
               <p className="text-sm text-text-secondary">{activeRole.description}</p>
@@ -218,7 +218,7 @@ function RbacPage() {
                             }`}
                           >
                             <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 mt-0.5 border transition-colors ${
-                              isGranted ? 'bg-primary border-primary text-white' : 'bg-surface border-surface-border text-transparent'
+                              isGranted ? 'bg-primary border-primary text-text-inverse' : 'bg-surface border-surface-border text-transparent'
                             }`}>
                               <Check size={14} />
                             </div>
@@ -278,7 +278,7 @@ function RbacPage() {
                 const categoryPerms = ALL_PERMISSIONS.filter(p => p.category === category)
                 return (
                   <div key={category} className="mb-4 last:mb-0">
-                    <h5 className="text-[0.65rem] font-bold text-primary uppercase tracking-wider mb-2">{category}</h5>
+                    <h5 className="text-xs font-bold text-primary uppercase tracking-wider mb-2">{category}</h5>
                     <div className="space-y-1">
                       {categoryPerms.map(perm => {
                         const isGranted = tempPermissions.includes(perm.id)

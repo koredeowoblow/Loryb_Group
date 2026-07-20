@@ -85,7 +85,7 @@ function UserManagementPage() {
       key: 'id', header: '', render: (row: User) => (
         <div className="flex justify-end gap-2">
           <button onClick={() => handleEdit(row)} className="text-primary hover:text-primary-hover font-bold font-header text-xs uppercase tracking-wider p-1 transition-colors">Edit</button>
-          <button onClick={() => setDeleteId(row.id)} className="text-status-error hover:text-status-error-dark font-bold font-header text-xs uppercase tracking-wider p-1 transition-colors">Delete</button>
+          <button onClick={() => setDeleteId(row.id)} className="text-status-danger hover:text-status-danger-dark font-bold font-header text-xs uppercase tracking-wider p-1 transition-colors">Delete</button>
         </div>
       )
     },
@@ -109,8 +109,8 @@ function UserManagementPage() {
 
       <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
-          <div><div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Users</div><div className="text-lg font-bold text-primary">{(usersData as User[]).length}</div></div>
-          <div><div className="text-[0.65rem] uppercase tracking-wider font-bold text-status-success font-header">Active</div><div className="text-lg font-bold text-status-success">{(usersData as User[]).filter(u => u.status === 'Active').length}</div></div>
+          <div><div className="text-xs uppercase tracking-wider font-bold text-text-muted font-header">Total Users</div><div className="text-lg font-bold text-primary">{(usersData as User[]).length}</div></div>
+          <div><div className="text-xs uppercase tracking-wider font-bold text-status-success font-header">Active</div><div className="text-lg font-bold text-status-success">{(usersData as User[]).filter(u => u.status === 'Active').length}</div></div>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
           <input type="text" placeholder="Search name or email..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted" />
@@ -121,7 +121,7 @@ function UserManagementPage() {
         </div>
       </div>
 
-      <div className="panel-table flex flex-col min-h-[500px]">
+      <div className="panel-table flex flex-col flex-1 min-h-0">
         <DataTable
           columns={columns}
           data={filteredUsers}
@@ -141,7 +141,7 @@ function UserManagementPage() {
             <form.Field name="role" children={(field) => (<SelectField field={field} label="Role" options={[{ label: 'Select Role...', value: '' }, ...(roles as any[]).map(r => ({ label: r.name, value: r.name }))]} />)} />
             <form.Field name="status" children={(field) => (<SelectField field={field} label="Status" options={[{ label: 'Active', value: 'Active' }, { label: 'Inactive', value: 'Inactive' }, { label: 'Pending', value: 'Pending' }]} />)} />
           </div>
-          {errorMsg && <div className="text-status-error text-sm mt-2">{errorMsg}</div>}
+          {errorMsg && <div className="text-status-danger text-sm mt-2">{errorMsg}</div>}
           <div className="pt-4 border-t border-surface-border flex justify-end gap-2">
             <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-ghost font-header uppercase tracking-wider">Cancel</button>
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
@@ -158,7 +158,7 @@ function UserManagementPage() {
           <p className="text-sm text-text-secondary">Are you sure you want to delete this user? This action cannot be undone.</p>
           <div className="flex justify-end gap-2 pt-4 border-t border-surface-border">
             <button onClick={() => setDeleteId('')} className="px-4 py-2 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">Cancel</button>
-            <button onClick={() => deleteMutation.mutate(deleteId)} disabled={deleteMutation.isPending} className="px-4 py-2 text-xs font-bold font-header uppercase tracking-wider text-white bg-status-error hover:bg-status-error-dark rounded shadow-sm border border-status-error-dark transition-colors disabled:opacity-50">
+            <button onClick={() => deleteMutation.mutate(deleteId)} disabled={deleteMutation.isPending} className="px-4 py-2 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-status-danger hover:bg-status-danger-dark rounded shadow-sm border border-status-error-dark transition-colors disabled:opacity-50">
               {deleteMutation.isPending ? 'Deleting...' : 'Delete User'}
             </button>
           </div>

@@ -32,7 +32,7 @@ function TripCard({ trip }: { trip: Trip }) {
     <div className="bg-surface p-3 rounded shadow-sm border border-surface-border flex flex-col gap-2">
       <div className="flex justify-between items-start">
         <div className="font-bold text-sm text-primary">{trip.truckNo}</div>
-        <div className="text-[0.65rem] uppercase tracking-wider bg-surface-muted px-1.5 py-0.5 rounded text-text-secondary font-bold">
+        <div className="text-xs uppercase tracking-wider bg-surface-muted px-1.5 py-0.5 rounded text-text-secondary font-bold">
           {trip.gatePassNo}
         </div>
       </div>
@@ -41,7 +41,7 @@ function TripCard({ trip }: { trip: Trip }) {
       </div>
       <div className="flex justify-between items-end mt-2">
         <div className="text-xs text-text-muted">{trip.driverName}</div>
-        <div className="text-[0.65rem] text-text-muted">{new Date(trip.etaOrCompletedAt).toLocaleDateString()}</div>
+        <div className="text-xs text-text-muted">{new Date(trip.etaOrCompletedAt).toLocaleDateString()}</div>
       </div>
     </div>
   )
@@ -98,7 +98,7 @@ function TripsPage() {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
+          className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
         >
           Schedule Trip
         </button>
@@ -108,7 +108,7 @@ function TripsPage() {
       <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Active Trips</div>
+            <div className="text-xs uppercase tracking-wider font-bold text-text-muted font-header">Total Active Trips</div>
             <div className="text-lg font-bold text-primary">{filteredData.length}</div>
           </div>
         </div>
@@ -137,7 +137,7 @@ function TripsPage() {
               <h3 className="font-header font-bold text-sm uppercase tracking-wider text-text-secondary">Pending</h3>
               <span className="bg-surface text-xs font-bold px-2 py-0.5 rounded shadow-sm border border-surface-border">{pending.length}</span>
             </div>
-            <div className="flex-1 overflow-y-auto space-y-3 min-h-[200px]">
+            <div className="flex-1 overflow-y-auto space-y-3 flex-1 min-h-0">
               {pending.length === 0 ? (
                  <div className="h-full flex flex-col items-center justify-center text-text-muted p-4 text-center border-2 border-dashed border-surface-border rounded">
                    <span className="text-2xl mb-1">📋</span>
@@ -155,7 +155,7 @@ function TripsPage() {
               <h3 className="font-header font-bold text-sm uppercase tracking-wider text-status-warning">In Transit</h3>
               <span className="bg-surface text-xs font-bold px-2 py-0.5 rounded shadow-sm border border-status-warning/30 text-status-warning">{inTransit.length}</span>
             </div>
-            <div className="flex-1 overflow-y-auto space-y-3 min-h-[200px]">
+            <div className="flex-1 overflow-y-auto space-y-3 flex-1 min-h-0">
               {inTransit.length === 0 ? (
                  <div className="h-full flex flex-col items-center justify-center text-text-muted p-4 text-center border-2 border-dashed border-surface-border rounded">
                    <span className="text-2xl mb-1">🚚</span>
@@ -173,7 +173,7 @@ function TripsPage() {
               <h3 className="font-header font-bold text-sm uppercase tracking-wider text-status-success">Delivered</h3>
               <span className="bg-surface text-xs font-bold px-2 py-0.5 rounded shadow-sm border border-status-success/30 text-status-success">{delivered.length}</span>
             </div>
-            <div className="flex-1 overflow-y-auto space-y-3 min-h-[200px]">
+            <div className="flex-1 overflow-y-auto space-y-3 flex-1 min-h-0">
               {delivered.length === 0 ? (
                  <div className="h-full flex flex-col items-center justify-center text-text-muted p-4 text-center border-2 border-dashed border-surface-border rounded">
                    <span className="text-2xl mb-1">🏁</span>
@@ -188,7 +188,7 @@ function TripsPage() {
       )}
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Trip">
-        {errorMsg && <div className="mb-4 text-sm bg-status-error/10 border border-status-error/20 text-status-error font-medium p-2 rounded">{errorMsg}</div>}
+        {errorMsg && <div className="mb-4 text-sm bg-status-danger/10 border border-status-error/20 text-status-danger font-medium p-2 rounded">{errorMsg}</div>}
         <form onSubmit={(e) => { e.preventDefault(); e.stopPropagation(); form.handleSubmit() }} className="space-y-4">
           <form.Field name="truckNo" children={(field) => <SelectField field={field as any} label="Truck No" options={truckOptions} />} />
           <form.Field name="driverName" children={(field) => <SelectField field={field as any} label="Driver Name" options={driverOptions} />} />
@@ -205,7 +205,7 @@ function TripsPage() {
           <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
             <button type="button" onClick={() => setIsModalOpen(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">Cancel</button>
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
-              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
+              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
                 {isSubmitting ? 'Scheduling...' : 'Schedule Trip'}
               </button>
             )} />

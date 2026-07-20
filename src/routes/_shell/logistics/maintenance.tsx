@@ -144,7 +144,7 @@ function MaintenancePage() {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
+          className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
         >
           Log Expense
         </button>
@@ -154,7 +154,7 @@ function MaintenancePage() {
       <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">
+            <div className="text-xs uppercase tracking-wider font-bold text-text-muted font-header">
               Total Expense
             </div>
             <div className="text-lg font-bold text-primary">
@@ -162,7 +162,7 @@ function MaintenancePage() {
             </div>
           </div>
           <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">
+            <div className="text-xs uppercase tracking-wider font-bold text-text-muted font-header">
               Fuel Costs
             </div>
             <div className="text-lg font-bold text-status-warning">
@@ -170,10 +170,10 @@ function MaintenancePage() {
             </div>
           </div>
           <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">
+            <div className="text-xs uppercase tracking-wider font-bold text-text-muted font-header">
               Repairs
             </div>
-            <div className="text-lg font-bold text-status-error">
+            <div className="text-lg font-bold text-status-danger">
               ₦ {maintenanceCost.toLocaleString()}
             </div>
           </div>
@@ -199,7 +199,7 @@ function MaintenancePage() {
         </div>
       </div>
 
-      <div className="panel-table flex flex-col min-h-[500px]">
+      <div className="panel-table flex flex-col flex-1 min-h-0">
         <DataTable
           columns={columns}
           data={filteredData}
@@ -285,7 +285,7 @@ function MaintenancePage() {
         title="Add Maintenance Log"
       >
         {errorMsg && (
-          <div className="mb-4 text-sm bg-status-error/10 border border-status-error/20 text-status-error font-medium p-2 rounded">
+          <div className="mb-4 text-sm bg-status-danger/10 border border-status-error/20 text-status-danger font-medium p-2 rounded">
             {errorMsg}
           </div>
         )}
@@ -365,7 +365,7 @@ function MaintenancePage() {
                 <button
                   type="submit"
                   disabled={!canSubmit || isSubmitting}
-                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
                 >
                   {isSubmitting ? "Logging..." : "Log Maintenance"}
                 </button>

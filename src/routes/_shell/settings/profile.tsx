@@ -65,7 +65,7 @@ function ProfilePage() {
           <h2 className="text-xl font-bold font-header tracking-tight text-text-primary">My Profile</h2>
           <p className="text-sm text-text-secondary mt-1">Manage your personal information and account settings.</p>
           {successMsg && <div className="text-sm text-status-success mt-2">{successMsg}</div>}
-          {errorMsg && <div className="text-sm text-status-error mt-2">{errorMsg}</div>}
+          {errorMsg && <div className="text-sm text-status-danger mt-2">{errorMsg}</div>}
         </div>
         <div className="flex gap-2">
           {isEditing ? (

@@ -102,7 +102,7 @@ function BinCardPage() {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
+          className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
         >
           Log Entry
         </button>
@@ -112,15 +112,15 @@ function BinCardPage() {
       <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Records</div>
+            <div className="text-xs uppercase tracking-wider font-bold text-text-muted font-header">Total Records</div>
             <div className="text-lg font-bold text-primary">{filteredData.length}</div>
           </div>
           <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-status-success font-header">Total In</div>
+            <div className="text-xs uppercase tracking-wider font-bold text-status-success font-header">Total In</div>
             <div className="text-lg font-bold text-status-success">{totalIn.toLocaleString()} kg</div>
           </div>
           <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-status-warning font-header">Total Out</div>
+            <div className="text-xs uppercase tracking-wider font-bold text-status-warning font-header">Total Out</div>
             <div className="text-lg font-bold text-status-warning">{totalOut.toLocaleString()} kg</div>
           </div>
         </div>
@@ -146,7 +146,7 @@ function BinCardPage() {
         </div>
       </div>
 
-      <div className="panel-table flex flex-col min-h-[500px]">
+      <div className="panel-table flex flex-col flex-1 min-h-0">
         <DataTable
           columns={columns}
           data={filteredData}
@@ -171,7 +171,7 @@ function BinCardPage() {
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Bin Card Entry">
-        {errorMsg && <div className="mb-4 text-sm bg-status-error/10 border border-status-error/20 text-status-error font-medium p-2 rounded">{errorMsg}</div>}
+        {errorMsg && <div className="mb-4 text-sm bg-status-danger/10 border border-status-error/20 text-status-danger font-medium p-2 rounded">{errorMsg}</div>}
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -206,7 +206,7 @@ function BinCardPage() {
                 <button
                   type="submit"
                   disabled={!canSubmit || isSubmitting}
-                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
                 >
                   {isSubmitting ? 'Updating...' : 'Update Bin Card'}
                 </button>

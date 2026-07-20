@@ -76,14 +76,14 @@ function SupplierPaymentsPage() {
           <h2 className="text-xl font-bold font-header tracking-tight text-primary">Supplier Payments</h2>
           <p className="text-sm text-text-secondary mt-1">Manage accounts payable for all supply operations.</p>
         </div>
-        <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light">Log Payment</button>
+        <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light">Log Payment</button>
       </div>
 
       <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
-          <div><div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Owed</div><div className="text-lg font-bold text-primary">₦ {totalOwed.toLocaleString()}</div></div>
-          <div><div className="text-[0.65rem] uppercase tracking-wider font-bold text-status-success font-header">Total Paid</div><div className="text-lg font-bold text-status-success">₦ {totalPaid.toLocaleString()}</div></div>
-          <div><div className="text-[0.65rem] uppercase tracking-wider font-bold text-status-error font-header">Outstanding</div><div className="text-lg font-bold text-status-error">₦ {outstanding.toLocaleString()}</div></div>
+          <div><div className="text-xs uppercase tracking-wider font-bold text-text-muted font-header">Total Owed</div><div className="text-lg font-bold text-primary">₦ {totalOwed.toLocaleString()}</div></div>
+          <div><div className="text-xs uppercase tracking-wider font-bold text-status-success font-header">Total Paid</div><div className="text-lg font-bold text-status-success">₦ {totalPaid.toLocaleString()}</div></div>
+          <div><div className="text-xs uppercase tracking-wider font-bold text-status-danger font-header">Outstanding</div><div className="text-lg font-bold text-status-danger">₦ {outstanding.toLocaleString()}</div></div>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
           <input type="text" placeholder="Search supplier name..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted" />
@@ -96,7 +96,7 @@ function SupplierPaymentsPage() {
         </div>
       </div>
 
-      <div className="panel-table flex flex-col min-h-[500px]">
+      <div className="panel-table flex flex-col flex-1 min-h-0">
         <DataTable
           columns={columns}
           data={filteredData}
@@ -110,7 +110,7 @@ function SupplierPaymentsPage() {
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Supplier Payment">
-        {errorMsg && <div className="mb-4 text-sm bg-status-error/10 border border-status-error/20 text-status-error font-medium p-2 rounded">{errorMsg}</div>}
+        {errorMsg && <div className="mb-4 text-sm bg-status-danger/10 border border-status-error/20 text-status-danger font-medium p-2 rounded">{errorMsg}</div>}
         <form onSubmit={(e) => { e.preventDefault(); e.stopPropagation(); form.handleSubmit() }} className="space-y-4">
           <form.Field name="date" children={(field) => <FormField field={field as any} label="Date" type="date" />} />
           <form.Field name="supplierName" children={(field) => <FormField field={field as any} label="Supplier Name" />} />
@@ -121,7 +121,7 @@ function SupplierPaymentsPage() {
           <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
             <button type="button" onClick={() => setIsModalOpen(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">Cancel</button>
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
-              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
+              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
                 {isSubmitting ? 'Authorizing...' : 'Authorize Payment'}
               </button>
             )} />

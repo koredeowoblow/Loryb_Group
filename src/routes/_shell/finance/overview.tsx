@@ -74,18 +74,18 @@ function FinancialOverviewPage() {
         <div className="panel p-5 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="flex justify-between items-center mb-2">
             <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted">Total Expenditures</div>
-            <Receipt size={16} className="text-status-error-dark" />
+            <Receipt size={16} className="text-status-danger-dark" />
           </div>
-          <div className="text-3xl font-bold text-status-error-dark">₦ {(totalExpenses + totalPayroll + totalSupplierPaid).toLocaleString()}</div>
+          <div className="text-3xl font-bold text-status-danger-dark">₦ {(totalExpenses + totalPayroll + totalSupplierPaid).toLocaleString()}</div>
           <div className="text-xs text-text-secondary mt-2">Combined Outbound Costs</div>
         </div>
 
         <div className="panel p-5 bg-surface-muted/30 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="flex justify-between items-center mb-2">
             <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted">Outstanding Payables</div>
-            <CreditCard size={16} className="text-status-pending-dark" />
+            <CreditCard size={16} className="text-status-warning" />
           </div>
-          <div className="text-3xl font-bold text-status-pending-dark">₦ {totalSupplierOwed.toLocaleString()}</div>
+          <div className="text-3xl font-bold text-status-warning">₦ {totalSupplierOwed.toLocaleString()}</div>
           <div className="text-xs text-text-secondary mt-2">Supplier Owed Balances</div>
         </div>
       </div>
@@ -177,7 +177,7 @@ function FinancialOverviewPage() {
                 </div>
                 <div className="text-right">
                   <div className="font-bold text-sm text-status-success-dark">₦ {s.amountPaid.toLocaleString()}</div>
-                  <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted mt-1">Remaining: ₦{s.amountOwed.toLocaleString()}</div>
+                  <div className="text-xs uppercase tracking-wider font-bold text-text-muted mt-1">Remaining: ₦{s.amountOwed.toLocaleString()}</div>
                 </div>
               </div>
             ))

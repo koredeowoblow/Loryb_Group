@@ -82,7 +82,7 @@ function NotificationsPage() {
           <Bell className="text-primary" />
           <h2 className="text-xl font-bold font-header tracking-tight text-text-primary">Notifications</h2>
           {unreadCount > 0 && (
-            <span className="ml-2 px-2 py-0.5 rounded-full bg-status-error text-white text-xs font-bold">
+            <span className="ml-2 px-2 py-0.5 rounded-full bg-status-danger text-text-inverse text-xs font-bold">
               {unreadCount} New
             </span>
           )}
@@ -95,7 +95,7 @@ function NotificationsPage() {
         </button>
       </div>
 
-      <div className="panel-table flex flex-col min-h-[500px]">
+      <div className="panel-table flex flex-col flex-1 min-h-0">
         <div className="flex border-b border-surface-border">
           <button 
             onClick={() => setFilter('all')}
@@ -143,7 +143,7 @@ function NotificationsPage() {
                     {notification.type === 'info' && <Info className="text-primary" size={20} />}
                     {notification.type === 'warning' && <AlertTriangle className="text-status-warning" size={20} />}
                     {notification.type === 'success' && <CheckCircle className="text-status-success" size={20} />}
-                    {notification.type === 'alert' && <AlertTriangle className="text-status-error" size={20} />}
+                    {notification.type === 'alert' && <AlertTriangle className="text-status-danger" size={20} />}
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-1">

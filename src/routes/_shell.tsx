@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState, redirect, useNavigate } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   LayoutDashboard, Shield, Warehouse, Truck, DollarSign,
   ChevronDown, ChevronRight, LogOut, Settings as SettingsIcon,
@@ -77,7 +77,7 @@ function ShellLayout() {
       {/* Mobile overlay */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-gray-900/50 z-20 md:hidden"
+          className="fixed inset-0 bg-surface-base/80 backdrop-blur-sm z-20 md:hidden"
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
         />
@@ -173,8 +173,56 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
 
   const navItems = ALL_NAV.filter(item => item.roles.includes(role as any))
 
+  const asideRef = useRef<HTMLElement>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement
+      asideRef.current?.focus()
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus()
+      previousFocusRef.current = null
+    }
+  }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false)
+        return
+      }
+
+      if (e.key === 'Tab' && asideRef.current) {
+        const focusable = asideRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusable.length === 0) return
+
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, setIsOpen])
+
   return (
-    <aside className={clsx(
+    <aside
+      ref={asideRef}
+      tabIndex={-1}
+      className={clsx(
       'bg-surface-raised border-r border-surface-border flex flex-col z-30',
       'overflow-y-auto transition-transform duration-300',
       'fixed md:static inset-y-0 left-0 w-64',
@@ -186,10 +234,10 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
           <img src="/logo.png" alt="" className="h-8 w-auto object-cover object-left" />
         </div>
         <div className="flex flex-col justify-center">
-          <span className="text-[14px] font-bold text-text-primary leading-tight tracking-tight">
+          <span className="text-base font-bold text-text-primary leading-tight tracking-tight">
             LORYB GROUP
           </span>
-          <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider leading-none">
+          <span className="text-xs font-semibold text-text-muted uppercase tracking-wider leading-none">
             Of Companies
           </span>
         </div>
@@ -242,7 +290,7 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
                       return (
                         <li key={sub.to} className="relative">
                           {isActive && (
-                            <span className="absolute -left-[13px] top-1/2 -translate-y-1/2 w-1 h-4 rounded-full bg-accent" />
+                            <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-1 h-4 rounded-full bg-accent" />
                           )}
                           <Link
                             to={sub.to}
@@ -320,7 +368,7 @@ function TopNav({
         </button>
 
         {/* Avatar */}
-        <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold ring-2 ring-primary/20">
+        <div className="w-8 h-8 rounded-full bg-primary text-text-inverse flex items-center justify-center text-sm font-bold ring-2 ring-primary/20">
           {role.charAt(0).toUpperCase()}
         </div>
       </div>

@@ -237,15 +237,21 @@ function LoginPage() {
                       <tr key={role} className="hover:bg-surface-active transition-colors">
                         <td className="px-4 py-2 font-medium text-text-primary">{role}</td>
                         <td
-                          className="px-4 py-2 cursor-pointer hover:text-primary transition-colors"
+                          className="px-4 py-2 cursor-pointer hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                          role="button"
+                          tabIndex={0}
                           onClick={() => setEmail(emailVal)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setEmail(emailVal); } }}
                           title="Click to fill"
                         >
                           {emailVal}
                         </td>
                         <td
-                          className="px-4 py-2 font-mono cursor-pointer hover:text-primary transition-colors"
+                          className="px-4 py-2 font-mono cursor-pointer hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                          role="button"
+                          tabIndex={0}
                           onClick={() => setPassword(pass)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPassword(pass); } }}
                           title="Click to fill"
                         >
                           {pass}

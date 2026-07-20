@@ -47,7 +47,7 @@ function LogsPage() {
           </nav>
         </div>
         
-        <div className="p-8 flex flex-col items-center justify-center min-h-[300px] text-center">
+        <div className="p-8 flex flex-col items-center justify-center flex-1 min-h-0 text-center">
           <div className="w-16 h-16 rounded-full bg-surface-muted flex items-center justify-center mb-4 text-text-muted">
             <ClipboardList size={32} />
           </div>

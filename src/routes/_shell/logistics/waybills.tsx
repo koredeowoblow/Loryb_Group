@@ -54,11 +54,11 @@ function WaybillsPage() {
       <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex gap-6">
           <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-text-muted font-header">Total Waybills</div>
+            <div className="text-xs uppercase tracking-wider font-bold text-text-muted font-header">Total Waybills</div>
             <div className="text-lg font-bold text-primary">{filteredData.length}</div>
           </div>
           <div>
-            <div className="text-[0.65rem] uppercase tracking-wider font-bold text-status-warning font-header">Active Transit</div>
+            <div className="text-xs uppercase tracking-wider font-bold text-status-warning font-header">Active Transit</div>
             <div className="text-lg font-bold text-status-warning">{activeWaybills}</div>
           </div>
         </div>
@@ -84,7 +84,7 @@ function WaybillsPage() {
         </div>
       </div>
 
-      <div className="panel-table flex flex-col min-h-[500px]">
+      <div className="panel-table flex flex-col flex-1 min-h-0">
         <DataTable
           columns={columns}
           data={filteredData}

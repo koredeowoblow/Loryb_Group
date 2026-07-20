@@ -48,8 +48,8 @@ function StockOverviewPage() {
       </div>
 
       {activeAlerts.length > 0 && (
-        <div className="bg-status-error/10 border border-status-error/20 p-4 rounded-md">
-          <div className="flex items-center gap-2 text-status-error font-bold font-header uppercase tracking-wider text-sm mb-3">
+        <div className="bg-status-danger/10 border border-status-error/20 p-4 rounded-md">
+          <div className="flex items-center gap-2 text-status-danger font-bold font-header uppercase tracking-wider text-sm mb-3">
             <AlertTriangle size={18} /> Active Stock Alerts
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -57,7 +57,7 @@ function StockOverviewPage() {
               <div key={alert.id} className="bg-surface p-3 rounded border border-status-error/20 shadow-sm flex flex-col hover:border-status-error/50 transition-all">
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-bold text-text-primary">{alert.grainType}</span>
-                  <span className={`text-[0.65rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${alert.status === 'critical' ? 'bg-status-error text-white' : 'bg-status-pending-dark text-white'}`}>
+                  <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded ${alert.status === 'critical' ? 'bg-status-danger text-text-inverse' : 'bg-status-warning text-text-inverse'}`}>
                     {alert.status}
                   </span>
                 </div>
@@ -126,7 +126,7 @@ function StockOverviewPage() {
             <ArrowDownToLine size={18} />
             <h3 className="font-header font-bold uppercase tracking-wide text-sm">Recent Intake (GRN)</h3>
           </div>
-          <div className="p-0 flex-1 overflow-y-auto max-h-[340px]">
+          <div className="p-0 flex-1 overflow-y-auto flex-1 min-h-0">
             {grn.length > 0 ? grn.slice(0, 6).map((g: any, i) => (
               <div key={`grn-${i}`} className="p-4 border-b border-surface-border hover:bg-surface-active transition-colors flex justify-between items-center">
                 <div>

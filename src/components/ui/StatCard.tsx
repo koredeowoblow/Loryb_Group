@@ -44,12 +44,12 @@ export function StatCard({
       )}
     >
       {/* Header row */}
-      <div className="flex justify-between items-start mb-2">
-        <p className={clsx('text-xs font-medium uppercase tracking-wider', hero ? 'text-white/70' : 'text-text-secondary')}>
+      <div className="flex justify-between items-start mb-2 gap-2">
+        <p className={clsx('text-sm font-semibold truncate', hero ? 'text-text-inverse/80' : 'text-text-secondary')}>
           {title}
         </p>
         {icon && (
-          <span className={clsx('opacity-60', hero ? 'text-white' : alert ? 'text-status-danger' : 'text-text-muted')}>
+          <span className={clsx('opacity-60', hero ? 'text-text-inverse' : alert ? 'text-status-danger' : 'text-text-muted')}>
             {icon}
           </span>
         )}
@@ -57,8 +57,8 @@ export function StatCard({
 
       {/* Value */}
       <p className={clsx(
-        'text-2xl font-bold tracking-tight',
-        hero ? 'text-white' : alert ? 'text-status-danger' : 'text-text-primary'
+        'text-2xl font-bold tracking-tight truncate',
+        hero ? 'text-text-inverse' : alert ? 'text-status-danger' : 'text-text-primary'
       )}>
         {value}
       </p>
@@ -78,7 +78,7 @@ export function StatCard({
             </span>
           )}
           {subtitle && (
-            <span className={clsx('text-xs', hero ? 'text-white/60' : 'text-text-muted')}>
+            <span className={clsx('text-xs', hero ? 'text-text-inverse/60' : 'text-text-muted')}>
               {subtitle}
             </span>
           )}

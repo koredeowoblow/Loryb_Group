@@ -97,7 +97,7 @@ function FleetPage() {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light flex items-center gap-2"
+          className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light flex items-center gap-2"
         >
           <TruckIcon size={16} /> Register Truck
         </button>
@@ -116,8 +116,8 @@ function FleetPage() {
         </div>
         <div className="panel p-4 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">In Maintenance</div>
-          <div className="text-3xl font-bold text-status-error-dark">{maintenanceTrucks}</div>
-          <div className="text-xs text-status-error-dark mt-1">Currently unavailable</div>
+          <div className="text-3xl font-bold text-status-danger-dark">{maintenanceTrucks}</div>
+          <div className="text-xs text-status-danger-dark mt-1">Currently unavailable</div>
         </div>
         <div className="panel p-4 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted mb-1">Active Trips</div>
@@ -191,11 +191,11 @@ function FleetPage() {
                      <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-surface-border -z-10"></div>
                      <div className="flex flex-col items-center bg-surface px-1">
                        <MapPin size={14} className="text-status-success-dark mb-1" />
-                       <span className="text-[0.65rem] font-bold uppercase tracking-wider text-text-muted">{trip.origin}</span>
+                       <span className="text-xs font-bold uppercase tracking-wider text-text-muted">{trip.origin}</span>
                      </div>
                      <div className="flex flex-col items-center bg-surface px-1">
-                       <Navigation size={14} className="text-status-error-dark mb-1" />
-                       <span className="text-[0.65rem] font-bold uppercase tracking-wider text-text-muted">{trip.destination}</span>
+                       <Navigation size={14} className="text-status-danger-dark mb-1" />
+                       <span className="text-xs font-bold uppercase tracking-wider text-text-muted">{trip.destination}</span>
                      </div>
                    </div>
                  </div>
@@ -210,7 +210,7 @@ function FleetPage() {
         </div>
 
         {/* Right Col: Fleet Registry Table */}
-        <div className="xl:col-span-2 flex flex-col h-full min-h-[500px]">
+        <div className="xl:col-span-2 flex flex-col h-full flex-1 min-h-0">
           <DataTable
             columns={columns}
             data={data || []}
@@ -223,7 +223,7 @@ function FleetPage() {
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Register Truck">
-        {errorMsg && <div className="mb-4 text-sm bg-status-error/10 border border-status-error/20 text-status-error font-medium p-2 rounded">{errorMsg}</div>}
+        {errorMsg && <div className="mb-4 text-sm bg-status-danger/10 border border-status-error/20 text-status-danger font-medium p-2 rounded">{errorMsg}</div>}
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -257,7 +257,7 @@ function FleetPage() {
                 <button
                   type="submit"
                   disabled={!canSubmit || isSubmitting}
-                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-white bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
                 >
                   {isSubmitting ? 'Saving...' : 'Register'}
                 </button>

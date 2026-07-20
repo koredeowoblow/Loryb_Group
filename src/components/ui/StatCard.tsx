@@ -37,14 +37,14 @@ export function StatCard({
     <div
       className={clsx(
         // Base: use .card from index.css (surface-raised + rounded-md + shadow-md + border)
-        'card card-hover flex flex-col p-4',
+        'card card-hover flex flex-col p-6',
         hero && 'bg-primary border-primary shadow-lg',
         alert && 'border-status-danger bg-status-danger/5',
         className,
       )}
     >
       {/* Header row */}
-      <div className="flex justify-between items-start mb-2 gap-2">
+      <div className="flex justify-between items-start mb-4 gap-2">
         <p className={clsx('text-sm font-semibold truncate', hero ? 'text-text-inverse/80' : 'text-text-secondary')}>
           {title}
         </p>
@@ -65,7 +65,7 @@ export function StatCard({
 
       {/* Footer: subtitle + trend */}
       {(subtitle || trend) && (
-        <div className="flex items-center gap-2 mt-1 flex-wrap">
+        <div className="flex items-center gap-2 mt-4 flex-wrap">
           {trend && (
             <span className={clsx(
               'inline-flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-sm',

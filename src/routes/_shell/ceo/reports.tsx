@@ -65,12 +65,12 @@ function ReportSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex flex-col gap-4">
-      <div className="flex items-center gap-2 border-b border-surface-border pb-3">
+    <section className="flex flex-col gap-6">
+      <div className="flex items-center gap-2 border-b border-surface-border pb-4">
         <Icon size={18} className="text-primary opacity-80" />
         <h2 className="text-lg font-bold text-text-primary">{title}</h2>
       </div>
-      <div className="flex flex-col gap-5">{children}</div>
+      <div className="flex flex-col gap-6">{children}</div>
     </section>
   );
 }
@@ -110,11 +110,11 @@ function ChartBlock({
 }) {
   return (
     <div className="card flex flex-col">
-      <div className="flex items-center px-4 py-3 border-b border-surface-border gap-2">
+      <div className="flex items-center px-6 py-4 border-b border-surface-border gap-2">
         {Icon && <Icon size={15} className="text-primary opacity-80" />}
         <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
       </div>
-      <div className="p-4 flex flex-col gap-4 flex-1">
+      <div className="p-6 flex flex-col gap-6 flex-1">
         {children}
         {legend && <ChartLegend items={legend} />}
       </div>
@@ -331,7 +331,7 @@ function ReportsPage() {
   ];
 
   return (
-    <div className="space-y-6 pb-12 font-sans">
+    <div className="flex flex-col gap-10 p-8 font-sans bg-surface-base min-h-full">
       {/* ── Page header ───────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
@@ -355,7 +355,7 @@ function ReportsPage() {
       {/* ── AI Executive Summary ──────────────────────────────────────────── */}
       {/* Uses info semantic tokens — restrained, on-system, no amber gradient */}
       <div
-        className="card p-4 flex gap-3 items-start border-l-4"
+        className="card p-6 flex gap-4 items-start border-l-4"
         style={{ borderLeftColor: `rgb(var(--color-status-info))` }}
       >
         <div
@@ -369,7 +369,7 @@ function ReportsPage() {
         </div>
         <div>
           <p
-            className="text-xs font-semibold uppercase tracking-wide mb-1"
+            className="text-xs font-semibold uppercase tracking-wide mb-3"
             style={{ color: `rgb(var(--color-status-info))` }}
           >
             AI Executive Summary
@@ -395,7 +395,7 @@ function ReportsPage() {
           Gross Revenue uses hero=true (same pattern as Overview).
           The other three are equal weight — no arbitrary single highlight.
         */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1">
             <StatCard
               hero
@@ -426,7 +426,7 @@ function ReportsPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Revenue vs Costs trend — 2/3 width */}
           <ChartBlock
             title="Revenue vs Costs Trend"
@@ -565,7 +565,7 @@ function ReportsPage() {
 
       {/* ── Warehouse Operations ──────────────────────────────────────────── */}
       <ReportSection title="Warehouse Operations" icon={Package}>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             title="Total Intake (YTD)"
             value={`${warehouse.intakeVolume.toLocaleString()} MT`}
@@ -640,10 +640,10 @@ function ReportsPage() {
       </ReportSection>
 
       {/* ── Logistics & Fleet + Security side-by-side ─────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Logistics & Fleet */}
         <ReportSection title="Logistics & Fleet" icon={Truck}>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-6">
             <StatCard
               title="Fleet Utilization"
               value={`${logistics.fleetUtilization}%`}
@@ -698,7 +698,7 @@ function ReportsPage() {
 
         {/* Security & Personnel */}
         <ReportSection title="Security & Personnel" icon={Shield}>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-6">
             <StatCard
               title="Active Visitors"
               value={
@@ -752,7 +752,7 @@ function ReportsPage() {
             </div>
 
             {/* Metric tiles — same styling as Overview mini-stat tiles */}
-            <div className="grid grid-cols-2 gap-3 mt-auto">
+            <div className="grid grid-cols-2 gap-6 mt-auto">
               <div className="bg-surface-active rounded-sm p-3 border border-surface-border">
                 <p className="text-xs text-text-muted mb-1">
                   Gate Incidents (30d)

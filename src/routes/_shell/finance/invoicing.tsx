@@ -12,6 +12,9 @@ import { Modal } from '../../../components/ui/Modal'
 import { FormField } from '../../../components/ui/FormField'
 import { SelectField } from '../../../components/ui/SelectField'
 import { Badge } from '../../../components/ui/Badge'
+import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
+import { Select } from '../../../components/ui/Select'
 
 export const Route = createFileRoute('/_shell/finance/invoicing')({
   component: InvoicesPage,
@@ -80,7 +83,7 @@ function InvoicesPage() {
           <h2 className="text-xl font-bold font-header tracking-tight text-primary">Invoicing & Billing</h2>
           <p className="text-sm text-text-secondary mt-1">Manage outbound invoices and track payment status.</p>
         </div>
-        <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light">Create Invoice</button>
+        <Button onClick={() => setIsModalOpen(true)}>Create Invoice</Button>
       </div>
 
       <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -90,14 +93,14 @@ function InvoicesPage() {
           <div><div className="text-xs uppercase tracking-wider font-bold text-status-danger font-header">Overdue</div><div className="text-lg font-bold text-status-danger">₦ {overdueAmount.toLocaleString()}</div></div>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          <input type="text" placeholder="Search invoice or party..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted" />
-          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted cursor-pointer">
+          <Input type="text" placeholder="Search invoice or party..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-64" />
+          <Select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
             <option value="All">All Statuses</option>
             <option value="draft">Draft</option>
             <option value="sent">Sent</option>
             <option value="paid">Paid</option>
             <option value="overdue">Overdue</option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -109,7 +112,7 @@ function InvoicesPage() {
           isLoading={isLoading}
           emptyMessage={searchTerm || statusFilter !== 'All' ? "No invoices match your current filters." : "No invoices in the system yet."}
           emptyIcon={<FileText size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />}
-          actions={(!searchTerm && statusFilter === 'All') && (<button onClick={() => setIsModalOpen(true)} className="text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors">Create Invoice</button>)}
+          actions={(!searchTerm && statusFilter === 'All') && (<Button variant="secondary" onClick={() => setIsModalOpen(true)} className="border-primary text-primary hover:text-primary-hover">Create Invoice</Button>)}
           className="rounded-none shadow-none border-2 border-surface-border"
         />
       </div>
@@ -126,11 +129,11 @@ function InvoicesPage() {
           <form.Field name="linkedSaleId" children={(field) => (<SelectField field={field as any} label="Linked Sale (Optional)" options={[{ label: 'None', value: '' }, ...salesOptions]} />)} />
           <form.Field name="linkedSupplierPaymentId" children={(field) => (<SelectField field={field as any} label="Linked Supplier Payment (Optional)" options={[{ label: 'None', value: '' }, ...supplierOptions]} />)} />
           <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">Cancel</button>
+            <Button variant="secondary" type="button" onClick={() => setIsModalOpen(false)}>Cancel</Button>
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
-              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
+              <Button type="submit" disabled={!canSubmit || isSubmitting} isLoading={isSubmitting}>
                 {isSubmitting ? 'Issuing...' : 'Issue Invoice'}
-              </button>
+              </Button>
             )} />
           </div>
         </form>

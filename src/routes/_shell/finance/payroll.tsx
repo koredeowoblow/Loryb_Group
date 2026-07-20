@@ -10,6 +10,9 @@ import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
 import { Modal } from '../../../components/ui/Modal'
 import { FormField } from '../../../components/ui/FormField'
+import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
+import { Select } from '../../../components/ui/Select'
 
 export const Route = createFileRoute('/_shell/finance/payroll')({
   component: PayrollPage,
@@ -72,7 +75,7 @@ function PayrollPage() {
           <h2 className="text-xl font-bold font-header tracking-tight text-primary">Payroll Registry</h2>
           <p className="text-sm text-text-secondary mt-1">Manage employee compensation and attendance records.</p>
         </div>
-        <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light">Log Payroll</button>
+        <Button onClick={() => setIsModalOpen(true)}>Log Payroll</Button>
       </div>
 
       <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -87,11 +90,11 @@ function PayrollPage() {
           </div>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          <input type="text" placeholder="Search staff or department..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted" />
-          <select value={periodFilter} onChange={e => setPeriodFilter(e.target.value)} className="px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted cursor-pointer">
+          <Input type="text" placeholder="Search staff or department..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-64" />
+          <Select value={periodFilter} onChange={e => setPeriodFilter(e.target.value)}>
             <option value="All">All Periods</option>
             {periods.map((p: string) => <option key={p} value={p}>{p}</option>)}
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -103,7 +106,7 @@ function PayrollPage() {
           isLoading={isLoading}
           emptyMessage={searchTerm || periodFilter !== 'All' ? "No records match your current filters." : "No payroll records yet. Log the first entry."}
           emptyIcon={<Users size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />}
-          actions={(!searchTerm && periodFilter === 'All') && (<button onClick={() => setIsModalOpen(true)} className="text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors">Log Payroll</button>)}
+          actions={(!searchTerm && periodFilter === 'All') && (<Button variant="secondary" onClick={() => setIsModalOpen(true)} className="border-primary text-primary hover:text-primary-hover">Log Payroll</Button>)}
           className="rounded-none shadow-none border-2 border-surface-border"
         />
       </div>
@@ -117,11 +120,11 @@ function PayrollPage() {
           <form.Field name="daysPresent" children={(field) => <FormField field={field as any} label="Days Present" type="number" />} />
           <form.Field name="amount" children={(field) => <FormField field={field as any} label="Amount (₦)" type="number" />} />
           <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">Cancel</button>
+            <Button variant="secondary" type="button" onClick={() => setIsModalOpen(false)}>Cancel</Button>
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
-              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
+              <Button type="submit" disabled={!canSubmit || isSubmitting} isLoading={isSubmitting}>
                 {isSubmitting ? 'Processing...' : 'Process Payroll'}
-              </button>
+              </Button>
             )} />
           </div>
         </form>

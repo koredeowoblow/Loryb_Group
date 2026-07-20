@@ -12,6 +12,7 @@ import { Modal } from '../../../components/ui/Modal'
 import { FormField } from '../../../components/ui/FormField'
 import { DateTimeField } from '../../../components/ui/DateTimeField'
 import { SelectField } from '../../../components/ui/SelectField'
+import { Select } from '../../../components/ui/Select'
 import { DataTable, Column } from '../../../components/ui/DataTable'
 import { Button } from '../../../components/ui/Button'
 import { StatCard } from '../../../components/ui/StatCard'
@@ -128,16 +129,12 @@ function SuppliersPage() {
         }
         actions={
           <div className="flex items-center gap-3">
-            <select
-              value={grainFilter}
-              onChange={e => setGrainFilter(e.target.value)}
-              className="px-3 py-1.5 text-sm border border-surface-border rounded-sm bg-surface-base focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors text-text-primary"
-            >
+            <Select value={grainFilter} onChange={e => setGrainFilter(e.target.value)}>
               <option value="All">All Grains</option>
               <option value="Maize">Maize</option>
               <option value="Sorghum">Sorghum</option>
               <option value="SoyaBeans">Soya Beans</option>
-            </select>
+            </Select>
             <Button onClick={() => setIsModalOpen(true)}>
               Log Supplier
             </Button>

@@ -2,6 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Shield, Lock, Users, Check, Edit } from 'lucide-react'
 import { Modal } from '../../../components/ui/Modal'
+import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
 
 export const Route = createFileRoute('/_shell/settings/rbac')({
   component: RbacPage,
@@ -128,9 +130,9 @@ function RbacPage() {
           </h2>
           <p className="text-sm text-text-secondary mt-1">Manage role-based access control and system permissions.</p>
         </div>
-        <button className="btn btn-primary font-header uppercase tracking-wider">
+        <Button>
           Create Custom Role
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -180,12 +182,12 @@ function RbacPage() {
             </div>
             
             <div className="flex gap-2">
-              <button 
+              <Button 
                 onClick={handleEdit} 
-                className="btn btn-primary px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider flex items-center gap-1.5"
+                className="flex items-center gap-1.5"
               >
                 <Edit size={14} /> Edit Role
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -252,12 +254,11 @@ function RbacPage() {
           )}
           <div>
             <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1">Role Name</label>
-            <input 
+            <Input 
               type="text" 
               value={editFormData.name}
               disabled={activeRole.isSystem}
               onChange={e => setEditFormData({...editFormData, name: e.target.value})}
-              className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors text-sm font-bold text-text-primary disabled:opacity-60 disabled:cursor-not-allowed" 
             />
           </div>
           <div>
@@ -303,13 +304,13 @@ function RbacPage() {
           </div>
 
           <div className="pt-4 border-t border-surface-border flex justify-end gap-2">
-            <button onClick={handleCancel} className="btn btn-ghost font-header uppercase tracking-wider">
+            <Button variant="ghost" onClick={handleCancel}>
               {activeRole.isSystem ? 'Close' : 'Cancel'}
-            </button>
+            </Button>
             {!activeRole.isSystem && (
-              <button onClick={handleSave} className="btn btn-primary font-header uppercase tracking-wider">
+              <Button onClick={handleSave}>
                 Save Changes
-              </button>
+              </Button>
             )}
           </div>
         </div>

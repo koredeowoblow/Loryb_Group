@@ -12,6 +12,8 @@ import { useForm } from '@tanstack/react-form'
 import { Modal } from '../../../components/ui/Modal'
 import { FormField } from '../../../components/ui/FormField'
 import { SelectField } from '../../../components/ui/SelectField'
+import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
 
 export const Route = createFileRoute('/_shell/finance/sales')({
   component: SalesPage,
@@ -69,9 +71,9 @@ function SalesPage() {
           <h2 className="text-xl font-bold font-header tracking-tight text-primary">Sales Record</h2>
           <p className="text-sm text-text-secondary mt-1">Track revenue from dispatch and delivery operations.</p>
         </div>
-        <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light">
+        <Button onClick={() => setIsModalOpen(true)}>
           Log Sale
-        </button>
+        </Button>
       </div>
 
       <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -86,7 +88,7 @@ function SalesPage() {
           </div>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          <input type="text" placeholder="Search transporter..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
+          <Input type="text" placeholder="Search transporter..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-64" />
         </div>
       </div>
 
@@ -98,7 +100,7 @@ function SalesPage() {
           isLoading={isLoading}
           emptyMessage={searchTerm ? "We couldn't find any sales matching your current search." : "There are currently no sales recorded in the system."}
           emptyIcon={<TrendingUp size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />}
-          actions={!searchTerm && (<button onClick={() => setIsModalOpen(true)} className="text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors">Log Sale</button>)}
+          actions={!searchTerm && (<Button variant="secondary" onClick={() => setIsModalOpen(true)} className="border-primary text-primary hover:text-primary-hover">Log Sale</Button>)}
           className="rounded-none shadow-none border-2 border-surface-border"
         />
       </div>
@@ -111,11 +113,11 @@ function SalesPage() {
           <form.Field name="linkedDispatchRecordId" children={(field) => (<SelectField field={field as any} label="Linked Dispatch Record (Optional)" options={[{ label: 'None', value: '' }, ...dispatchOptions]} />)} />
           <form.Field name="amount" children={(field) => <FormField field={field as any} label="Amount (₦)" type="number" />} />
           <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">Cancel</button>
+            <Button variant="secondary" type="button" onClick={() => setIsModalOpen(false)}>Cancel</Button>
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
-              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
+              <Button type="submit" disabled={!canSubmit || isSubmitting} isLoading={isSubmitting}>
                 {isSubmitting ? 'Logging...' : 'Log Sale'}
-              </button>
+              </Button>
             )} />
           </div>
         </form>

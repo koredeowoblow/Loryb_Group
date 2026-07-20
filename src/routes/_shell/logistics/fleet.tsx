@@ -12,6 +12,7 @@ import { useForm } from '@tanstack/react-form'
 import { Modal } from '../../../components/ui/Modal'
 import { FormField } from '../../../components/ui/FormField'
 import { SelectField } from '../../../components/ui/SelectField'
+import { Button } from '../../../components/ui/Button'
 import { Truck as TruckIcon, MapPin, Navigation, Clock, Activity } from 'lucide-react'
 
 export const Route = createFileRoute('/_shell/logistics/fleet')({
@@ -95,12 +96,9 @@ function FleetPage() {
           </h2>
           <p className="text-sm text-text-secondary mt-1">Live tracking of fleet status, capacity utilization, and active routes.</p>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light flex items-center gap-2"
-        >
-          <TruckIcon size={16} /> Register Truck
-        </button>
+        <Button onClick={() => setIsModalOpen(true)} icon={<TruckIcon size={16} />}>
+          Register Truck
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -244,25 +242,14 @@ function FleetPage() {
           <form.Field name="assignedDriver" children={(field) => <FormField field={field as any} label="Assigned Driver (Optional)" />} />
 
           <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors"
-            >
+            <Button variant="secondary" type="button" onClick={() => setIsModalOpen(false)}>
               Cancel
-            </button>
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <button
-                  type="submit"
-                  disabled={!canSubmit || isSubmitting}
-                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
-                >
-                  {isSubmitting ? 'Saving...' : 'Register'}
-                </button>
-              )}
-            />
+            </Button>
+            <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
+              <Button type="submit" disabled={!canSubmit || isSubmitting} isLoading={isSubmitting}>
+                {isSubmitting ? 'Saving...' : 'Register'}
+              </Button>
+            )} />
           </div>
         </form>
       </Modal>

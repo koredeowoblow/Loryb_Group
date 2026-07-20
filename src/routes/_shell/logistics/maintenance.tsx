@@ -12,6 +12,9 @@ import { useForm } from "@tanstack/react-form";
 import { Modal } from "../../../components/ui/Modal";
 import { FormField } from "../../../components/ui/FormField";
 import { SelectField } from "../../../components/ui/SelectField";
+import { Button } from "../../../components/ui/Button";
+import { Input } from "../../../components/ui/Input";
+import { Select } from "../../../components/ui/Select";
 
 export const Route = createFileRoute("/_shell/logistics/maintenance")({
   component: MaintenancePage,
@@ -142,12 +145,9 @@ function MaintenancePage() {
             Track operational expenses and repair logs for all trucks.
           </p>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
-        >
+        <Button onClick={() => setIsModalOpen(true)}>
           Log Expense
-        </button>
+        </Button>
       </div>
 
       {/* Summary Strip & Filters */}
@@ -180,22 +180,21 @@ function MaintenancePage() {
         </div>
 
         <div className="flex gap-2 w-full sm:w-auto">
-          <input
+          <Input
             type="text"
             placeholder="Search truck no..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            className="w-full sm:w-64"
           />
-          <select
+          <Select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer"
           >
             <option value="All">All Types</option>
             <option value="fuel">Fuel</option>
             <option value="maintenance">Maintenance</option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -214,12 +213,13 @@ function MaintenancePage() {
           actions={
             !searchTerm &&
             typeFilter === "All" && (
-              <button
+              <Button
+                variant="secondary"
                 onClick={() => setIsModalOpen(true)}
-                className="mt-4 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
+                className="mt-4 border-primary text-primary hover:text-primary-hover"
               >
                 Log Expense
-              </button>
+              </Button>
             )
           }
         />
@@ -352,23 +352,23 @@ function MaintenancePage() {
           />
 
           <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
-            <button
+            <Button
+              variant="secondary"
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors"
             >
               Cancel
-            </button>
+            </Button>
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <button
+                <Button
                   type="submit"
                   disabled={!canSubmit || isSubmitting}
-                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
+                  isLoading={isSubmitting}
                 >
                   {isSubmitting ? "Logging..." : "Log Maintenance"}
-                </button>
+                </Button>
               )}
             />
           </div>

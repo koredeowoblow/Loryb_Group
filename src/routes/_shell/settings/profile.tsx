@@ -4,6 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { profile } from '../../../api/core'
 import { useEffect } from 'react'
 import { User, Mail, Shield, Phone, Key } from 'lucide-react'
+import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
 
 export const Route = createFileRoute('/_shell/settings/profile')({
   component: ProfilePage,
@@ -70,17 +72,17 @@ function ProfilePage() {
         <div className="flex gap-2">
           {isEditing ? (
             <>
-              <button onClick={() => setIsEditing(false)} className="btn btn-ghost px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider">
+              <Button variant="ghost" onClick={() => setIsEditing(false)}>
                 Cancel
-              </button>
-              <button onClick={handleSave} disabled={mutation.isPending} className="btn btn-primary px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider">
+              </Button>
+              <Button onClick={handleSave} disabled={mutation.isPending} isLoading={mutation.isPending}>
                 {mutation.isPending ? 'Saving...' : 'Save Changes'}
-              </button>
+              </Button>
             </>
           ) : (
-            <button onClick={() => setIsEditing(true)} className="btn btn-secondary px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider">
+            <Button variant="secondary" onClick={() => setIsEditing(true)}>
               Edit Profile
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -105,32 +107,29 @@ function ProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
             <div>
               <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1 flex items-center gap-1.5"><User size={12}/> Full Name</label>
-              <input 
+              <Input 
                 type="text" 
                 value={formData.fullName}
                 onChange={e => setFormData({...formData, fullName: e.target.value})}
                 disabled={!isEditing}
-                className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-70 disabled:cursor-not-allowed transition-colors text-sm font-medium" 
               />
             </div>
             <div>
               <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1 flex items-center gap-1.5"><Mail size={12}/> Email Address</label>
-              <input 
+              <Input 
                 type="email" 
                 value={formData.email}
                 onChange={e => setFormData({...formData, email: e.target.value})}
                 disabled={!isEditing}
-                className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-70 disabled:cursor-not-allowed transition-colors text-sm font-medium" 
               />
             </div>
             <div>
               <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1 flex items-center gap-1.5"><Phone size={12}/> Phone Number</label>
-              <input 
+              <Input 
                 type="tel" 
                 value={formData.phone}
                 onChange={e => setFormData({...formData, phone: e.target.value})}
                 disabled={!isEditing}
-                className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-70 disabled:cursor-not-allowed transition-colors text-sm font-medium" 
               />
             </div>
           </div>
@@ -147,9 +146,9 @@ function ProfilePage() {
                 <div className="text-xs text-text-secondary mt-0.5">Last changed 3 months ago</div>
               </div>
             </div>
-            <button className="btn btn-secondary px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider">
+            <Button variant="secondary">
               Change Password
-            </button>
+            </Button>
           </div>
         </div>
       </div>

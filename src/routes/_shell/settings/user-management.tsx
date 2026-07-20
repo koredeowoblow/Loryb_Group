@@ -12,6 +12,9 @@ import { useForm } from '@tanstack/react-form'
 import { validateFormWithZod } from '../../../lib/zodValidator'
 import { FormField } from '../../../components/ui/FormField'
 import { SelectField } from '../../../components/ui/SelectField'
+import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
+import { Select } from '../../../components/ui/Select'
 
 export const Route = createFileRoute('/_shell/settings/user-management')({
   component: UserManagementPage,
@@ -84,8 +87,8 @@ function UserManagementPage() {
     {
       key: 'id', header: '', render: (row: User) => (
         <div className="flex justify-end gap-2">
-          <button onClick={() => handleEdit(row)} className="text-primary hover:text-primary-hover font-bold font-header text-xs uppercase tracking-wider p-1 transition-colors">Edit</button>
-          <button onClick={() => setDeleteId(row.id)} className="text-status-danger hover:text-status-danger-dark font-bold font-header text-xs uppercase tracking-wider p-1 transition-colors">Delete</button>
+          <Button variant="ghost" size="sm" onClick={() => handleEdit(row)} className="text-primary hover:text-primary-hover p-1">Edit</Button>
+          <Button variant="ghost" size="sm" onClick={() => setDeleteId(row.id)} className="text-status-danger hover:text-status-danger-dark p-1">Delete</Button>
         </div>
       )
     },
@@ -104,7 +107,7 @@ function UserManagementPage() {
           <h2 className="text-xl font-bold font-header tracking-tight text-text-primary">User Management</h2>
           <p className="text-sm text-text-secondary mt-1">Manage staff access and active platform accounts.</p>
         </div>
-        <button onClick={handleCreate} className="btn btn-primary font-header uppercase tracking-wider">Invite User</button>
+        <Button onClick={handleCreate}>Invite User</Button>
       </div>
 
       <div className="panel p-3 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -113,11 +116,11 @@ function UserManagementPage() {
           <div><div className="text-xs uppercase tracking-wider font-bold text-status-success font-header">Active</div><div className="text-lg font-bold text-status-success">{(usersData as User[]).filter(u => u.status === 'Active').length}</div></div>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          <input type="text" placeholder="Search name or email..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted" />
-          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted cursor-pointer">
+          <Input type="text" placeholder="Search name or email..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-64" />
+          <Select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}>
             <option value="All">All Roles</option>
             {(roles as any[]).map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -143,11 +146,11 @@ function UserManagementPage() {
           </div>
           {errorMsg && <div className="text-status-danger text-sm mt-2">{errorMsg}</div>}
           <div className="pt-4 border-t border-surface-border flex justify-end gap-2">
-            <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-ghost font-header uppercase tracking-wider">Cancel</button>
+            <Button variant="ghost" type="button" onClick={() => setIsModalOpen(false)}>Cancel</Button>
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
-              <button type="submit" disabled={!canSubmit || isSubmitting} className="btn btn-primary font-header uppercase tracking-wider">
+              <Button type="submit" disabled={!canSubmit || isSubmitting} isLoading={isSubmitting}>
                 {isSubmitting ? 'Saving...' : (editingUser ? 'Update User' : 'Create User')}
-              </button>
+              </Button>
             )} />
           </div>
         </form>
@@ -157,10 +160,10 @@ function UserManagementPage() {
         <div className="space-y-4">
           <p className="text-sm text-text-secondary">Are you sure you want to delete this user? This action cannot be undone.</p>
           <div className="flex justify-end gap-2 pt-4 border-t border-surface-border">
-            <button onClick={() => setDeleteId('')} className="px-4 py-2 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">Cancel</button>
-            <button onClick={() => deleteMutation.mutate(deleteId)} disabled={deleteMutation.isPending} className="px-4 py-2 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-status-danger hover:bg-status-danger-dark rounded shadow-sm border border-status-error-dark transition-colors disabled:opacity-50">
+            <Button variant="secondary" onClick={() => setDeleteId('')}>Cancel</Button>
+            <Button variant="danger" onClick={() => deleteMutation.mutate(deleteId)} disabled={deleteMutation.isPending} isLoading={deleteMutation.isPending}>
               {deleteMutation.isPending ? 'Deleting...' : 'Delete User'}
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>

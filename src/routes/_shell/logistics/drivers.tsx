@@ -12,6 +12,9 @@ import { Modal } from '../../../components/ui/Modal'
 import { FormField } from '../../../components/ui/FormField'
 import { SelectField } from '../../../components/ui/SelectField'
 import { Badge } from '../../../components/ui/Badge'
+import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
+import { Select } from '../../../components/ui/Select'
 
 export const Route = createFileRoute('/_shell/logistics/drivers')({
   component: DriversPage,
@@ -109,12 +112,9 @@ function DriversPage() {
           <h2 className="text-xl font-bold font-header tracking-tight text-primary">Driver Registry</h2>
           <p className="text-sm text-text-secondary mt-1">Manage driver credentials, contact info, and truck assignments.</p>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
-        >
+        <Button onClick={() => setIsModalOpen(true)}>
           Register Driver
-        </button>
+        </Button>
       </div>
 
       {/* Summary Strip & Filters */}
@@ -131,22 +131,21 @@ function DriversPage() {
         </div>
         
         <div className="flex gap-2 w-full sm:w-auto">
-          <input
+          <Input
             type="text"
             placeholder="Search name, phone, or truck..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            className="w-full sm:w-64"
           />
-          <select
+          <Select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer"
           >
             <option value="All">All Statuses</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -162,12 +161,9 @@ function DriversPage() {
           emptyIcon={<UserCircle size={48} className="text-surface-border/50 mb-2" strokeWidth={1.5} />}
           actions={
             (!searchTerm && statusFilter === 'All') && (
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="text-xs font-bold uppercase tracking-wider text-primary hover:text-primary-hover border border-primary px-4 py-2 rounded transition-colors"
-              >
+              <Button variant="secondary" onClick={() => setIsModalOpen(true)} className="border-primary text-primary hover:text-primary-hover">
                 Register Driver
-              </button>
+              </Button>
             )
           }
           className="rounded-none shadow-none border-2 border-surface-border"
@@ -201,23 +197,15 @@ function DriversPage() {
           )} />
 
           <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors"
-            >
+            <Button variant="secondary" type="button" onClick={() => setIsModalOpen(false)}>
               Cancel
-            </button>
+            </Button>
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <button
-                  type="submit"
-                  disabled={!canSubmit || isSubmitting}
-                  className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors"
-                >
+                <Button type="submit" disabled={!canSubmit || isSubmitting} isLoading={isSubmitting}>
                   {isSubmitting ? 'Adding...' : 'Add Driver'}
-                </button>
+                </Button>
               )}
             />
           </div>

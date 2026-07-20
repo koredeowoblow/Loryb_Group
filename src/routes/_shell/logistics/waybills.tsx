@@ -6,6 +6,8 @@ import { waybills } from '../../../api/logistics'
 import { Waybill } from '../../../types'
 import { DataTable, Column } from '../../../components/ui/DataTable'
 import { Badge } from '../../../components/ui/Badge'
+import { Input } from '../../../components/ui/Input'
+import { Select } from '../../../components/ui/Select'
 
 export const Route = createFileRoute('/_shell/logistics/waybills')({
   component: WaybillsPage,
@@ -64,23 +66,22 @@ function WaybillsPage() {
         </div>
         
         <div className="flex gap-2 w-full sm:w-auto">
-          <input
+          <Input
             type="text"
             placeholder="Search waybill or truck no..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            className="w-full sm:w-64"
           />
-          <select
+          <Select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer"
           >
             <option value="All">All Statuses</option>
             <option value="pending">Pending</option>
             <option value="in-transit">In Transit</option>
             <option value="delivered">Delivered</option>
-          </select>
+          </Select>
         </div>
       </div>
 

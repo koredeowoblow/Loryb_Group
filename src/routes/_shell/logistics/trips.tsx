@@ -10,6 +10,8 @@ import { Modal } from '../../../components/ui/Modal'
 import { FormField } from '../../../components/ui/FormField'
 import { SelectField } from '../../../components/ui/SelectField'
 import { DateTimeField } from '../../../components/ui/DateTimeField'
+import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
 
 export const Route = createFileRoute('/_shell/logistics/trips')({
   component: TripsPage,
@@ -96,12 +98,9 @@ function TripsPage() {
           <h2 className="text-xl font-bold font-header tracking-tight text-primary">Trip Scheduling Board</h2>
           <p className="text-sm text-text-secondary mt-1">Manage and track fleet dispatches across the delivery lifecycle.</p>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-primary-hover text-text-inverse px-4 py-2 rounded shadow-sm text-xs font-bold font-header uppercase tracking-wider transition-colors border border-primary-light"
-        >
+        <Button onClick={() => setIsModalOpen(true)}>
           Schedule Trip
-        </button>
+        </Button>
       </div>
 
       {/* Summary Strip & Filters */}
@@ -114,12 +113,12 @@ function TripsPage() {
         </div>
         
         <div className="flex gap-2 w-full sm:w-auto">
-          <input
+          <Input
             type="text"
             placeholder="Search truck, driver or destination..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            className="w-full sm:w-64"
           />
         </div>
       </div>
@@ -203,11 +202,11 @@ function TripsPage() {
           <form.Field name="gatePassNo" children={(field) => <FormField field={field as any} label="Gate Pass No" />} />
 
           <div className="flex justify-end pt-4 border-t border-surface-border gap-2">
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-secondary hover:bg-surface-active border border-surface-border rounded transition-colors">Cancel</button>
+            <Button variant="secondary" type="button" onClick={() => setIsModalOpen(false)}>Cancel</Button>
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]} children={([canSubmit, isSubmitting]) => (
-              <button type="submit" disabled={!canSubmit || isSubmitting} className="px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider text-text-inverse bg-primary hover:bg-primary-hover rounded shadow-sm border border-primary-light disabled:opacity-50 transition-colors">
+              <Button type="submit" disabled={!canSubmit || isSubmitting} isLoading={isSubmitting}>
                 {isSubmitting ? 'Scheduling...' : 'Schedule Trip'}
-              </button>
+              </Button>
             )} />
           </div>
         </form>

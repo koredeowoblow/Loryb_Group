@@ -3,6 +3,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { orgSettings } from '../../../api/core'
 import { useEffect } from 'react'
+import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
+import { Select } from '../../../components/ui/Select'
 
 export const Route = createFileRoute('/_shell/settings/org-settings')({
   component: OrgSettingsPage,
@@ -74,17 +77,17 @@ function OrgSettingsPage() {
         <div className="flex gap-2">
           {isEditing ? (
             <>
-              <button onClick={() => setIsEditing(false)} className="btn btn-ghost px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider">
+              <Button variant="ghost" onClick={() => setIsEditing(false)}>
                 Cancel
-              </button>
-              <button onClick={handleSave} disabled={mutation.isPending} className="btn btn-primary px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider">
+              </Button>
+              <Button onClick={handleSave} disabled={mutation.isPending} isLoading={mutation.isPending}>
                 {mutation.isPending ? 'Saving...' : 'Save Changes'}
-              </button>
+              </Button>
             </>
           ) : (
-            <button onClick={() => setIsEditing(true)} className="btn btn-secondary px-3 py-1.5 text-xs font-bold font-header uppercase tracking-wider">
+            <Button variant="secondary" onClick={() => setIsEditing(true)}>
               Edit Settings
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -117,42 +120,38 @@ function OrgSettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-text-primary mb-1">Company Name</label>
-                  <input 
+                  <Input 
                     type="text" 
                     value={formData.companyName}
                     onChange={e => setFormData({...formData, companyName: e.target.value})}
                     disabled={!isEditing}
-                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-text-primary mb-1">Operating Site</label>
-                  <input 
+                  <Input 
                     type="text" 
                     value={formData.siteName}
                     onChange={e => setFormData({...formData, siteName: e.target.value})}
                     disabled={!isEditing}
-                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-text-primary mb-1">Primary Email</label>
-                  <input 
+                  <Input 
                     type="email" 
                     value={formData.contactEmail}
                     onChange={e => setFormData({...formData, contactEmail: e.target.value})}
                     disabled={!isEditing}
-                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-text-primary mb-1">Support Phone</label>
-                  <input 
+                  <Input 
                     type="tel" 
                     value={formData.contactPhone}
                     onChange={e => setFormData({...formData, contactPhone: e.target.value})}
                     disabled={!isEditing}
-                    className="w-full px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm" 
                   />
                 </div>
               </div>
@@ -206,12 +205,12 @@ function OrgSettingsPage() {
               </div>
               <div>
                 <label className="block text-sm font-bold text-text-primary mb-1">Session Timeout (Minutes)</label>
-                <select disabled={!isEditing} className="w-full max-w-xs px-3 py-2 border border-surface-border rounded bg-surface-muted focus:bg-surface focus:ring-1 focus:ring-primary focus:border-primary outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm">
+                <Select disabled={!isEditing} className="w-full max-w-xs">
                   <option value="15">15 Minutes</option>
                   <option value="30">30 Minutes</option>
                   <option value="60">1 Hour</option>
                   <option value="never">Never (Not Recommended)</option>
-                </select>
+                </Select>
               </div>
             </div>
           )}

@@ -5,6 +5,7 @@ import { inventoryAlerts } from '../../../api/warehouse'
 import { InventoryAlert } from '../../../types'
 import { DataTable, Column } from '../../../components/ui/DataTable'
 import { Badge } from '../../../components/ui/Badge'
+import { Input } from '../../../components/ui/Input'
 import { CheckCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/_shell/warehouse/alerts')({
@@ -57,12 +58,12 @@ function AlertsPage() {
         </div>
         
         <div className="flex gap-2 w-full sm:w-auto">
-          <input
+          <Input
             type="text"
             placeholder="Search grain or status..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 px-3 py-1.5 text-sm border border-surface-border rounded bg-surface-muted focus:bg-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            className="w-full sm:w-64"
           />
         </div>
       </div>

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import {
   LayoutDashboard, Shield, Warehouse, Truck, DollarSign,
   ChevronDown, ChevronRight, LogOut, Settings as SettingsIcon,
-  Menu, X, Moon, Sun,
+  Menu, X,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useAuth, Role } from '../auth'
@@ -32,19 +32,6 @@ export const Route = createFileRoute('/_shell')({
 function ShellLayout() {
   const { role } = useAuth()
   const [isSidebarOpen, setSidebarOpen] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return (
-        document.documentElement.classList.contains('dark') ||
-        window.matchMedia('(prefers-color-scheme: dark)').matches
-      )
-    }
-    return false
-  })
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDarkMode)
-  }, [isDarkMode])
 
   const router = useRouterState()
   const isLoading = router.status === 'pending' || router.isLoading
@@ -64,8 +51,6 @@ function ShellLayout() {
         <TopNav
           role={role}
           toggleSidebar={() => setSidebarOpen(s => !s)}
-          isDarkMode={isDarkMode}
-          toggleDarkMode={() => setIsDarkMode(m => !m)}
         />
 
         {/* Content */}
@@ -338,12 +323,10 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
 // ─── Top Nav ──────────────────────────────────────────────────────────────────
 
 function TopNav({
-  role, toggleSidebar, isDarkMode, toggleDarkMode,
+  role, toggleSidebar,
 }: {
   role: Role
   toggleSidebar: () => void
-  isDarkMode: boolean
-  toggleDarkMode: () => void
 }) {
   return (
     <header className="h-16 bg-surface-raised border-b border-surface-border flex items-center px-4 md:px-6 justify-between shrink-0 shadow-sm z-10">
@@ -360,19 +343,9 @@ function TopNav({
         <span className="text-base font-semibold text-text-primary">Loryb Group</span>
       </div>
 
-      <div className="flex items-center gap-2">
-        <button
-          onClick={toggleDarkMode}
-          className="p-2 rounded-full text-text-secondary hover:bg-surface-active hover:text-text-primary transition-colors"
-          aria-label={isDarkMode ? 'Light mode' : 'Dark mode'}
-        >
-          {isDarkMode ? <Sun size={17} /> : <Moon size={17} />}
-        </button>
-
-        {/* Avatar */}
-        <div className="w-8 h-8 rounded-full bg-primary text-text-inverse flex items-center justify-center text-sm font-bold ring-2 ring-primary/20">
-          {role.charAt(0).toUpperCase()}
-        </div>
+      {/* Avatar */}
+      <div className="w-8 h-8 rounded-full bg-primary text-text-inverse flex items-center justify-center text-sm font-bold ring-2 ring-primary/20">
+        {role.charAt(0).toUpperCase()}
       </div>
     </header>
   )

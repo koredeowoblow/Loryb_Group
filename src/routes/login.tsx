@@ -39,8 +39,8 @@ function AuthInput({
       </label>
       <div className="relative">
         <Icon
-          size={16}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none"
+          size={18}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
         />
         <input
           id={id}
@@ -51,7 +51,7 @@ function AuthInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="
-            w-full pl-[40px] pr-4 py-3 text-sm
+            w-full pl-[44px] pr-4 py-3 text-sm
             bg-white border rounded-sm
             text-text-primary placeholder:text-gray-400
             transition-colors

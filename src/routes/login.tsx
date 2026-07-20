@@ -30,7 +30,7 @@ function AuthInput({
   autoComplete?: string;
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <label
         htmlFor={id}
         className="text-xs font-semibold uppercase tracking-wider text-text-secondary"
@@ -39,8 +39,8 @@ function AuthInput({
       </label>
       <div className="relative">
         <Icon
-          size={15}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none"
+          size={16}
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none"
         />
         <input
           id={id}
@@ -51,7 +51,7 @@ function AuthInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="
-            w-full pl-9 pr-3 py-2.5 text-sm
+            w-full pl-10 pr-4 py-3 text-sm
             bg-white border rounded-sm
             text-text-primary placeholder:text-gray-400
             transition-colors
@@ -194,7 +194,7 @@ function LoginPage() {
               borderLeftColor: 'rgb(var(--color-primary))',
             }}
           >
-            <div className="px-6 pt-7 pb-6 flex flex-col gap-6">
+            <div className="px-8 py-8 flex flex-col gap-8">
               {/* Error banner */}
               {error && (
                 <div className="alert alert-danger">
@@ -205,7 +205,7 @@ function LoginPage() {
 
               <form
                 onSubmit={handleSubmit}
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-6"
                 noValidate
               >
                 <AuthInput
@@ -253,7 +253,7 @@ function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn btn-primary w-full py-3 justify-center font-semibold tracking-wide disabled:opacity-60"
+                  className="btn btn-primary w-full py-3.5 mt-2 justify-center font-semibold tracking-wide disabled:opacity-60"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
@@ -268,7 +268,7 @@ function LoginPage() {
 
               {/* ── Demo accounts — inside card, below divider ─────────── */}
               {USE_MOCK_DATA && (
-                <div className="border-t border-surface-border -mx-6 px-6 pt-4">
+                <div className="border-t border-surface-border -mx-8 px-8 pt-6">
                   <button
                     onClick={() => setShowHint((h) => !h)}
                     className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-muted hover:text-text-secondary transition-colors"

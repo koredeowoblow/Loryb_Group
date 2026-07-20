@@ -238,14 +238,14 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-3 overflow-y-auto" aria-label="Main navigation">
-        <ul className="flex flex-col px-2">
+      <nav className="flex-1 py-4 overflow-y-auto" aria-label="Main navigation">
+        <ul className="flex flex-col px-3 gap-6">
           {navItems.map(item => {
             const Icon = item.icon
             const isExpanded = expanded[item.to]
 
             return (
-              <li key={item.to}>
+              <li key={item.to} className="flex flex-col gap-1">
                 {/* Section header button */}
                 <button
                   onClick={() => setExpanded(prev => ({ ...prev, [item.to]: !prev[item.to] }))}
@@ -255,9 +255,10 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
                     'text-sm font-semibold transition-colors group text-text-secondary hover:bg-surface-active hover:text-text-primary',
                   )}
                 >
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center gap-3">
                     <Icon
-                      size={17}
+                      size={16}
+                      strokeWidth={2}
                       className="opacity-60 transition-transform group-hover:scale-105 group-hover:opacity-100"
                     />
                     {item.label}
@@ -270,25 +271,27 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
 
                 {/* Sub-items */}
                 {isExpanded && (
-                  <ul className="mt-1 mb-2 ml-6 pl-3 border-l border-surface-border flex flex-col gap-px relative">
+                  <ul className="flex flex-col gap-0.5">
                     {item.subItems.map((sub: any) => {
                       if (sub.roles && !sub.roles.includes(role)) return null
                       const isActive = currentPath === sub.to
                       return (
                         <li key={sub.to} className="relative">
-                          {isActive && (
-                            <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-1 h-4 rounded-full bg-accent" />
-                          )}
                           <Link
                             to={sub.to}
                             className={clsx(
-                              'block px-3 py-1.5 rounded-sm text-sm transition-colors',
+                              'relative block w-full py-2 rounded-sm text-sm transition-colors',
                               isActive
                                 ? 'bg-surface-active text-text-primary font-medium'
                                 : 'text-text-secondary hover:bg-surface-active hover:text-text-primary',
                             )}
                           >
-                            {sub.label}
+                            {isActive && (
+                              <span className="absolute left-0 top-0 bottom-0 w-1 bg-accent rounded-r-sm" />
+                            )}
+                            <span className="block pl-[40px] pr-3">
+                              {sub.label}
+                            </span>
                           </Link>
                         </li>
                       )

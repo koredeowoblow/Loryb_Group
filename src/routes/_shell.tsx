@@ -56,8 +56,8 @@ function ShellLayout() {
       <div className="flex flex-col flex-1 overflow-hidden relative">
         {/* Page-load progress bar */}
         {isLoading && (
-          <div className="absolute top-0 left-0 right-0 h-px bg-surface-border z-50">
-            <div className="h-full bg-primary animate-pulse" />
+          <div className="progress-bar-track">
+            <div className="progress-bar-fill" />
           </div>
         )}
 
@@ -70,7 +70,9 @@ function ShellLayout() {
 
         {/* Content */}
         <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
-          <Outlet />
+          <div key={router.location.pathname} className="page-enter">
+            <Outlet />
+          </div>
         </main>
       </div>
 

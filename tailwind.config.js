@@ -1,7 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  darkMode: 'class',
   theme: {
     // ─── SPACING (8px base, strict — use numeric keys) ───────────────────────
     // Intentionally kept minimal. Only these values are allowed.

@@ -158,7 +158,7 @@ function LoginPage() {
 
       {/* ── Right form panel ────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 min-h-screen">
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-md">
 
           {/* Mobile-only brand mark — text-based, no image dependency */}
           <div className="flex lg:hidden items-center gap-2 mb-8">

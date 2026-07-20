@@ -352,13 +352,13 @@
            transition-all duration-200 ease-[cubic-bezier(0.25,1,0.5,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 active:scale-95 active:translate-y-[1px];
   }
   .btn-primary {
-    @apply bg-primary text-text-inverse hover:bg-primary-hover focus-visible:ring-primary hover:-translate-y-0.5 hover:shadow-md active:shadow-sm;
+    @apply bg-primary text-text-inverse hover:bg-primary-hover focus-visible:ring-primary hover:-translate-y-px hover:shadow-md active:shadow-sm;
   }
   .btn-secondary {
-    @apply bg-surface-raised text-text-primary border border-surface-border hover:bg-surface-active hover:-translate-y-0.5 hover:shadow-md active:shadow-sm;
+    @apply bg-surface-raised text-text-primary border border-surface-border hover:bg-surface-active hover:-translate-y-px hover:shadow-md active:shadow-sm;
   }
   .btn-danger {
-    @apply bg-status-danger text-text-inverse hover:opacity-90 focus-visible:ring-danger hover:-translate-y-0.5 hover:shadow-md active:shadow-sm;
+    @apply bg-status-danger text-text-inverse hover:opacity-90 focus-visible:ring-danger hover:-translate-y-px hover:shadow-md active:shadow-sm;
   }
   .btn-ghost {
     @apply text-text-secondary hover:bg-surface-active hover:text-text-primary active:scale-[0.98];

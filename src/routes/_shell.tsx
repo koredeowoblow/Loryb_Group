@@ -6,14 +6,25 @@ import {
   Menu, X, Sun, Moon,
 } from 'lucide-react'
 import clsx from 'clsx'
-import { useAuth, Role } from '../auth'
+import { useAuth, Role, parseJwt } from '../auth'
 import { AUTH_BYPASS_PATHS, ADMIN_RESTRICTED_PATHS, getRoleRedirect } from '../lib/rbac'
 
 export const Route = createFileRoute('/_shell')({
   component: ShellLayout,
   beforeLoad: ({ context, location }) => {
-    const role = context.auth.role
+    let role = context.auth.role
     const path = location.pathname
+    
+    if (!role) {
+      const token = localStorage.getItem('loryb_token')
+      if (token) {
+        const decoded = parseJwt(token)
+        if (decoded && decoded.role) {
+          role = decoded.role as Role
+        }
+      }
+    }
+
     if (!role) {
       throw redirect({ to: '/login' })
     }

@@ -5,11 +5,17 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { DollarSign, TrendingUp, Wallet, Receipt, CreditCard, Banknote } from 'lucide-react'
 import { CHART_COLORS } from '../../../components/ui/ChartWrapper'
 
+import { PageSkeleton } from '../../../components/ui/Skeleton'
+
 function FinancialOverviewPage() {
-  const { data: sales = [] } = useQuery({ queryKey: ['sales'], queryFn: salesApi.list })
-  const { data: expenses = [] } = useQuery({ queryKey: ['expenses'], queryFn: expensesApi.list })
-  const { data: payroll = [] } = useQuery({ queryKey: ['payroll'], queryFn: payrollApi.list })
-  const { data: supplierPayments = [] } = useQuery({ queryKey: ['supplierPayments'], queryFn: supplierPaymentsApi.list })
+  const { data: sales = [], isLoading: isLoadingSales } = useQuery({ queryKey: ['sales'], queryFn: salesApi.list })
+  const { data: expenses = [], isLoading: isLoadingExpenses } = useQuery({ queryKey: ['expenses'], queryFn: expensesApi.list })
+  const { data: payroll = [], isLoading: isLoadingPayroll } = useQuery({ queryKey: ['payroll'], queryFn: payrollApi.list })
+  const { data: supplierPayments = [], isLoading: isLoadingSupplierPayments } = useQuery({ queryKey: ['supplierPayments'], queryFn: supplierPaymentsApi.list })
+
+  if (isLoadingSales || isLoadingExpenses || isLoadingPayroll || isLoadingSupplierPayments) {
+    return <PageSkeleton />
+  }
 
   const totalSales = sales.reduce((acc, s) => acc + s.amount, 0) || 12500000
   const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0) || 3400000

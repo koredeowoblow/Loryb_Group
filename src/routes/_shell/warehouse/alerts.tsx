@@ -8,6 +8,8 @@ import { Badge } from '../../../components/ui/Badge'
 import { Input } from '../../../components/ui/Input'
 import { CheckCircle } from 'lucide-react'
 
+import { PageSkeleton } from '../../../components/ui/Skeleton'
+
 export const Route = createFileRoute('/_shell/warehouse/alerts')({
   component: AlertsPage,
 })
@@ -27,6 +29,10 @@ function AlertsPage() {
     queryKey: ['inventoryAlerts'],
     queryFn: inventoryAlerts.list,
   })
+
+  if (isLoading) {
+    return <PageSkeleton />
+  }
 
   const filteredData = data?.filter(row => 
     row.grainType.toLowerCase().includes(searchTerm.toLowerCase()) || 

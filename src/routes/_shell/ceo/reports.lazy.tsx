@@ -1,5 +1,6 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { PageSkeleton } from "../../../components/ui/Skeleton";
 import {
   sales as salesApi,
   expenses as expensesApi,
@@ -264,15 +265,9 @@ function ReportsPage() {
     },
   });
 
-  if (isLoading)
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-          <p className="text-sm text-text-secondary">Compiling report…</p>
-        </div>
-      </div>
-    );
+  if (isLoading) {
+    return <PageSkeleton />;
+  }
 
   const { financials, warehouse, logistics, security } = data!;
 

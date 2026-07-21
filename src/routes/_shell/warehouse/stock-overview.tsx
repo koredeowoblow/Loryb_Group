@@ -5,14 +5,20 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Warehouse, AlertTriangle, ArrowDownToLine, Activity } from 'lucide-react'
 import { CHART_COLORS } from '../../../components/ui/ChartWrapper'
 
+import { PageSkeleton } from '../../../components/ui/Skeleton'
+
 export const Route = createFileRoute('/_shell/warehouse/stock-overview')({
   component: StockOverviewPage,
 })
 
 function StockOverviewPage() {
-  const { data: binCards = [] } = useQuery({ queryKey: ['binCards'], queryFn: binCardApi.list })
-  const { data: grn = [] } = useQuery({ queryKey: ['grn'], queryFn: grnApi.list })
-  const { data: alerts = [] } = useQuery({ queryKey: ['alerts'], queryFn: inventoryAlerts.list })
+  const { data: binCards = [], isLoading: isLoadingBinCards } = useQuery({ queryKey: ['binCards'], queryFn: binCardApi.list })
+  const { data: grn = [], isLoading: isLoadingGrn } = useQuery({ queryKey: ['grn'], queryFn: grnApi.list })
+  const { data: alerts = [], isLoading: isLoadingAlerts } = useQuery({ queryKey: ['alerts'], queryFn: inventoryAlerts.list })
+
+  if (isLoadingBinCards || isLoadingGrn || isLoadingAlerts) {
+    return <PageSkeleton />
+  }
 
   const totalMaize = binCards.filter(b => b.grainType === 'Maize').reduce((acc, b) => acc + b.qtyIn - b.qtyOut, 0) || 45000
   const totalSorghum = binCards.filter(b => b.grainType === 'Sorghum').reduce((acc, b) => acc + b.qtyIn - b.qtyOut, 0) || 28000

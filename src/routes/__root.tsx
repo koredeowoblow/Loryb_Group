@@ -1,4 +1,4 @@
-import { createRootRouteWithContext, Outlet, Link } from '@tanstack/react-router'
+import { createRootRouteWithContext, Outlet, Link, useRouterState } from '@tanstack/react-router'
 
 function NotFound() {
   return (
@@ -27,10 +27,20 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  component: () => (
-    <>
-      <Outlet />
-    </>
-  ),
+  component: () => {
+    const router = useRouterState()
+    const isLoading = router.status === 'pending' || router.isLoading
+
+    return (
+      <>
+        {isLoading && (
+          <div className="progress-bar-track !fixed !top-0 !left-0 !right-0 !h-1 !z-[9999]">
+            <div className="progress-bar-fill" />
+          </div>
+        )}
+        <Outlet />
+      </>
+    )
+  },
   notFoundComponent: NotFound,
 })

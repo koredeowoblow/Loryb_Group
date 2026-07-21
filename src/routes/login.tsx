@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { auth, USE_MOCK_DATA } from "../api/core";
 import { useAuth } from "../auth";
-import { ChevronDown, ChevronUp, AlertCircle, Mail, Lock } from "lucide-react";
+import { ChevronDown, ChevronUp, AlertCircle, Mail, Lock, CheckCircle } from "lucide-react";
 import { getRoleRedirect } from "../lib/rbac";
 
 export const Route = createFileRoute("/login")({
@@ -19,6 +19,7 @@ function AuthInput({
   placeholder,
   icon: Icon,
   autoComplete,
+  disabled,
 }: {
   id: string;
   type: string;
@@ -28,6 +29,7 @@ function AuthInput({
   placeholder?: string;
   icon: React.ElementType;
   autoComplete?: string;
+  disabled?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -46,6 +48,7 @@ function AuthInput({
           id={id}
           type={type}
           required
+          disabled={disabled}
           autoComplete={autoComplete}
           placeholder={placeholder}
           value={value}
@@ -73,6 +76,7 @@ function LoginPage() {
   const { setRole } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,10 +91,14 @@ function LoginPage() {
       const { role } = response.user;
       localStorage.setItem("loryb_token", response.token);
       setRole(role);
-      navigate({ to: getRoleRedirect(role) as any });
+      setToastMessage(`Welcome back! Sign-in successful.`);
+      
+      // Delay redirect by 1200ms so they see the success toast clearly
+      setTimeout(() => {
+        navigate({ to: getRoleRedirect(role) as any });
+      }, 1200);
     } catch (err: any) {
       setError(err.message || "Invalid email or password");
-    } finally {
       setLoading(false);
     }
   };
@@ -217,6 +225,7 @@ function LoginPage() {
                   placeholder="you@lorybgroup.com"
                   icon={Mail}
                   autoComplete="email"
+                  disabled={loading}
                 />
 
                 <AuthInput
@@ -228,6 +237,7 @@ function LoginPage() {
                   placeholder="Enter your password"
                   icon={Lock}
                   autoComplete="current-password"
+                  disabled={loading}
                 />
 
                 {/* Remember me + forgot — same link style */}
@@ -236,6 +246,7 @@ function LoginPage() {
                     <input
                       id="remember-me"
                       type="checkbox"
+                      disabled={loading}
                       className="h-3.5 w-3.5 rounded-sm accent-primary"
                     />
                     <span className="text-xs text-text-secondary">
@@ -265,6 +276,13 @@ function LoginPage() {
                   )}
                 </button>
               </form>
+
+              {toastMessage && (
+                <div className="fixed bottom-6 right-6 z-50 bg-[#10b981] text-white px-4 py-3 rounded shadow-lg flex items-center gap-2 border border-emerald-500/20 animate-bounce">
+                  <CheckCircle size={18} className="text-white shrink-0 animate-pulse" />
+                  <span className="font-semibold text-sm">{toastMessage}</span>
+                </div>
+              )}
 
               {/* ── Demo accounts — inside card, below divider ─────────── */}
               {USE_MOCK_DATA && (

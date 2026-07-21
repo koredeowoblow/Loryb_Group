@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState, redirect, useNavigate } from '@tanstack/react-router'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import {
   LayoutDashboard, Shield, Warehouse, Truck, DollarSign,
   ChevronDown, ChevronRight, LogOut, Settings as SettingsIcon,
@@ -8,6 +8,7 @@ import {
 import clsx from 'clsx'
 import { useAuth, Role, parseJwt } from '../auth'
 import { AUTH_BYPASS_PATHS, ADMIN_RESTRICTED_PATHS, getRoleRedirect } from '../lib/rbac'
+import { PageSkeleton } from '../components/ui/Skeleton'
 
 export const Route = createFileRoute('/_shell')({
   component: ShellLayout,
@@ -48,20 +49,12 @@ function ShellLayout() {
   const [isSidebarOpen, setSidebarOpen] = useState(false)
 
   const router = useRouterState()
-  const isLoading = router.status === 'pending' || router.isLoading
 
   return (
     <div className="flex h-screen bg-surface-base text-text-primary overflow-hidden font-sans">
       <Sidebar role={role} logout={logout} isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
 
       <div className="flex flex-col flex-1 overflow-hidden relative">
-        {/* Page-load progress bar */}
-        {isLoading && (
-          <div className="progress-bar-track">
-            <div className="progress-bar-fill" />
-          </div>
-        )}
-
         <TopNav
           role={role}
           toggleSidebar={() => setSidebarOpen(s => !s)}
@@ -69,9 +62,11 @@ function ShellLayout() {
 
         {/* Content */}
         <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
-          <div key={router.location.pathname} className="page-enter">
-            <Outlet />
-          </div>
+          <Suspense fallback={<PageSkeleton />}>
+            <div key={router.location.pathname} className="page-enter">
+              <Outlet />
+            </div>
+          </Suspense>
         </main>
       </div>
 

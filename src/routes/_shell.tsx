@@ -349,7 +349,7 @@ function Sidebar({ role, logout, isOpen, setIsOpen }: { role: Role | null; logou
 function TopNav({
   role, toggleSidebar,
 }: {
-  role: Role
+  role: Role | null
   toggleSidebar: () => void
 }) {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -402,7 +402,7 @@ function TopNav({
 
         {/* Avatar */}
         <div className="w-8 h-8 rounded-full bg-primary text-text-inverse flex items-center justify-center text-sm font-bold ring-2 ring-primary/20 select-none">
-          {role.charAt(0).toUpperCase()}
+          {role ? role.charAt(0).toUpperCase() : ''}
         </div>
       </div>
     </header>

@@ -93,6 +93,7 @@ const ALL_NAV = [
       { label: 'Motorcycle Log',    to: '/security/motorcycle-log'    },
       { label: 'Staff Movement',    to: '/security/staff-movement'    },
       { label: 'Staff Attendance',  to: '/security/staff-attendance'  },
+      { label: 'Attendance Scanner',to: '/security/attendance-scanner'},
       { label: 'Dispatch',          to: '/security/dispatch'          },
       { label: 'Item Bought',       to: '/security/item-bought'       },
       { label: 'Labourers Log',     to: '/security/labourers-log'     },
@@ -106,6 +107,7 @@ const ALL_NAV = [
     roles: ['CEO', 'Admin', 'Warehouse'],
     subItems: [
       { label: 'Stock Overview',      to: '/warehouse/stock-overview' },
+      { label: 'Production',          to: '/warehouse/production'     },
       { label: 'Goods Received Note', to: '/warehouse/grn'           },
       { label: 'Bin Card',            to: '/warehouse/bin-card'       },
       { label: 'Alerts',              to: '/warehouse/alerts'         },
@@ -139,6 +141,8 @@ const ALL_NAV = [
     roles: ['CEO', 'Admin', 'Security', 'Warehouse', 'Logistics', 'Finance'],
     subItems: [
       { label: 'My Profile',       to: '/settings/profile'                              },
+      { label: 'Branches',         to: '/settings/branches',        roles: ['CEO', 'Super_Admin', 'Admin'] },
+      { label: 'Staff',            to: '/settings/staff',           roles: ['CEO', 'Super_Admin', 'Admin'] },
       { label: 'User Management',  to: '/settings/user-management', roles: ['CEO', 'Super_Admin'] },
       { label: 'RBAC & Permissions', to: '/settings/rbac',          roles: ['CEO', 'Super_Admin'] },
       { label: 'Org Settings',     to: '/settings/org-settings',    roles: ['CEO', 'Super_Admin'] },

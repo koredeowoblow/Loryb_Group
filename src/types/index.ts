@@ -278,3 +278,43 @@ export type Stock = {
   status: 'ok' | 'low' | 'critical'
   lastUpdated: string
 }
+
+export type Branch = {
+  id: string;
+  name: string;
+  address?: string;
+  phone?: string;
+  managerId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type Staff = {
+  id: string;
+  name: string;
+  phone?: string;
+  role?: string;
+  branchId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type AttendanceLog = {
+  id: string;
+  staffId: string;
+  branchId: string;
+  clockIn: string;
+  clockOut?: string;
+  status: 'in' | 'out';
+  createdAt: string;
+}
+
+export type Production = {
+  id: string;
+  branchId: string;
+  staffId: string;
+  metricType: string;
+  value: number;
+  recordedAt: string;
+  createdAt: string;
+}

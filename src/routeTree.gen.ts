@@ -27,13 +27,16 @@ import { Route as ShellSecurityIndexRouteImport } from './routes/_shell/security
 import { Route as ShellLogisticsIndexRouteImport } from './routes/_shell/logistics/index'
 import { Route as ShellFinanceIndexRouteImport } from './routes/_shell/finance/index'
 import { Route as ShellWarehouseStockOverviewRouteImport } from './routes/_shell/warehouse/stock-overview'
+import { Route as ShellWarehouseProductionRouteImport } from './routes/_shell/warehouse/production'
 import { Route as ShellWarehouseGrnRouteImport } from './routes/_shell/warehouse/grn'
 import { Route as ShellWarehouseBinCardRouteImport } from './routes/_shell/warehouse/bin-card'
 import { Route as ShellWarehouseAlertsRouteImport } from './routes/_shell/warehouse/alerts'
 import { Route as ShellSettingsUserManagementRouteImport } from './routes/_shell/settings/user-management'
+import { Route as ShellSettingsStaffRouteImport } from './routes/_shell/settings/staff'
 import { Route as ShellSettingsRbacRouteImport } from './routes/_shell/settings/rbac'
 import { Route as ShellSettingsProfileRouteImport } from './routes/_shell/settings/profile'
 import { Route as ShellSettingsOrgSettingsRouteImport } from './routes/_shell/settings/org-settings'
+import { Route as ShellSettingsBranchesRouteImport } from './routes/_shell/settings/branches'
 import { Route as ShellSecurityVisitorLogRouteImport } from './routes/_shell/security/visitor-log'
 import { Route as ShellSecuritySuppliersRouteImport } from './routes/_shell/security/suppliers'
 import { Route as ShellSecurityStaffMovementRouteImport } from './routes/_shell/security/staff-movement'
@@ -46,6 +49,7 @@ import { Route as ShellSecurityLabourersLogRouteImport } from './routes/_shell/s
 import { Route as ShellSecurityItemBoughtRouteImport } from './routes/_shell/security/item-bought'
 import { Route as ShellSecurityGateLogRouteImport } from './routes/_shell/security/gate-log'
 import { Route as ShellSecurityDispatchRouteImport } from './routes/_shell/security/dispatch'
+import { Route as ShellSecurityAttendanceScannerRouteImport } from './routes/_shell/security/attendance-scanner'
 import { Route as ShellLogisticsWaybillsRouteImport } from './routes/_shell/logistics/waybills'
 import { Route as ShellLogisticsTripsRouteImport } from './routes/_shell/logistics/trips'
 import { Route as ShellLogisticsMaintenanceRouteImport } from './routes/_shell/logistics/maintenance'
@@ -150,6 +154,12 @@ const ShellWarehouseStockOverviewRoute =
     path: '/stock-overview',
     getParentRoute: () => ShellWarehouseRoute,
   } as any)
+const ShellWarehouseProductionRoute =
+  ShellWarehouseProductionRouteImport.update({
+    id: '/production',
+    path: '/production',
+    getParentRoute: () => ShellWarehouseRoute,
+  } as any)
 const ShellWarehouseGrnRoute = ShellWarehouseGrnRouteImport.update({
   id: '/grn',
   path: '/grn',
@@ -171,6 +181,11 @@ const ShellSettingsUserManagementRoute =
     path: '/settings/user-management',
     getParentRoute: () => ShellRoute,
   } as any)
+const ShellSettingsStaffRoute = ShellSettingsStaffRouteImport.update({
+  id: '/settings/staff',
+  path: '/settings/staff',
+  getParentRoute: () => ShellRoute,
+} as any)
 const ShellSettingsRbacRoute = ShellSettingsRbacRouteImport.update({
   id: '/settings/rbac',
   path: '/settings/rbac',
@@ -187,6 +202,11 @@ const ShellSettingsOrgSettingsRoute =
     path: '/settings/org-settings',
     getParentRoute: () => ShellRoute,
   } as any)
+const ShellSettingsBranchesRoute = ShellSettingsBranchesRouteImport.update({
+  id: '/settings/branches',
+  path: '/settings/branches',
+  getParentRoute: () => ShellRoute,
+} as any)
 const ShellSecurityVisitorLogRoute = ShellSecurityVisitorLogRouteImport.update({
   id: '/visitor-log',
   path: '/visitor-log',
@@ -252,6 +272,12 @@ const ShellSecurityDispatchRoute = ShellSecurityDispatchRouteImport.update({
   path: '/dispatch',
   getParentRoute: () => ShellSecurityRoute,
 } as any)
+const ShellSecurityAttendanceScannerRoute =
+  ShellSecurityAttendanceScannerRouteImport.update({
+    id: '/attendance-scanner',
+    path: '/attendance-scanner',
+    getParentRoute: () => ShellSecurityRoute,
+  } as any)
 const ShellLogisticsWaybillsRoute = ShellLogisticsWaybillsRouteImport.update({
   id: '/waybills',
   path: '/waybills',
@@ -346,6 +372,7 @@ export interface FileRoutesByFullPath {
   '/logistics/maintenance': typeof ShellLogisticsMaintenanceRoute
   '/logistics/trips': typeof ShellLogisticsTripsRoute
   '/logistics/waybills': typeof ShellLogisticsWaybillsRoute
+  '/security/attendance-scanner': typeof ShellSecurityAttendanceScannerRoute
   '/security/dispatch': typeof ShellSecurityDispatchRoute
   '/security/gate-log': typeof ShellSecurityGateLogRoute
   '/security/item-bought': typeof ShellSecurityItemBoughtRoute
@@ -358,13 +385,16 @@ export interface FileRoutesByFullPath {
   '/security/staff-movement': typeof ShellSecurityStaffMovementRoute
   '/security/suppliers': typeof ShellSecuritySuppliersRoute
   '/security/visitor-log': typeof ShellSecurityVisitorLogRoute
+  '/settings/branches': typeof ShellSettingsBranchesRoute
   '/settings/org-settings': typeof ShellSettingsOrgSettingsRoute
   '/settings/profile': typeof ShellSettingsProfileRoute
   '/settings/rbac': typeof ShellSettingsRbacRoute
+  '/settings/staff': typeof ShellSettingsStaffRoute
   '/settings/user-management': typeof ShellSettingsUserManagementRoute
   '/warehouse/alerts': typeof ShellWarehouseAlertsRoute
   '/warehouse/bin-card': typeof ShellWarehouseBinCardRoute
   '/warehouse/grn': typeof ShellWarehouseGrnRoute
+  '/warehouse/production': typeof ShellWarehouseProductionRoute
   '/warehouse/stock-overview': typeof ShellWarehouseStockOverviewRoute
   '/finance/': typeof ShellFinanceIndexRoute
   '/logistics/': typeof ShellLogisticsIndexRoute
@@ -393,6 +423,7 @@ export interface FileRoutesByTo {
   '/logistics/maintenance': typeof ShellLogisticsMaintenanceRoute
   '/logistics/trips': typeof ShellLogisticsTripsRoute
   '/logistics/waybills': typeof ShellLogisticsWaybillsRoute
+  '/security/attendance-scanner': typeof ShellSecurityAttendanceScannerRoute
   '/security/dispatch': typeof ShellSecurityDispatchRoute
   '/security/gate-log': typeof ShellSecurityGateLogRoute
   '/security/item-bought': typeof ShellSecurityItemBoughtRoute
@@ -405,13 +436,16 @@ export interface FileRoutesByTo {
   '/security/staff-movement': typeof ShellSecurityStaffMovementRoute
   '/security/suppliers': typeof ShellSecuritySuppliersRoute
   '/security/visitor-log': typeof ShellSecurityVisitorLogRoute
+  '/settings/branches': typeof ShellSettingsBranchesRoute
   '/settings/org-settings': typeof ShellSettingsOrgSettingsRoute
   '/settings/profile': typeof ShellSettingsProfileRoute
   '/settings/rbac': typeof ShellSettingsRbacRoute
+  '/settings/staff': typeof ShellSettingsStaffRoute
   '/settings/user-management': typeof ShellSettingsUserManagementRoute
   '/warehouse/alerts': typeof ShellWarehouseAlertsRoute
   '/warehouse/bin-card': typeof ShellWarehouseBinCardRoute
   '/warehouse/grn': typeof ShellWarehouseGrnRoute
+  '/warehouse/production': typeof ShellWarehouseProductionRoute
   '/warehouse/stock-overview': typeof ShellWarehouseStockOverviewRoute
   '/finance': typeof ShellFinanceIndexRoute
   '/logistics': typeof ShellLogisticsIndexRoute
@@ -446,6 +480,7 @@ export interface FileRoutesById {
   '/_shell/logistics/maintenance': typeof ShellLogisticsMaintenanceRoute
   '/_shell/logistics/trips': typeof ShellLogisticsTripsRoute
   '/_shell/logistics/waybills': typeof ShellLogisticsWaybillsRoute
+  '/_shell/security/attendance-scanner': typeof ShellSecurityAttendanceScannerRoute
   '/_shell/security/dispatch': typeof ShellSecurityDispatchRoute
   '/_shell/security/gate-log': typeof ShellSecurityGateLogRoute
   '/_shell/security/item-bought': typeof ShellSecurityItemBoughtRoute
@@ -458,13 +493,16 @@ export interface FileRoutesById {
   '/_shell/security/staff-movement': typeof ShellSecurityStaffMovementRoute
   '/_shell/security/suppliers': typeof ShellSecuritySuppliersRoute
   '/_shell/security/visitor-log': typeof ShellSecurityVisitorLogRoute
+  '/_shell/settings/branches': typeof ShellSettingsBranchesRoute
   '/_shell/settings/org-settings': typeof ShellSettingsOrgSettingsRoute
   '/_shell/settings/profile': typeof ShellSettingsProfileRoute
   '/_shell/settings/rbac': typeof ShellSettingsRbacRoute
+  '/_shell/settings/staff': typeof ShellSettingsStaffRoute
   '/_shell/settings/user-management': typeof ShellSettingsUserManagementRoute
   '/_shell/warehouse/alerts': typeof ShellWarehouseAlertsRoute
   '/_shell/warehouse/bin-card': typeof ShellWarehouseBinCardRoute
   '/_shell/warehouse/grn': typeof ShellWarehouseGrnRoute
+  '/_shell/warehouse/production': typeof ShellWarehouseProductionRoute
   '/_shell/warehouse/stock-overview': typeof ShellWarehouseStockOverviewRoute
   '/_shell/finance/': typeof ShellFinanceIndexRoute
   '/_shell/logistics/': typeof ShellLogisticsIndexRoute
@@ -499,6 +537,7 @@ export interface FileRouteTypes {
     | '/logistics/maintenance'
     | '/logistics/trips'
     | '/logistics/waybills'
+    | '/security/attendance-scanner'
     | '/security/dispatch'
     | '/security/gate-log'
     | '/security/item-bought'
@@ -511,13 +550,16 @@ export interface FileRouteTypes {
     | '/security/staff-movement'
     | '/security/suppliers'
     | '/security/visitor-log'
+    | '/settings/branches'
     | '/settings/org-settings'
     | '/settings/profile'
     | '/settings/rbac'
+    | '/settings/staff'
     | '/settings/user-management'
     | '/warehouse/alerts'
     | '/warehouse/bin-card'
     | '/warehouse/grn'
+    | '/warehouse/production'
     | '/warehouse/stock-overview'
     | '/finance/'
     | '/logistics/'
@@ -546,6 +588,7 @@ export interface FileRouteTypes {
     | '/logistics/maintenance'
     | '/logistics/trips'
     | '/logistics/waybills'
+    | '/security/attendance-scanner'
     | '/security/dispatch'
     | '/security/gate-log'
     | '/security/item-bought'
@@ -558,13 +601,16 @@ export interface FileRouteTypes {
     | '/security/staff-movement'
     | '/security/suppliers'
     | '/security/visitor-log'
+    | '/settings/branches'
     | '/settings/org-settings'
     | '/settings/profile'
     | '/settings/rbac'
+    | '/settings/staff'
     | '/settings/user-management'
     | '/warehouse/alerts'
     | '/warehouse/bin-card'
     | '/warehouse/grn'
+    | '/warehouse/production'
     | '/warehouse/stock-overview'
     | '/finance'
     | '/logistics'
@@ -598,6 +644,7 @@ export interface FileRouteTypes {
     | '/_shell/logistics/maintenance'
     | '/_shell/logistics/trips'
     | '/_shell/logistics/waybills'
+    | '/_shell/security/attendance-scanner'
     | '/_shell/security/dispatch'
     | '/_shell/security/gate-log'
     | '/_shell/security/item-bought'
@@ -610,13 +657,16 @@ export interface FileRouteTypes {
     | '/_shell/security/staff-movement'
     | '/_shell/security/suppliers'
     | '/_shell/security/visitor-log'
+    | '/_shell/settings/branches'
     | '/_shell/settings/org-settings'
     | '/_shell/settings/profile'
     | '/_shell/settings/rbac'
+    | '/_shell/settings/staff'
     | '/_shell/settings/user-management'
     | '/_shell/warehouse/alerts'
     | '/_shell/warehouse/bin-card'
     | '/_shell/warehouse/grn'
+    | '/_shell/warehouse/production'
     | '/_shell/warehouse/stock-overview'
     | '/_shell/finance/'
     | '/_shell/logistics/'
@@ -761,6 +811,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellWarehouseStockOverviewRouteImport
       parentRoute: typeof ShellWarehouseRoute
     }
+    '/_shell/warehouse/production': {
+      id: '/_shell/warehouse/production'
+      path: '/production'
+      fullPath: '/warehouse/production'
+      preLoaderRoute: typeof ShellWarehouseProductionRouteImport
+      parentRoute: typeof ShellWarehouseRoute
+    }
     '/_shell/warehouse/grn': {
       id: '/_shell/warehouse/grn'
       path: '/grn'
@@ -789,6 +846,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellSettingsUserManagementRouteImport
       parentRoute: typeof ShellRoute
     }
+    '/_shell/settings/staff': {
+      id: '/_shell/settings/staff'
+      path: '/settings/staff'
+      fullPath: '/settings/staff'
+      preLoaderRoute: typeof ShellSettingsStaffRouteImport
+      parentRoute: typeof ShellRoute
+    }
     '/_shell/settings/rbac': {
       id: '/_shell/settings/rbac'
       path: '/settings/rbac'
@@ -808,6 +872,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/org-settings'
       fullPath: '/settings/org-settings'
       preLoaderRoute: typeof ShellSettingsOrgSettingsRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/settings/branches': {
+      id: '/_shell/settings/branches'
+      path: '/settings/branches'
+      fullPath: '/settings/branches'
+      preLoaderRoute: typeof ShellSettingsBranchesRouteImport
       parentRoute: typeof ShellRoute
     }
     '/_shell/security/visitor-log': {
@@ -892,6 +963,13 @@ declare module '@tanstack/react-router' {
       path: '/dispatch'
       fullPath: '/security/dispatch'
       preLoaderRoute: typeof ShellSecurityDispatchRouteImport
+      parentRoute: typeof ShellSecurityRoute
+    }
+    '/_shell/security/attendance-scanner': {
+      id: '/_shell/security/attendance-scanner'
+      path: '/attendance-scanner'
+      fullPath: '/security/attendance-scanner'
+      preLoaderRoute: typeof ShellSecurityAttendanceScannerRouteImport
       parentRoute: typeof ShellSecurityRoute
     }
     '/_shell/logistics/waybills': {
@@ -1035,6 +1113,7 @@ const ShellLogisticsRouteWithChildren = ShellLogisticsRoute._addFileChildren(
 )
 
 interface ShellSecurityRouteChildren {
+  ShellSecurityAttendanceScannerRoute: typeof ShellSecurityAttendanceScannerRoute
   ShellSecurityDispatchRoute: typeof ShellSecurityDispatchRoute
   ShellSecurityGateLogRoute: typeof ShellSecurityGateLogRoute
   ShellSecurityItemBoughtRoute: typeof ShellSecurityItemBoughtRoute
@@ -1051,6 +1130,7 @@ interface ShellSecurityRouteChildren {
 }
 
 const ShellSecurityRouteChildren: ShellSecurityRouteChildren = {
+  ShellSecurityAttendanceScannerRoute: ShellSecurityAttendanceScannerRoute,
   ShellSecurityDispatchRoute: ShellSecurityDispatchRoute,
   ShellSecurityGateLogRoute: ShellSecurityGateLogRoute,
   ShellSecurityItemBoughtRoute: ShellSecurityItemBoughtRoute,
@@ -1074,6 +1154,7 @@ interface ShellWarehouseRouteChildren {
   ShellWarehouseAlertsRoute: typeof ShellWarehouseAlertsRoute
   ShellWarehouseBinCardRoute: typeof ShellWarehouseBinCardRoute
   ShellWarehouseGrnRoute: typeof ShellWarehouseGrnRoute
+  ShellWarehouseProductionRoute: typeof ShellWarehouseProductionRoute
   ShellWarehouseStockOverviewRoute: typeof ShellWarehouseStockOverviewRoute
   ShellWarehouseIndexRoute: typeof ShellWarehouseIndexRoute
 }
@@ -1082,6 +1163,7 @@ const ShellWarehouseRouteChildren: ShellWarehouseRouteChildren = {
   ShellWarehouseAlertsRoute: ShellWarehouseAlertsRoute,
   ShellWarehouseBinCardRoute: ShellWarehouseBinCardRoute,
   ShellWarehouseGrnRoute: ShellWarehouseGrnRoute,
+  ShellWarehouseProductionRoute: ShellWarehouseProductionRoute,
   ShellWarehouseStockOverviewRoute: ShellWarehouseStockOverviewRoute,
   ShellWarehouseIndexRoute: ShellWarehouseIndexRoute,
 }
@@ -1100,9 +1182,11 @@ interface ShellRouteChildren {
   ShellWarehouseRoute: typeof ShellWarehouseRouteWithChildren
   ShellCeoOverviewRoute: typeof ShellCeoOverviewRoute
   ShellCeoReportsRoute: typeof ShellCeoReportsRoute
+  ShellSettingsBranchesRoute: typeof ShellSettingsBranchesRoute
   ShellSettingsOrgSettingsRoute: typeof ShellSettingsOrgSettingsRoute
   ShellSettingsProfileRoute: typeof ShellSettingsProfileRoute
   ShellSettingsRbacRoute: typeof ShellSettingsRbacRoute
+  ShellSettingsStaffRoute: typeof ShellSettingsStaffRoute
   ShellSettingsUserManagementRoute: typeof ShellSettingsUserManagementRoute
 }
 
@@ -1116,9 +1200,11 @@ const ShellRouteChildren: ShellRouteChildren = {
   ShellWarehouseRoute: ShellWarehouseRouteWithChildren,
   ShellCeoOverviewRoute: ShellCeoOverviewRoute,
   ShellCeoReportsRoute: ShellCeoReportsRoute,
+  ShellSettingsBranchesRoute: ShellSettingsBranchesRoute,
   ShellSettingsOrgSettingsRoute: ShellSettingsOrgSettingsRoute,
   ShellSettingsProfileRoute: ShellSettingsProfileRoute,
   ShellSettingsRbacRoute: ShellSettingsRbacRoute,
+  ShellSettingsStaffRoute: ShellSettingsStaffRoute,
   ShellSettingsUserManagementRoute: ShellSettingsUserManagementRoute,
 }
 

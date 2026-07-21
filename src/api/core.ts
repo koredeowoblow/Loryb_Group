@@ -94,3 +94,35 @@ export const suppliers = {
   update: (id: string, data: Partial<Types.SupplierRecord>) => handleApiCall(() => data as any, `/api/v1/security/suppliers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id: string) => handleApiCall(() => ({}), `/api/v1/security/suppliers/${id}`, { method: 'DELETE' })
 };
+
+export const branches = {
+  list: () => handleApiCall(() => [] as Types.Branch[], '/api/v1/branches'),
+  get: (id: string) => handleApiCall(() => ({} as Types.Branch), `/api/v1/branches/${id}`),
+  create: (data: Omit<Types.Branch, 'id'>) => handleApiCall(() => data as any, '/api/v1/branches', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id: string, data: Partial<Types.Branch>) => handleApiCall(() => data as any, `/api/v1/branches/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id: string) => handleApiCall(() => ({}), `/api/v1/branches/${id}`, { method: 'DELETE' }),
+  getStaff: (id: string) => handleApiCall(() => [] as Types.Staff[], `/api/v1/branches/${id}/staff`),
+  getAttendance: (id: string, skip: number = 0, limit: number = 20) => handleApiCall(() => ({ data: [] as Types.AttendanceLog[], total: 0 }), `/api/v1/branches/${id}/attendance?skip=${skip}&limit=${limit}`),
+  getProductionSummary: (id: string, startDate: string, endDate: string) => handleApiCall(() => [], `/api/v1/branches/${id}/production?startDate=${startDate}&endDate=${endDate}`)
+};
+
+export const staff = {
+  search: (query: string) => handleApiCall(() => [], `/api/v1/staff/search?query=${query}`),
+  list: () => handleApiCall(() => [] as Types.Staff[], '/api/v1/staff'),
+  get: (id: string) => handleApiCall(() => ({} as Types.Staff), `/api/v1/staff/${id}`),
+  create: (data: Omit<Types.Staff, 'id'>) => handleApiCall(() => data as any, '/api/v1/staff', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id: string, data: Partial<Types.Staff>) => handleApiCall(() => data as any, `/api/v1/staff/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id: string) => handleApiCall(() => ({}), `/api/v1/staff/${id}`, { method: 'DELETE' })
+};
+
+export const attendance = {
+  scan: (staffId: string) => handleApiCall(() => ({}), '/api/v1/attendance/scan', { method: 'POST', body: JSON.stringify({ staffId }) }),
+  getHistory: (staffId: string, skip: number = 0, limit: number = 20) => handleApiCall(() => ({ data: [] as Types.AttendanceLog[], total: 0 }), `/api/v1/attendance/${staffId}/history?skip=${skip}&limit=${limit}`)
+};
+
+export const production = {
+  list: () => handleApiCall(() => [] as Types.Production[], '/api/v1/production'),
+  create: (data: Omit<Types.Production, 'id'>) => handleApiCall(() => data as any, '/api/v1/production', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id: string, data: Partial<Types.Production>) => handleApiCall(() => data as any, `/api/v1/production/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id: string) => handleApiCall(() => ({}), `/api/v1/production/${id}`, { method: 'DELETE' })
+};

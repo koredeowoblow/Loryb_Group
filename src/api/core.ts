@@ -2,6 +2,7 @@ import { getMock, addMock } from '../mocks/db';
 import * as Types from '../types';
 
 export const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
  async function handleApiCall<T>(mockData: () => T, endpoint: string, options?: RequestInit): Promise<T> {
   if (USE_MOCK_DATA) {
@@ -15,7 +16,8 @@ export const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true';
   };
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const response = await fetch(endpoint, { ...options, headers })
+  const url = endpoint.startsWith('http') ? endpoint : `${BACKEND_URL}${endpoint}`;
+  const response = await fetch(url, { ...options, headers })
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'API Error');
@@ -51,7 +53,8 @@ export const auth = {
         }
         throw new Error('Invalid email or password')
       }
-      const response = await fetch('/api/v1/auth/login', {
+      const url = `/api/v1/auth/login`.startsWith('http') ? `/api/v1/auth/login` : `${BACKEND_URL}/api/v1/auth/login`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)

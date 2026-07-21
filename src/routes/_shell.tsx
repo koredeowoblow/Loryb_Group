@@ -162,6 +162,16 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
   )
   const [expanded, setExpanded] = useState<Record<string, boolean>>(initialExpanded)
 
+  useEffect(() => {
+    setExpanded(prev => {
+      const matched = ALL_NAV.find(item => currentPath.startsWith(item.to))
+      if (matched && !prev[matched.to]) {
+        return { ...prev, [matched.to]: true }
+      }
+      return prev
+    })
+  }, [currentPath])
+
   const navItems = ALL_NAV.filter(item => item.roles.includes(role as any))
 
   const asideRef = useRef<HTMLElement>(null)
@@ -283,6 +293,7 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
                         <li key={sub.to} className="relative">
                           <Link
                             to={sub.to}
+                            onClick={() => setIsOpen(false)}
                             className={clsx(
                               'relative flex min-h-[44px] w-full items-center py-[10px] rounded-sm text-base transition-colors',
                               isActive

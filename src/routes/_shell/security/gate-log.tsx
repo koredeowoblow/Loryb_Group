@@ -10,16 +10,6 @@ import { Button } from '../../../components/ui/Button'
 
 export const Route = createFileRoute('/_shell/security/gate-log')({ component: GateLogDashboard })
 
-const volumeData = [
-  { day: 'Mon', intake: 12, dispatch: 8  },
-  { day: 'Tue', intake: 19, dispatch: 15 },
-  { day: 'Wed', intake: 15, dispatch: 11 },
-  { day: 'Thu', intake: 22, dispatch: 18 },
-  { day: 'Fri', intake: 18, dispatch: 20 },
-  { day: 'Sat', intake: 5,  dispatch: 4  },
-  { day: 'Sun', intake: 2,  dispatch: 1  },
-]
-
 function GateLogDashboard() {
   const { data, isLoading } = useQuery({
     queryKey: ['security-dashboard-detailed'],
@@ -41,6 +31,23 @@ function GateLogDashboard() {
         todaySuppliers:  suppliers.length,
       }
     },
+  })
+
+  // Build 7-day traffic volume from real visitor / dispatch records
+  const _dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const _today = new Date()
+  const volumeData = Array.from({ length: 7 }, (_, i) => {
+    const target = new Date(_today)
+    target.setDate(_today.getDate() - (6 - i))
+    const targetStr = target.toISOString().slice(0, 10)
+    const dayLabel = _dayNames[target.getDay()]
+    const intakeCount = (data?.visitors ?? []).filter(
+      (v: any) => String(v.date ?? v.timeIn ?? v.createdAt ?? '').slice(0, 10) === targetStr
+    ).length
+    const dispatchCount = (data?.dispatch ?? []).filter(
+      (d: any) => String(d.date ?? d.createdAt ?? '').slice(0, 10) === targetStr
+    ).length
+    return { day: dayLabel, intake: intakeCount, dispatch: dispatchCount }
   })
 
   return (

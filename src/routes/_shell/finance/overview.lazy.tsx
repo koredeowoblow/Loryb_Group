@@ -17,11 +17,11 @@ function FinancialOverviewPage() {
     return <PageSkeleton />
   }
 
-  const totalSales = sales.reduce((acc, s) => acc + s.amount, 0) || 12500000
-  const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0) || 3400000
-  const totalPayroll = payroll.reduce((acc, p) => acc + p.amount, 0) || 2100000
-  const totalSupplierPaid = supplierPayments.reduce((acc, s) => acc + s.amountPaid, 0) || 4500000
-  const totalSupplierOwed = supplierPayments.reduce((acc, s) => acc + s.amountOwed, 0) || 1200000
+  const totalSales = sales.reduce((acc, s) => acc + s.amount, 0)
+  const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0)
+  const totalPayroll = payroll.reduce((acc, p) => acc + p.amount, 0)
+  const totalSupplierPaid = supplierPayments.reduce((acc, s) => acc + s.amountPaid, 0)
+  const totalSupplierOwed = supplierPayments.reduce((acc, s) => acc + Math.max(0, (s.amountOwed ?? 0) - (s.amountPaid ?? 0)), 0)
   
   const netCashflow = totalSales - (totalExpenses + totalPayroll + totalSupplierPaid)
 
@@ -32,15 +32,32 @@ function FinancialOverviewPage() {
     { name: 'Suppliers', value: totalSupplierPaid, fill: CHART_COLORS.primary }, 
   ]
 
-  const trendData = [
-    { month: 'Jan', revenue: 4000000, expenses: 2400000 },
-    { month: 'Feb', revenue: 3000000, expenses: 1398000 },
-    { month: 'Mar', revenue: 2000000, expenses: 9800000 },
-    { month: 'Apr', revenue: 2780000, expenses: 3908000 },
-    { month: 'May', revenue: 1890000, expenses: 4800000 },
-    { month: 'Jun', revenue: 2390000, expenses: 3800000 },
-    { month: 'Jul', revenue: 3490000, expenses: 4300000 },
-  ];
+  // Build last 6 months of revenue vs expenses from real records
+  const trendData = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date()
+    d.setDate(1)
+    d.setMonth(d.getMonth() - (5 - i))
+    const year = d.getFullYear()
+    const month = d.getMonth()
+    const label = d.toLocaleString('default', { month: 'short' })
+    const rev = sales
+      .filter((s: any) => { const sd = new Date(s.date ?? s.createdAt ?? 0); return sd.getFullYear() === year && sd.getMonth() === month })
+      .reduce((a: number, s: any) => a + (s.amount ?? 0), 0)
+    const exp = expenses
+      .filter((e: any) => { const ed = new Date(e.date ?? e.createdAt ?? 0); return ed.getFullYear() === year && ed.getMonth() === month })
+      .reduce((a: number, e: any) => a + (e.amount ?? 0), 0)
+    return { month: label, revenue: rev, expenses: exp }
+  })
+
+  // Month-over-month cashflow growth
+  const thisMonth = trendData[trendData.length - 1]
+  const lastMonth = trendData[trendData.length - 2]
+  const lastNetCashflow = (lastMonth?.revenue ?? 0) - (lastMonth?.expenses ?? 0)
+  const growthPct = lastNetCashflow !== 0
+    ? Math.round(((netCashflow - lastNetCashflow) / Math.abs(lastNetCashflow)) * 100)
+    : null
+  // Suppress unused variable warning from thisMonth
+  void thisMonth
 
   return (
     <div className="space-y-6">
@@ -61,7 +78,14 @@ function FinancialOverviewPage() {
           </div>
           <div className="text-3xl font-bold text-primary">₦ {netCashflow.toLocaleString()}</div>
           <div className="text-xs text-status-success-dark mt-2 font-medium flex items-center gap-1">
-             <TrendingUp size={12} /> +12.5% from last month
+          {growthPct !== null ? (
+            <>
+              <TrendingUp size={12} />
+              {growthPct >= 0 ? '+' : ''}{growthPct}% from last month
+            </>
+          ) : (
+            <span>No prior month data</span>
+          )}
           </div>
         </div>
 

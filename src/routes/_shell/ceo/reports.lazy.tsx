@@ -207,41 +207,25 @@ function ReportsPage() {
         staffAttendanceApi.list(),
       ]);
 
-      const totalSales = sales.reduce((a, s) => a + s.amount, 0) || 12_500_000;
-      const totalExpenses =
-        expenses.reduce((a, e) => a + e.amount, 0) || 3_400_000;
-      const totalPayroll =
-        payroll.reduce((a, p) => a + p.amount, 0) || 2_100_000;
-      const totalSupplierPaid =
-        supplierPayments.reduce((a, s) => a + s.amountPaid, 0) || 4_500_000;
+      const totalSales = sales.reduce((a, s) => a + s.amount, 0);
+      const totalExpenses = expenses.reduce((a, e) => a + e.amount, 0);
+      const totalPayroll = payroll.reduce((a, p) => a + p.amount, 0);
+      const totalSupplierPaid = supplierPayments.reduce((a, s) => a + s.amountPaid, 0);
       const totalCosts = totalExpenses + totalPayroll + totalSupplierPaid;
       const netProfit = totalSales - totalCosts;
 
-      const intakeVolume = grn.reduce((a, g) => a + g.netWeight, 0) || 374_492;
-      const dispatchVolume =
-        dispatch.reduce((a, d) => a + d.confirmedQty, 0) || 521_327;
+      const intakeVolume = grn.reduce((a, g) => a + g.netWeight, 0);
+      const dispatchVolume = dispatch.reduce((a, d) => a + (d.confirmedQty ?? 0), 0);
 
-      const activeTrucks =
-        trucks.length > 0
-          ? trucks.filter((t) => t.status === "in-transit").length
-          : 12;
-      const idleTrucks =
-        trucks.length > 0
-          ? trucks.filter((t) => t.status === "idle").length
-          : 4;
-      const maintenanceTrucks =
-        trucks.length > 0
-          ? trucks.filter((t) => t.status === "maintenance").length
-          : 2;
-      const totalFleet =
-        trucks.length || activeTrucks + idleTrucks + maintenanceTrucks;
-      const fleetUtilization = Math.round((activeTrucks / totalFleet) * 100);
+      const activeTrucks = trucks.filter((t) => t.status === "in-transit").length;
+      const idleTrucks = trucks.filter((t) => t.status === "idle").length;
+      const maintenanceTrucks = trucks.filter((t) => t.status === "maintenance").length;
+      const totalFleet = trucks.length;
+      const fleetUtilization = totalFleet > 0 ? Math.round((activeTrucks / totalFleet) * 100) : 0;
 
-      const activeVisitors =
-        visitorLog.length > 0 ? visitorLog.filter((v) => !v.timeOut).length : 0;
-      const totalStaff = staff.length > 0 ? staff.length : 20;
-      const staffPresent =
-        staff.length > 0 ? staff.filter((s) => !s.timeOut).length : 0;
+      const activeVisitors = visitorLog.filter((v) => !v.timeOut).length;
+      const totalStaff = staff.length;
+      const staffPresent = staff.filter((s) => !s.timeOut).length;
 
       return {
         financials: {
@@ -261,6 +245,11 @@ function ReportsPage() {
           fleetUtilization,
         },
         security: { activeVisitors, totalStaff, staffPresent },
+        // Raw records for chart time-series
+        grnRaw: grn,
+        dispatchRaw: dispatch,
+        salesRaw: sales,
+        expensesRaw: expenses,
       };
     },
   });
@@ -269,7 +258,7 @@ function ReportsPage() {
     return <PageSkeleton />;
   }
 
-  const { financials, warehouse, logistics, security } = data!;
+  const { financials, warehouse, logistics, security, grnRaw, dispatchRaw, salesRaw, expensesRaw } = data!;
 
   const fmt = (n: number) => `₦${n.toLocaleString()}`;
   const margin = Math.round(
@@ -279,7 +268,7 @@ function ReportsPage() {
     (security.staffPresent / security.totalStaff) * 100,
   );
 
-  // ── Chart data ─────────────────────────────────────────────────────────────
+  // ── Chart data — derived from real records ─────────────────────────────────
   const costBreakdown = [
     {
       name: "Ops Expenses",
@@ -298,22 +287,42 @@ function ReportsPage() {
     },
   ];
 
-  const warehouseFlow = [
-    { month: "Jan", intake: 40000, dispatch: 24000 },
-    { month: "Feb", intake: 30000, dispatch: 13980 },
-    { month: "Mar", intake: 20000, dispatch: 98000 },
-    { month: "Apr", intake: 27800, dispatch: 39080 },
-    { month: "May", intake: 18900, dispatch: 48000 },
-    { month: "Jun", intake: 23900, dispatch: 38000 },
-    { month: "Jul", intake: 34900, dispatch: 43000 },
-  ];
+  // Warehouse flow — last 7 months of GRN intake and dispatch volume
+  const warehouseFlow = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - (6 - i));
+    const year = d.getFullYear();
+    const month = d.getMonth();
+    const label = d.toLocaleString('default', { month: 'short' });
+    const intake = (grnRaw as any[])
+      .filter((g: any) => { const gd = new Date(g.date ?? g.createdAt ?? 0); return gd.getFullYear() === year && gd.getMonth() === month; })
+      .reduce((a: number, g: any) => a + (g.netWeight ?? 0), 0);
+    const disp = (dispatchRaw as any[])
+      .filter((g: any) => { const gd = new Date(g.date ?? g.createdAt ?? 0); return gd.getFullYear() === year && gd.getMonth() === month; })
+      .reduce((a: number, g: any) => a + (g.confirmedQty ?? 0), 0);
+    return { month: label, intake, dispatch: disp };
+  });
 
-  const revCostTrend = [
-    { wk: "Wk 1", revenue: 1_200_000, costs: 800_000 },
-    { wk: "Wk 2", revenue: 1_500_000, costs: 950_000 },
-    { wk: "Wk 3", revenue: 1_800_000, costs: 850_000 },
-    { wk: "Wk 4", revenue: 2_100_000, costs: 1_100_000 },
-  ];
+  // Revenue vs Cost — last 4 weeks
+  const now = new Date();
+  const startOfThisWeek = new Date(now);
+  startOfThisWeek.setDate(now.getDate() - now.getDay());
+  startOfThisWeek.setHours(0, 0, 0, 0);
+  const revCostTrend = [0, 1, 2, 3].reverse().map((weeksAgo) => {
+    const wkStart = new Date(startOfThisWeek);
+    wkStart.setDate(wkStart.getDate() - weeksAgo * 7);
+    const wkEnd = new Date(wkStart);
+    wkEnd.setDate(wkStart.getDate() + 7);
+    const label = weeksAgo === 0 ? 'This Wk' : `Wk -${weeksAgo}`;
+    const rev = (salesRaw as any[])
+      .filter((s: any) => { const d = new Date(s.date ?? s.createdAt ?? 0); return d >= wkStart && d < wkEnd; })
+      .reduce((a: number, s: any) => a + (s.amount ?? 0), 0);
+    const costs = (expensesRaw as any[])
+      .filter((e: any) => { const d = new Date(e.date ?? e.createdAt ?? 0); return d >= wkStart && d < wkEnd; })
+      .reduce((a: number, e: any) => a + (e.amount ?? 0), 0);
+    return { wk: label, revenue: rev, costs };
+  });
 
   const fleetBreakdown = [
     {

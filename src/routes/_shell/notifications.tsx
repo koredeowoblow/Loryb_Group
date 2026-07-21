@@ -1,79 +1,114 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import { Bell, AlertTriangle, CheckCircle, Info } from 'lucide-react'
+import { useState, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { Bell, AlertTriangle, CheckCircle, Info, PackageOpen } from 'lucide-react'
 import clsx from 'clsx'
+import { inventoryAlerts as inventoryAlertsApi } from '../../../api/warehouse'
+import { invoices as invoicesApi } from '../../../api/finance'
+import { dispatchRecord as dispatchRecordApi } from '../../../api/security'
 
 export const Route = createFileRoute('/_shell/notifications')({
   component: NotificationsPage,
 })
 
+type NotificationType = 'info' | 'warning' | 'success' | 'alert'
+
 type Notification = {
   id: string
   title: string
   message: string
-  type: 'info' | 'warning' | 'success' | 'alert'
+  type: NotificationType
   timestamp: string
   isRead: boolean
 }
 
-const mockNotifications: Notification[] = [
-  {
-    id: 'n-1',
-    title: 'Low Stock Alert: Maize',
-    message: 'Warehouse A is running critically low on Maize (Current: 450kg). Please initiate procurement.',
-    type: 'warning',
-    timestamp: '10 minutes ago',
-    isRead: false,
-  },
-  {
-    id: 'n-2',
-    title: 'New Trip Approved',
-    message: 'Trip T-4091 to Abuja has been approved and fleet KJA-992-XD has been dispatched.',
-    type: 'success',
-    timestamp: '1 hour ago',
-    isRead: false,
-  },
-  {
-    id: 'n-3',
-    title: 'System Maintenance Scheduled',
-    message: 'Loryb Ops Platform will undergo scheduled maintenance tonight at 02:00 AM WAT.',
-    type: 'info',
-    timestamp: '3 hours ago',
-    isRead: true,
-  },
-  {
-    id: 'n-4',
-    title: 'Invoice Overdue',
-    message: 'Invoice INV-2026-089 for supplier Greenville Logistics is now 3 days overdue.',
-    type: 'alert',
-    timestamp: '5 hours ago',
-    isRead: true,
-  },
-  {
-    id: 'n-5',
-    title: 'Payroll Processed',
-    message: 'June 2026 payroll has been successfully processed and disbursed.',
-    type: 'success',
-    timestamp: '1 day ago',
-    isRead: true,
-  },
-]
+function timeAgo(dateStr: string): string {
+  const date = new Date(dateStr)
+  if (isNaN(date.getTime())) return 'Recently'
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
+  if (seconds < 60) return `${seconds}s ago`
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return `${minutes}m ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  return `${Math.floor(hours / 24)}d ago`
+}
 
 function NotificationsPage() {
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications)
+  const { data: alerts = [] } = useQuery({ queryKey: ['inventoryAlerts'], queryFn: inventoryAlertsApi.list })
+  const { data: invList = [] } = useQuery({ queryKey: ['invoices'], queryFn: invoicesApi.list })
+  const { data: dispatches = [] } = useQuery({ queryKey: ['dispatchRecord'], queryFn: dispatchRecordApi.list })
+
+  // Build a unified notification feed from real records
+  const baseNotifications = useMemo<Notification[]>(() => {
+    const items: Notification[] = []
+
+    // Low / critical stock alerts
+    alerts
+      .filter((a: any) => a.status === 'low' || a.status === 'critical')
+      .forEach((a: any) => {
+        items.push({
+          id: `alert-${a.id ?? a._id}`,
+          title: `${a.status === 'critical' ? 'Critical' : 'Low'} Stock: ${a.grainType ?? a.itemName ?? 'Item'}`,
+          message: `Current quantity is ${(a.currentQty ?? a.quantity ?? 0).toLocaleString()} kg — below threshold of ${(a.thresholdQty ?? a.threshold ?? 0).toLocaleString()} kg.`,
+          type: a.status === 'critical' ? 'alert' : 'warning',
+          timestamp: timeAgo(a.updatedAt ?? a.createdAt ?? ''),
+          isRead: false,
+        })
+      })
+
+    // Overdue invoices
+    const today = new Date()
+    invList
+      .filter((i: any) => i.status !== 'paid' && i.dueDate && new Date(i.dueDate) < today)
+      .slice(0, 5)
+      .forEach((i: any) => {
+        items.push({
+          id: `inv-${i.id ?? i._id}`,
+          title: `Invoice Overdue: ${i.invoiceNumber ?? i.id ?? 'Unknown'}`,
+          message: `Invoice for ${i.clientName ?? i.supplierName ?? 'a client'} is overdue. Amount: ₦${(i.amount ?? 0).toLocaleString()}.`,
+          type: 'alert',
+          timestamp: timeAgo(i.dueDate),
+          isRead: false,
+        })
+      })
+
+    // Recent dispatches (last 5 cleared)
+    dispatches
+      .slice(0, 5)
+      .forEach((d: any) => {
+        items.push({
+          id: `dispatch-${d.id ?? d._id}`,
+          title: `Dispatch Cleared: ${d.truckNo ?? d.vehicleNo ?? 'Unknown Truck'}`,
+          message: `Driver ${d.driverName ?? 'Unknown'} has been cleared through the gate.`,
+          type: 'success',
+          timestamp: timeAgo(d.date ?? d.createdAt ?? ''),
+          isRead: true,
+        })
+      })
+
+    return items
+  }, [alerts, invList, dispatches])
+
+  const [notifications, setNotifications] = useState<Notification[]>(baseNotifications)
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
 
+  // Sync when base data loads
+  const merged = useMemo(() => {
+    const readMap = new Map(notifications.map(n => [n.id, n.isRead]))
+    return baseNotifications.map(n => ({ ...n, isRead: readMap.get(n.id) ?? n.isRead }))
+  }, [baseNotifications, notifications])
+
   const markAllRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))
+    setNotifications(merged.map(n => ({ ...n, isRead: true })))
   }
 
   const markAsRead = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n))
+    setNotifications(merged.map(n => n.id === id ? { ...n, isRead: true } : n))
   }
 
-  const displayedNotifications = filter === 'all' ? notifications : notifications.filter(n => !n.isRead)
-
-  const unreadCount = notifications.filter(n => !n.isRead).length
+  const displayedNotifications = filter === 'all' ? merged : merged.filter(n => !n.isRead)
+  const unreadCount = merged.filter(n => !n.isRead).length
 
   return (
     <div className="space-y-4 max-w-4xl mx-auto">
@@ -121,11 +156,15 @@ function NotificationsPage() {
           {displayedNotifications.length === 0 ? (
             <div className="p-16 flex flex-col items-center justify-center text-center">
               <div className="w-16 h-16 bg-surface-muted rounded-full flex items-center justify-center mb-4 text-surface-border">
-                <Bell size={32} />
+                {filter === 'unread' ? <Bell size={32} /> : <PackageOpen size={32} />}
               </div>
-              <h3 className="text-lg font-bold text-primary font-header">You're all caught up!</h3>
+              <h3 className="text-lg font-bold text-primary font-header">
+                {filter === 'unread' ? "You're all caught up!" : "No activity yet"}
+              </h3>
               <p className="text-sm text-text-muted max-w-sm mt-1">
-                There are no {filter === 'unread' ? 'unread ' : ''}notifications at the moment.
+                {filter === 'unread'
+                  ? 'There are no unread notifications at the moment.'
+                  : 'Notifications will appear here as stock alerts, overdue invoices, and dispatches are recorded.'}
               </p>
             </div>
           ) : (
@@ -172,4 +211,5 @@ function NotificationsPage() {
     </div>
   )
 }
+
 

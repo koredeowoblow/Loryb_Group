@@ -140,52 +140,83 @@ function CEOOverviewPage() {
   const totalExpenses = expenses.reduce((a, e) => a + e.amount, 0);
   const totalIntake = grn.reduce((a, g) => a + g.netWeight, 0);
 
-  const fleetTransit =
-    trucks.filter((t) => t.status === "in-transit").length || 2;
-  const fleetIdle = trucks.filter((t) => t.status === "idle").length || 1;
-  const fleetMaintenance =
-    trucks.filter((t) => t.status === "maintenance").length || 1;
+  const fleetTransit = trucks.filter((t) => t.status === "in-transit").length;
+  const fleetIdle = trucks.filter((t) => t.status === "idle").length;
+  const fleetMaintenance = trucks.filter((t) => t.status === "maintenance").length;
 
-  const todayIntakes = suppliers.length > 0 ? 4 : 0;
-  const activeVisitors = visitorLog.filter((v) => !v.timeOut).length || 2;
-  const lowStockCount =
-    inventoryAlerts.filter((a) => a.status === "low" || a.status === "critical")
-      .length || 1;
+  // Count suppliers that arrived today
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayIntakes = suppliers.filter((s: any) => {
+    const d = s.date ?? s.createdAt ?? '';
+    return String(d).slice(0, 10) === todayStr;
+  }).length;
 
-  const completedThisWeek =
-    trips.filter((t) => t.status === "delivered").length || 12;
-  const completedLastWeek = 8;
+  const activeVisitors = visitorLog.filter((v) => !v.timeOut).length;
+  const lowStockCount = inventoryAlerts.filter(
+    (a) => a.status === "low" || a.status === "critical"
+  ).length;
+
+  // Trips completed this week vs last week
+  const now = new Date();
+  const startOfThisWeek = new Date(now);
+  startOfThisWeek.setDate(now.getDate() - now.getDay());
+  startOfThisWeek.setHours(0, 0, 0, 0);
+  const startOfLastWeek = new Date(startOfThisWeek);
+  startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
+
+  const completedThisWeek = trips.filter((t) => {
+    if (t.status !== "delivered") return false;
+    const d = new Date(t.date ?? t.createdAt ?? 0);
+    return d >= startOfThisWeek;
+  }).length;
+  const completedLastWeek = trips.filter((t) => {
+    if (t.status !== "delivered") return false;
+    const d = new Date(t.date ?? t.createdAt ?? 0);
+    return d >= startOfLastWeek && d < startOfThisWeek;
+  }).length;
   const tripDelta = completedThisWeek - completedLastWeek;
 
-  const outstandingPayables =
-    supplierPayments.reduce((a, p) => a + (p.amountOwed - p.amountPaid), 0) ||
-    450000;
-  const outstandingReceivables =
-    invoices
-      .filter((i) => i.status !== "paid")
-      .reduce((a, i) => a + i.amount, 0) || 1200000;
+  const outstandingPayables = supplierPayments.reduce(
+    (a, p) => a + Math.max(0, (p.amountOwed ?? 0) - (p.amountPaid ?? 0)),
+    0
+  );
+  const outstandingReceivables = invoices
+    .filter((i) => i.status !== "paid")
+    .reduce((a, i) => a + i.amount, 0);
 
-  // ── Chart data ──────────────────────────────────────────────────────────────
+  // ── Chart data — derived from real records ──────────────────────────────────
+  // Stock by grain type from GRN net weights
+  const grnByType = (type: string) =>
+    grn
+      .filter((g: any) => g.grainType === type)
+      .reduce((a: number, g: any) => a + (g.netWeight ?? 0), 0);
   const stockData = [
-    { name: "Maize", value: 45000, fill: CHART_COLORS.maize },
-    { name: "Sorghum", value: 28000, fill: CHART_COLORS.sorghum },
-    { name: "SoyaBeans", value: 15000, fill: CHART_COLORS.soyabeans },
+    { name: "Maize",     value: grnByType("Maize"),     fill: CHART_COLORS.maize },
+    { name: "Sorghum",   value: grnByType("Sorghum"),   fill: CHART_COLORS.sorghum },
+    { name: "SoyaBeans", value: grnByType("SoyaBeans"), fill: CHART_COLORS.soyabeans },
   ];
+
   const fleetData = [
-    { name: "In-Transit", value: fleetTransit, fill: CHART_COLORS.inTransit },
-    { name: "Idle", value: fleetIdle, fill: CHART_COLORS.idle },
-    {
-      name: "Maintenance",
-      value: fleetMaintenance,
-      fill: CHART_COLORS.maintenance,
-    },
+    { name: "In-Transit",  value: fleetTransit,     fill: CHART_COLORS.inTransit },
+    { name: "Idle",        value: fleetIdle,         fill: CHART_COLORS.idle },
+    { name: "Maintenance", value: fleetMaintenance,  fill: CHART_COLORS.maintenance },
   ];
-  const trendData = [
-    { date: "Wk 1", revenue: 1_200_000, expenses: 800_000 },
-    { date: "Wk 2", revenue: 1_500_000, expenses: 950_000 },
-    { date: "Wk 3", revenue: 1_800_000, expenses: 850_000 },
-    { date: "Wk 4", revenue: 2_100_000, expenses: 1_100_000 },
-  ];
+
+  // Weekly revenue/expenses trend — last 4 weeks
+  const trendData = [0, 1, 2, 3].reverse().map((weeksAgo) => {
+    const wkStart = new Date(startOfThisWeek);
+    wkStart.setDate(wkStart.getDate() - weeksAgo * 7);
+    const wkEnd = new Date(wkStart);
+    wkEnd.setDate(wkStart.getDate() + 7);
+    const label = weeksAgo === 0 ? 'This Wk' : `Wk -${weeksAgo}`;
+    const rev = sales
+      .filter((s: any) => { const d = new Date(s.date ?? s.createdAt ?? 0); return d >= wkStart && d < wkEnd; })
+      .reduce((a: number, s: any) => a + (s.amount ?? 0), 0);
+    const exp = expenses
+      .filter((e: any) => { const d = new Date(e.date ?? e.createdAt ?? 0); return d >= wkStart && d < wkEnd; })
+      .reduce((a: number, e: any) => a + (e.amount ?? 0), 0);
+    return { date: label, revenue: rev, expenses: exp };
+  });
 
   const fmt = (n: number) => `₦${n.toLocaleString()}`;
 
@@ -220,7 +251,7 @@ function CEOOverviewPage() {
         <StatCard
           title="Fleet in Transit"
           value={fleetTransit}
-          subtitle={`of ${trucks.length || 4} trucks`}
+          subtitle={`of ${trucks.length} trucks`}
         />
       </div>
 

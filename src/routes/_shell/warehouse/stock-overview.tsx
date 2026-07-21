@@ -20,28 +20,30 @@ function StockOverviewPage() {
     return <PageSkeleton />
   }
 
-  const totalMaize = binCards.filter(b => b.grainType === 'Maize').reduce((acc, b) => acc + b.qtyIn - b.qtyOut, 0) || 45000
-  const totalSorghum = binCards.filter(b => b.grainType === 'Sorghum').reduce((acc, b) => acc + b.qtyIn - b.qtyOut, 0) || 28000
-  const totalSoya = binCards.filter(b => b.grainType === 'SoyaBeans').reduce((acc, b) => acc + b.qtyIn - b.qtyOut, 0) || 15000
+  const totalMaize = binCards.filter(b => b.grainType === 'Maize').reduce((acc, b) => acc + (b.qtyIn ?? 0) - (b.qtyOut ?? 0), 0)
+  const totalSorghum = binCards.filter(b => b.grainType === 'Sorghum').reduce((acc, b) => acc + (b.qtyIn ?? 0) - (b.qtyOut ?? 0), 0)
+  const totalSoya = binCards.filter(b => b.grainType === 'SoyaBeans').reduce((acc, b) => acc + (b.qtyIn ?? 0) - (b.qtyOut ?? 0), 0)
   
-  const activeAlertsList = alerts.filter(a => a.status !== 'ok')
-  const mockAlerts = [
-    { id: '1', grainType: 'SoyaBeans', currentQty: 15000, thresholdQty: 20000, status: 'low' },
-    { id: '2', grainType: 'Millet', currentQty: 2000, thresholdQty: 10000, status: 'critical' }
-  ];
-  const activeAlerts = activeAlertsList.length > 0 ? activeAlertsList : mockAlerts;
+  const activeAlerts = alerts.filter(a => a.status !== 'ok')
 
   const capacity = { Maize: 100000, Sorghum: 50000, SoyaBeans: 50000 }
 
-  const trendData = [
-    { day: 'Mon', in: 12000, out: 8000 },
-    { day: 'Tue', in: 15000, out: 14000 },
-    { day: 'Wed', in: 5000, out: 12000 },
-    { day: 'Thu', in: 22000, out: 18000 },
-    { day: 'Fri', in: 18000, out: 20000 },
-    { day: 'Sat', in: 0, out: 4000 },
-    { day: 'Sun', in: 0, out: 1000 }
-  ]
+  // 7-day movement trend from real GRN and bin-card records
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const today = new Date()
+  const trendData = Array.from({ length: 7 }, (_, i) => {
+    const target = new Date(today)
+    target.setDate(today.getDate() - (6 - i))
+    const targetStr = target.toISOString().slice(0, 10)
+    const dayLabel = dayNames[target.getDay()]
+    const dayIn = grn
+      .filter((g: any) => String(g.date ?? g.createdAt ?? '').slice(0, 10) === targetStr)
+      .reduce((a: number, g: any) => a + (g.netWeight ?? 0), 0)
+    const dayOut = binCards
+      .filter((b: any) => String(b.date ?? b.createdAt ?? '').slice(0, 10) === targetStr)
+      .reduce((a: number, b: any) => a + (b.qtyOut ?? 0), 0)
+    return { day: dayLabel, in: dayIn, out: dayOut }
+  })
 
   return (
     <div className="space-y-6">

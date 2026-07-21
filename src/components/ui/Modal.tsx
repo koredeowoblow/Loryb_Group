@@ -49,7 +49,7 @@ export function Modal({ isOpen, onClose, title, description, children, size = 'm
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-surface-base/80 dark:bg-black/80 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -80,7 +80,7 @@ export function Modal({ isOpen, onClose, title, description, children, size = 'm
           </div>
           <button
             onClick={onClose}
-            className="btn btn-ghost p-1 rounded-sm mt-0.5 shrink-0"
+            className="btn btn-ghost min-w-[44px] min-h-[44px] p-2 rounded-sm shrink-0"
             aria-label="Close modal"
           >
             <X size={18} />

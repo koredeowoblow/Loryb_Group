@@ -134,6 +134,66 @@
                0 4px 8px -4px rgb(15 19 32 / 0.06);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   DARK MODE
+═══════════════════════════════════════════════════════════════════════════ */
+.dark,
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Brand Navy & Primary Adjustments for Dark Surface Contrast */
+    --color-primary:       51 102 187;   /* lighter blue for high contrast on dark */
+    --color-primary-hover: 75 125 210;
+    --color-primary-light: 100 150 230;
+    --color-primary-dark:  30 70 150;
+
+    /* Grays scale inverted for dark mode */
+    --color-gray-50:  15 19 32;     /* page canvas dark */
+    --color-gray-100: 24 30 48;     /* subtle tint / sidebar bg */
+    --color-gray-200: 38 46 70;     /* borders, dividers */
+    --color-gray-300: 60 72 104;    /* disabled inputs */
+    --color-gray-400: 108 121 147;  /* placeholder text */
+    --color-gray-500: 152 162 183;  /* secondary text */
+    --color-gray-600: 200 207 221;  /* body text */
+    --color-gray-700: 224 228 237;  /* strong text */
+    --color-gray-800: 241 243 248;  /* headings */
+    --color-gray-900: 248 249 252;  /* near-white text */
+
+    /* Dark Surfaces */
+    --color-surface-base:    15 19 32;    /* deep dark page background */
+    --color-surface-raised:  24 30 48;    /* elevated dark card surface */
+    --color-surface-overlay: 30 38 60;    /* dark modal surface */
+    --color-surface-border:  44 54 82;    /* 1px subtle dark hairline border */
+    --color-surface-active:  34 42 66;    /* hovered/selected row dark */
+
+    /* Text */
+    --color-text-primary:   248 249 252;
+    --color-text-secondary: 180 190 215;
+    --color-text-muted:     120 135 165;
+    --color-text-inverse:   15 19 32;
+
+    /* Dark Status Containers */
+    --color-status-success-bg:     15 40 25;
+    --color-status-success-border: 22 100 50;
+
+    --color-status-warning-bg:     45 30 10;
+    --color-status-warning-border: 140 80 15;
+
+    --color-status-danger-bg:      45 15 15;
+    --color-status-danger-border:  150 40 40;
+
+    --color-status-info-bg:        30 20 55;
+    --color-status-info-border:    90 50 160;
+
+    --color-status-neutral-bg:     28 35 52;
+    --color-status-neutral-border: 60 72 104;
+
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4);
+    --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);
+  }
+}
+
+
 
 /* ═══════════════════════════════════════════════════════════════════════════
    BASE LAYER

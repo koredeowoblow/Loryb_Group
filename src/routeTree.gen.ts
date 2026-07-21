@@ -324,7 +324,9 @@ const ShellFinanceOverviewRoute = ShellFinanceOverviewRouteImport.update({
   id: '/overview',
   path: '/overview',
   getParentRoute: () => ShellFinanceRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/_shell/finance/overview.lazy').then((d) => d.Route),
+)
 const ShellFinanceInvoicingRoute = ShellFinanceInvoicingRouteImport.update({
   id: '/invoicing',
   path: '/invoicing',
@@ -339,7 +341,9 @@ const ShellCeoReportsRoute = ShellCeoReportsRouteImport.update({
   id: '/ceo/reports',
   path: '/ceo/reports',
   getParentRoute: () => ShellRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/_shell/ceo/reports.lazy').then((d) => d.Route),
+)
 const ShellCeoOverviewRoute = ShellCeoOverviewRouteImport.update({
   id: '/ceo/overview',
   path: '/ceo/overview',

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { binCard as binCardApi, grn as grnApi, inventoryAlerts } from '../../../api/warehouse'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { Warehouse, AlertTriangle, ArrowDownToLine, Activity } from 'lucide-react'
+import { CHART_COLORS } from '../../../components/ui/ChartWrapper'
 
 export const Route = createFileRoute('/_shell/warehouse/stock-overview')({
   component: StockOverviewPage,
@@ -73,9 +74,9 @@ function StockOverviewPage() {
         
         {/* Visual Level Indicators */}
         {[
-          { name: 'Maize', value: totalMaize, cap: capacity.Maize, fill: '#002B79' },
-          { name: 'Sorghum', value: totalSorghum, cap: capacity.Sorghum, fill: '#F59E0B' },
-          { name: 'SoyaBeans', value: totalSoya, cap: capacity.SoyaBeans, fill: '#10B981' }
+          { name: 'Maize', value: totalMaize, cap: capacity.Maize, fill: CHART_COLORS.maize },
+          { name: 'Sorghum', value: totalSorghum, cap: capacity.Sorghum, fill: CHART_COLORS.sorghum },
+          { name: 'SoyaBeans', value: totalSoya, cap: capacity.SoyaBeans, fill: CHART_COLORS.soyabeans }
         ].map(grain => {
           const percent = Math.min(100, Math.round((grain.value / grain.cap) * 100))
           return (
@@ -113,8 +114,8 @@ function StockOverviewPage() {
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
                 <Tooltip cursor={{ stroke: '#E5E7EB' }} contentStyle={{ borderRadius: 4, fontWeight: 'bold' }} />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: 12, fontWeight: 600, paddingTop: 10 }} />
-                <Line name="Stock In (GRN)" type="monotone" dataKey="in" stroke="#002B79" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-                <Line name="Stock Out (Dispatch)" type="monotone" dataKey="out" stroke="#F59E0B" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                <Line name="Stock In (GRN)" type="monotone" dataKey="in" stroke={CHART_COLORS.primary} strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                <Line name="Stock Out (Dispatch)" type="monotone" dataKey="out" stroke={CHART_COLORS.warning} strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>

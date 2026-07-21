@@ -40,7 +40,7 @@ function AuthInput({
       <div className="relative">
         <Icon
           size={18}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none"
         />
         <input
           id={id}
@@ -52,12 +52,11 @@ function AuthInput({
           onChange={(e) => onChange(e.target.value)}
           className="
             w-full pl-[44px] pr-4 py-3 text-sm
-            bg-white border rounded-sm
-            text-text-primary placeholder:text-gray-400
+            bg-surface-raised border border-surface-border rounded-sm
+            text-text-primary placeholder:text-text-muted
             transition-colors
             focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary
           "
-          style={{ borderColor: 'rgb(180 188 208)' }}
         />
       </div>
     </div>
@@ -124,6 +123,7 @@ function LoginPage() {
           <img
             src="/logo.png"
             alt=""
+            aria-hidden="true"
             className="h-10 w-auto object-contain brightness-0 invert"
           />
           <span className="text-white text-lg font-bold tracking-tight">
@@ -138,7 +138,7 @@ function LoginPage() {
             <br />
             One platform.
           </p>
-          <p className="text-white/50 text-sm mt-3 max-w-xs leading-relaxed">
+          <p className="text-white/80 text-sm mt-3 max-w-xs leading-relaxed">
             Warehouse · Logistics · Finance · Security managed from a single
             command centre.
           </p>
@@ -150,7 +150,7 @@ function LoginPage() {
             className="h-1 w-16 rounded-full mb-4"
             style={{ background: "rgb(var(--color-accent))" }}
           />
-          <p className="text-white/40 text-xs">
+          <p className="text-white/70 text-xs">
             © {new Date().getFullYear()} Loryb Group of Companies
           </p>
         </div>

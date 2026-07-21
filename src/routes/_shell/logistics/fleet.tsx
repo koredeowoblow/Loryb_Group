@@ -14,6 +14,7 @@ import { FormField } from '../../../components/ui/FormField'
 import { SelectField } from '../../../components/ui/SelectField'
 import { Button } from '../../../components/ui/Button'
 import { Truck as TruckIcon, MapPin, Navigation, Clock, Activity } from 'lucide-react'
+import { CHART_COLORS } from '../../../components/ui/ChartWrapper'
 
 export const Route = createFileRoute('/_shell/logistics/fleet')({
   component: FleetPage,
@@ -137,9 +138,9 @@ function FleetPage() {
                 <PieChart>
                   <Pie
                     data={[
-                      { name: 'Idle', value: data?.filter(t => t.status === 'idle').length || 0, fill: '#10B981' },
-                      { name: 'In Transit', value: activeTrucks, fill: '#3B82F6' },
-                      { name: 'Maintenance', value: maintenanceTrucks, fill: '#F59E0B' }
+                      { name: 'Idle', value: data?.filter(t => t.status === 'idle').length || 0, fill: CHART_COLORS.success },
+                      { name: 'In Transit', value: activeTrucks, fill: CHART_COLORS.info },
+                      { name: 'Maintenance', value: maintenanceTrucks, fill: CHART_COLORS.warning }
                     ]}
                     innerRadius={60}
                     outerRadius={80}
@@ -147,9 +148,9 @@ function FleetPage() {
                     dataKey="value"
                   >
                     {[
-                      { name: 'Idle', value: data?.filter(t => t.status === 'idle').length || 0, fill: '#10B981' },
-                      { name: 'In Transit', value: activeTrucks, fill: '#3B82F6' },
-                      { name: 'Maintenance', value: maintenanceTrucks, fill: '#F59E0B' }
+                      { name: 'Idle', value: data?.filter(t => t.status === 'idle').length || 0, fill: CHART_COLORS.success },
+                      { name: 'In Transit', value: activeTrucks, fill: CHART_COLORS.info },
+                      { name: 'Maintenance', value: maintenanceTrucks, fill: CHART_COLORS.warning }
                     ].map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}

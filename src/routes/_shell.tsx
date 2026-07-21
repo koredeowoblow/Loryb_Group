@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import {
   LayoutDashboard, Shield, Warehouse, Truck, DollarSign,
   ChevronDown, ChevronRight, LogOut, Settings as SettingsIcon,
-  Menu, X,
+  Menu, X, Sun, Moon,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useAuth, Role } from '../auth'
@@ -222,7 +222,7 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
       {/* Logo row */}
       <div className="h-16 flex items-center gap-3 px-4 border-b border-surface-border shrink-0 overflow-hidden">
         <div className="w-8 h-8 shrink-0 overflow-hidden rounded-sm flex items-center justify-center">
-          <img src="/logo.png" alt="" className="h-8 w-auto object-cover object-left" />
+          <img src="/logo.png" alt="" aria-hidden="true" className="h-8 w-auto object-cover object-left" />
         </div>
         <div className="flex flex-col justify-center">
           <span className="text-base font-bold text-text-primary leading-tight tracking-tight">
@@ -233,7 +233,7 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
           </span>
         </div>
         <button
-          className="md:hidden ml-auto p-2 rounded-sm text-text-secondary hover:text-primary hover:bg-surface-active transition-colors"
+          className="md:hidden ml-auto min-w-[44px] min-h-[44px] inline-flex items-center justify-center p-2 rounded-sm text-text-secondary hover:text-primary hover:bg-surface-active transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           onClick={() => setIsOpen(false)}
           aria-label="Close sidebar"
         >
@@ -316,7 +316,7 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
         </div>
         <button
           onClick={() => navigate({ to: '/login' as any })}
-          className="p-2 rounded-sm text-text-muted hover:text-status-danger hover:bg-status-danger/10 transition-colors"
+          className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center p-2 rounded-sm text-text-muted hover:text-status-danger hover:bg-status-danger/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-status-danger/50"
           title="Sign out"
           aria-label="Sign out"
         >
@@ -335,12 +335,35 @@ function TopNav({
   role: Role
   toggleSidebar: () => void
 }) {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      const persisted = localStorage.getItem('loryb_theme')
+      if (persisted === 'dark' || persisted === 'light') return persisted
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    }
+    return 'light'
+  })
+
+  useEffect(() => {
+    const root = document.documentElement
+    if (theme === 'dark') {
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
+    }
+    localStorage.setItem('loryb_theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'))
+  }
+
   return (
     <header className="h-16 bg-surface-raised border-b border-surface-border flex items-center px-4 md:px-6 justify-between shrink-0 shadow-sm z-10">
       <div className="flex items-center gap-3">
         <button
           onClick={toggleSidebar}
-          className="md:hidden p-2 rounded-sm text-text-secondary hover:text-primary hover:bg-surface-active transition-colors"
+          className="md:hidden min-w-[44px] min-h-[44px] inline-flex items-center justify-center p-2 rounded-sm text-text-secondary hover:text-primary hover:bg-surface-active transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           aria-label="Toggle sidebar"
         >
           <Menu size={20} />
@@ -350,9 +373,20 @@ function TopNav({
         <span className="text-base font-semibold text-text-primary">Loryb Group</span>
       </div>
 
-      {/* Avatar */}
-      <div className="w-8 h-8 rounded-full bg-primary text-text-inverse flex items-center justify-center text-sm font-bold ring-2 ring-primary/20">
-        {role.charAt(0).toUpperCase()}
+      <div className="flex items-center gap-3">
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center p-2 rounded-sm text-text-secondary hover:text-primary hover:bg-surface-active transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          aria-label={theme === 'dark' ? "Switch to light theme" : "Switch to dark theme"}
+        >
+          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+
+        {/* Avatar */}
+        <div className="w-8 h-8 rounded-full bg-primary text-text-inverse flex items-center justify-center text-sm font-bold ring-2 ring-primary/20 select-none">
+          {role.charAt(0).toUpperCase()}
+        </div>
       </div>
     </header>
   )

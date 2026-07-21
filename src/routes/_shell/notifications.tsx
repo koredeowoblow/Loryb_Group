@@ -3,9 +3,9 @@ import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Bell, AlertTriangle, CheckCircle, Info, PackageOpen } from 'lucide-react'
 import clsx from 'clsx'
-import { inventoryAlerts as inventoryAlertsApi } from '../../../api/warehouse'
-import { invoices as invoicesApi } from '../../../api/finance'
-import { dispatchRecord as dispatchRecordApi } from '../../../api/security'
+import { inventoryAlerts as inventoryAlertsApi } from '../../api/warehouse'
+import { invoices as invoicesApi } from '../../api/finance'
+import { dispatchRecord as dispatchRecordApi } from '../../api/security'
 
 export const Route = createFileRoute('/_shell/notifications')({
   component: NotificationsPage,
@@ -35,9 +35,9 @@ function timeAgo(dateStr: string): string {
 }
 
 function NotificationsPage() {
-  const { data: alerts = [] } = useQuery({ queryKey: ['inventoryAlerts'], queryFn: inventoryAlertsApi.list })
-  const { data: invList = [] } = useQuery({ queryKey: ['invoices'], queryFn: invoicesApi.list })
-  const { data: dispatches = [] } = useQuery({ queryKey: ['dispatchRecord'], queryFn: dispatchRecordApi.list })
+  const { data: alerts = [] } = useQuery<any[]>({ queryKey: ['inventoryAlerts'], queryFn: inventoryAlertsApi.list })
+  const { data: invList = [] } = useQuery<any[]>({ queryKey: ['invoices'], queryFn: invoicesApi.list })
+  const { data: dispatches = [] } = useQuery<any[]>({ queryKey: ['dispatchRecord'], queryFn: dispatchRecordApi.list })
 
   // Build a unified notification feed from real records
   const baseNotifications = useMemo<Notification[]>(() => {

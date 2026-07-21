@@ -164,14 +164,14 @@ function CEOOverviewPage() {
   const startOfLastWeek = new Date(startOfThisWeek);
   startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
 
-  const completedThisWeek = trips.filter((t) => {
+  const completedThisWeek = (trips as any[]).filter((t) => {
     if (t.status !== "delivered") return false;
-    const d = new Date(t.date ?? t.createdAt ?? 0);
+    const d = new Date(t.etaOrCompletedAt ?? t.date ?? t.createdAt ?? 0);
     return d >= startOfThisWeek;
   }).length;
-  const completedLastWeek = trips.filter((t) => {
+  const completedLastWeek = (trips as any[]).filter((t) => {
     if (t.status !== "delivered") return false;
-    const d = new Date(t.date ?? t.createdAt ?? 0);
+    const d = new Date(t.etaOrCompletedAt ?? t.date ?? t.createdAt ?? 0);
     return d >= startOfLastWeek && d < startOfThisWeek;
   }).length;
   const tripDelta = completedThisWeek - completedLastWeek;

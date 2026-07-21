@@ -14,6 +14,9 @@ export const Route = createFileRoute('/_shell')({
   beforeLoad: ({ context, location }) => {
     const role = context.auth.role
     const path = location.pathname
+    if (!role) {
+      throw redirect({ to: '/login' })
+    }
     if (role === 'CEO') return
     if (AUTH_BYPASS_PATHS.includes(path)) return
     if (role === 'Admin') {
@@ -30,7 +33,7 @@ export const Route = createFileRoute('/_shell')({
 // ─── Shell ────────────────────────────────────────────────────────────────────
 
 function ShellLayout() {
-  const { role } = useAuth()
+  const { role, logout } = useAuth()
   const [isSidebarOpen, setSidebarOpen] = useState(false)
 
   const router = useRouterState()
@@ -38,7 +41,7 @@ function ShellLayout() {
 
   return (
     <div className="flex h-screen bg-surface-base text-text-primary overflow-hidden font-sans">
-      <Sidebar role={role} isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
+      <Sidebar role={role} logout={logout} isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
 
       <div className="flex flex-col flex-1 overflow-hidden relative">
         {/* Page-load progress bar */}
@@ -152,7 +155,7 @@ const ALL_NAV = [
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
-function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; setIsOpen: (v: boolean) => void }) {
+function Sidebar({ role, logout, isOpen, setIsOpen }: { role: Role | null; logout: () => void; isOpen: boolean; setIsOpen: (v: boolean) => void }) {
   const { location } = useRouterState()
   const navigate = useNavigate()
   const currentPath = location.pathname
@@ -326,7 +329,10 @@ function Sidebar({ role, isOpen, setIsOpen }: { role: Role; isOpen: boolean; set
           <span className="text-sm font-medium text-text-secondary">{role}</span>
         </div>
         <button
-          onClick={() => navigate({ to: '/login' as any })}
+          onClick={() => {
+            logout()
+            navigate({ to: '/login' as any })
+          }}
           className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center p-2 rounded-sm text-text-muted hover:text-status-danger hover:bg-status-danger/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-status-danger/50"
           title="Sign out"
           aria-label="Sign out"

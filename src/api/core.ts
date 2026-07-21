@@ -19,6 +19,10 @@ export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
   const url = endpoint.startsWith('http') ? endpoint : `${BACKEND_URL}${endpoint}`;
   const response = await fetch(url, { ...options, headers })
   if (!response.ok) {
+    if (response.status === 401) {
+      localStorage.removeItem('loryb_token');
+      window.dispatchEvent(new Event('loryb_unauthorized'));
+    }
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'API Error');
   }

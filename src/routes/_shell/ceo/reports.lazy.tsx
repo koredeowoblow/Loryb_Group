@@ -153,7 +153,11 @@ function DonutLabel({ value, sub }: { value: string | number; sub?: string }) {
       <tspan
         x="50%"
         dy="-6"
-        style={{ fontSize: 18, fontWeight: 700, fill: "rgb(var(--color-text-primary))" }}
+        style={{
+          fontSize: 18,
+          fontWeight: 700,
+          fill: "rgb(var(--color-text-primary))",
+        }}
       >
         {value}
       </tspan>
@@ -161,7 +165,12 @@ function DonutLabel({ value, sub }: { value: string | number; sub?: string }) {
         <tspan
           x="50%"
           dy="18"
-          style={{ fontSize: 10, fontWeight: 600, fill: "rgb(var(--color-text-muted))", letterSpacing: "0.05em" }}
+          style={{
+            fontSize: 10,
+            fontWeight: 600,
+            fill: "rgb(var(--color-text-muted))",
+            letterSpacing: "0.05em",
+          }}
         >
           {sub}
         </tspan>
@@ -341,7 +350,7 @@ function ReportsPage() {
             Cross-module performance — finance, supply chain, and operations
           </p>
         </div>
-        <button className="btn btn-primary shrink-0 self-start sm:self-auto">
+        <button className="btn btn-primary shrink-0 self-start sm:self-auto py-2">
           <Download size={15} />
           Export PDF
         </button>
@@ -464,7 +473,9 @@ function ReportsPage() {
                     width={45}
                   />
                   <Tooltip
-                    content={<ChartTooltip formatValue={(v) => fmt(Number(v))} />}
+                    content={
+                      <ChartTooltip formatValue={(v) => fmt(Number(v))} />
+                    }
                   />
                   <Area
                     type="monotone"
@@ -490,10 +501,7 @@ function ReportsPage() {
           </div>
 
           <div className="lg:col-span-1">
-            <ChartBlock
-              title="Cost Breakdown"
-              icon={PieChartIcon}
-            >
+            <ChartBlock title="Cost Breakdown" icon={PieChartIcon}>
               <div className="flex-1 flex flex-col justify-between h-full">
                 <div className="flex-1 flex items-center justify-center relative min-h-[170px]">
                   <ResponsiveContainer width="100%" height={170}>
@@ -512,9 +520,14 @@ function ReportsPage() {
                           <Cell key={i} fill={entry.fill} />
                         ))}
                       </Pie>
-                      <DonutLabel value={fmt(financials.totalCosts)} sub="Total Costs" />
+                      <DonutLabel
+                        value={fmt(financials.totalCosts)}
+                        sub="Total Costs"
+                      />
                       <Tooltip
-                        content={<ChartTooltip formatValue={(v) => fmt(Number(v))} />}
+                        content={
+                          <ChartTooltip formatValue={(v) => fmt(Number(v))} />
+                        }
                       />
                     </PieChart>
                   </ResponsiveContainer>
@@ -523,16 +536,31 @@ function ReportsPage() {
                 {/* Segment breakdown list */}
                 <div className="flex flex-col gap-2 mt-4 pt-4 px-1 border-t border-surface-border">
                   {costBreakdown.map((item) => {
-                    const pct = financials.totalCosts > 0 ? Math.round((item.value / financials.totalCosts) * 100) : 0;
+                    const pct =
+                      financials.totalCosts > 0
+                        ? Math.round((item.value / financials.totalCosts) * 100)
+                        : 0;
                     return (
-                      <div key={item.name} className="flex items-center justify-between text-xs">
+                      <div
+                        key={item.name}
+                        className="flex items-center justify-between text-xs"
+                      >
                         <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.fill }} />
-                          <span className="font-semibold text-text-secondary">{item.name}</span>
+                          <span
+                            className="w-2.5 h-2.5 rounded-full shrink-0"
+                            style={{ backgroundColor: item.fill }}
+                          />
+                          <span className="font-semibold text-text-secondary">
+                            {item.name}
+                          </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="font-bold text-text-primary">{fmt(item.value)}</span>
-                          <span className="text-text-muted font-bold w-9 text-right">{pct}%</span>
+                          <span className="font-bold text-text-primary">
+                            {fmt(item.value)}
+                          </span>
+                          <span className="text-text-muted font-bold w-9 text-right">
+                            {pct}%
+                          </span>
                         </div>
                       </div>
                     );

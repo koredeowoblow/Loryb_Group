@@ -72,15 +72,15 @@ function ReportSection({
 // ── Inline chart legend ────────────────────────────────────────────────────────
 function ChartLegend({ items }: { items: { label: string; color: string }[] }) {
   return (
-    <div className="flex items-center gap-4 flex-wrap mt-2">
+    <div className="flex items-center gap-4 flex-wrap mt-4 pt-4 border-t border-surface-border">
       {items.map(({ label, color }) => (
         <span
           key={label}
-          className="flex items-center gap-1.5 text-xs text-text-muted"
+          className="flex items-center gap-2 text-xs text-text-muted font-semibold"
         >
           <span
-            className="w-2 h-2 rounded-full shrink-0"
-            style={{ background: color }}
+            className="w-2.5 h-2.5 rounded-full shrink-0"
+            style={{ backgroundColor: color }}
           />
           {label}
         </span>
@@ -102,13 +102,13 @@ function ChartBlock({
   children: React.ReactNode;
 }) {
   return (
-    <div className="card flex flex-col">
+    <div className="card flex flex-col h-full">
       <div className="flex items-center px-6 py-4 border-b border-surface-border gap-2">
         {Icon && <Icon size={15} className="text-primary opacity-80" />}
         <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
       </div>
-      <div className="p-6 flex flex-col gap-6 flex-1">
-        {children}
+      <div className="p-6 flex flex-col justify-between flex-1">
+        <div className="flex-1 flex flex-col justify-center">{children}</div>
         {legend && <ChartLegend items={legend} />}
       </div>
     </div>
@@ -153,12 +153,16 @@ function DonutLabel({ value, sub }: { value: string | number; sub?: string }) {
       <tspan
         x="50%"
         dy="-6"
-        style={{ fontSize: 22, fontWeight: 700, fill: "currentColor" }}
+        style={{ fontSize: 18, fontWeight: 700, fill: "rgb(var(--color-text-primary))" }}
       >
         {value}
       </tspan>
       {sub && (
-        <tspan x="50%" dy="18" style={{ fontSize: 11, fill: "currentColor", opacity: 0.6 }}>
+        <tspan
+          x="50%"
+          dy="18"
+          style={{ fontSize: 10, fontWeight: 600, fill: "rgb(var(--color-text-muted))", letterSpacing: "0.05em" }}
+        >
           {sub}
         </tspan>
       )}
@@ -411,137 +415,132 @@ function ReportsPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <ChartBlock
-            title="Revenue vs Costs Trend"
-            icon={Calendar}
-            legend={[
-              { label: "Revenue", color: CHART_COLORS.success },
-              { label: "Costs", color: CHART_COLORS.danger },
-            ]}
-          >
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart
-                data={revCostTrend}
-                margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="gradRev" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="0%"
-                      stopColor={CHART_COLORS.success}
-                      stopOpacity={0.25}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor={CHART_COLORS.success}
-                      stopOpacity={0}
-                    />
-                  </linearGradient>
-                  <linearGradient id="gradCost" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="0%"
-                      stopColor={CHART_COLORS.danger}
-                      stopOpacity={0.2}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor={CHART_COLORS.danger}
-                      stopOpacity={0}
-                    />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid {...chartGridProps} />
-                <XAxis dataKey="wk" {...chartAxisProps} />
-                <YAxis
-                  {...chartAxisProps}
-                  tickFormatter={(v) => `${v / 1_000_000}M`}
-                  width={45}
-                />
-                <Tooltip
-                  content={<ChartTooltip formatValue={(v) => fmt(Number(v))} />}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  name="Revenue"
-                  stroke={CHART_COLORS.success}
-                  strokeWidth={2.5}
-                  fill="url(#gradRev)"
-                  dot={{ r: 3, fill: CHART_COLORS.success, strokeWidth: 0 }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="costs"
-                  name="Costs"
-                  stroke={CHART_COLORS.danger}
-                  strokeWidth={2.5}
-                  fill="url(#gradCost)"
-                  dot={{ r: 3, fill: CHART_COLORS.danger, strokeWidth: 0 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </ChartBlock>
-
-          <ChartBlock
-            title="Cost Breakdown"
-            icon={PieChartIcon}
-            legend={costBreakdown.map((d) => ({
-              label: d.name,
-              color: d.fill,
-            }))}
-          >
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie
-                  data={costBreakdown}
-                  cx="50%"
-                  cy="45%"
-                  innerRadius={58}
-                  outerRadius={82}
-                  paddingAngle={3}
-                  dataKey="value"
-                  stroke="none"
-                  labelLine={false}
-                  label={({
-                    cx = 0,
-                    cy = 0,
-                    midAngle = 0,
-                    innerRadius = 0,
-                    outerRadius = 0,
-                    percent = 0,
-                  }: any) => {
-                    if (percent < 0.05) return null;
-                    const RADIAN = Math.PI / 180;
-                    const radius =
-                      innerRadius + (outerRadius - innerRadius) * 0.5;
-                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-                    return (
-                      <text
-                        x={x}
-                        y={y}
-                        fill="white"
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        fontSize={11}
-                        fontWeight="bold"
-                      >
-                        {`${(percent * 100).toFixed(0)}%`}
-                      </text>
-                    );
-                  }}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          <div className="lg:col-span-2">
+            <ChartBlock
+              title="Revenue vs Costs Trend"
+              icon={Calendar}
+              legend={[
+                { label: "Revenue", color: CHART_COLORS.success },
+                { label: "Costs", color: CHART_COLORS.danger },
+              ]}
+            >
+              <ResponsiveContainer width="100%" height={220}>
+                <AreaChart
+                  data={revCostTrend}
+                  margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
                 >
-                  {costBreakdown.map((entry, i) => (
-                    <Cell key={i} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  content={<ChartTooltip formatValue={(v) => fmt(Number(v))} />}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </ChartBlock>
+                  <defs>
+                    <linearGradient id="gradRev" x1="0" y1="0" x2="0" y2="1">
+                      <stop
+                        offset="0%"
+                        stopColor={CHART_COLORS.success}
+                        stopOpacity={0.25}
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor={CHART_COLORS.success}
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                    <linearGradient id="gradCost" x1="0" y1="0" x2="0" y2="1">
+                      <stop
+                        offset="0%"
+                        stopColor={CHART_COLORS.danger}
+                        stopOpacity={0.2}
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor={CHART_COLORS.danger}
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid {...chartGridProps} />
+                  <XAxis dataKey="wk" {...chartAxisProps} />
+                  <YAxis
+                    {...chartAxisProps}
+                    tickFormatter={(v) => `${v / 1_000_000}M`}
+                    width={45}
+                  />
+                  <Tooltip
+                    content={<ChartTooltip formatValue={(v) => fmt(Number(v))} />}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    name="Revenue"
+                    stroke={CHART_COLORS.success}
+                    strokeWidth={2.5}
+                    fill="url(#gradRev)"
+                    dot={{ r: 3, fill: CHART_COLORS.success, strokeWidth: 0 }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="costs"
+                    name="Costs"
+                    stroke={CHART_COLORS.danger}
+                    strokeWidth={2.5}
+                    fill="url(#gradCost)"
+                    dot={{ r: 3, fill: CHART_COLORS.danger, strokeWidth: 0 }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </ChartBlock>
+          </div>
+
+          <div className="lg:col-span-1">
+            <ChartBlock
+              title="Cost Breakdown"
+              icon={PieChartIcon}
+            >
+              <div className="flex-1 flex flex-col justify-between h-full">
+                <div className="flex-1 flex items-center justify-center relative min-h-[170px]">
+                  <ResponsiveContainer width="100%" height={170}>
+                    <PieChart>
+                      <Pie
+                        data={costBreakdown}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={58}
+                        outerRadius={78}
+                        paddingAngle={3}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        {costBreakdown.map((entry, i) => (
+                          <Cell key={i} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <DonutLabel value={fmt(financials.totalCosts)} sub="Total Costs" />
+                      <Tooltip
+                        content={<ChartTooltip formatValue={(v) => fmt(Number(v))} />}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Segment breakdown list */}
+                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-surface-border">
+                  {costBreakdown.map((item) => {
+                    const pct = financials.totalCosts > 0 ? Math.round((item.value / financials.totalCosts) * 100) : 0;
+                    return (
+                      <div key={item.name} className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.fill }} />
+                          <span className="font-semibold text-text-secondary">{item.name}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="font-bold text-text-primary">{fmt(item.value)}</span>
+                          <span className="text-text-muted font-bold w-9 text-right">{pct}%</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </ChartBlock>
+          </div>
         </div>
       </ReportSection>
 

@@ -123,16 +123,29 @@ function RbacPage() {
   if (!activeRole) return <div className="p-8 text-center text-text-muted">Loading roles...</div>;
   return (
     <div className="space-y-6 max-w-6xl">
+      {/* Backend notice */}
+      <div className="p-4 bg-status-warning/10 border border-status-warning/30 rounded-md flex items-start gap-3">
+        <Shield size={18} className="text-status-warning mt-0.5 shrink-0" />
+        <div>
+          <p className="text-sm font-bold text-status-warning">Roles Not Yet Persisted to Database</p>
+          <p className="text-xs text-text-secondary mt-0.5">
+            The backend does not yet have a database model for role permissions. Any edits you make here are stored in this browser session only and will reset on page refresh. This feature is ready for backend implementation.
+          </p>
+        </div>
+      </div>
+
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-xl font-bold font-header tracking-tight text-text-primary flex items-center gap-2">
-            <Lock size={24} /> RBAC & Permissions
+            <Lock size={24} /> RBAC &amp; Permissions
           </h2>
           <p className="text-sm text-text-secondary mt-1">Manage role-based access control and system permissions.</p>
         </div>
-        <Button>
-          Create Custom Role
-        </Button>
+        <div title="Backend persistence not yet implemented">
+          <Button disabled>
+            Create Custom Role
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

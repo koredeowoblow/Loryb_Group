@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { RouterProvider, createRouter, createHashHistory } from '@tanstack/react-router'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider, useAuth } from './auth'
 import './index.css'
@@ -8,11 +8,8 @@ import { routeTree } from './routeTree.gen'
 
 const queryClient = new QueryClient()
 
-const hashHistory = createHashHistory()
-
 const router = createRouter({ 
   routeTree,
-  history: hashHistory,
   context: { auth: undefined! as any }
 })
 

@@ -60,11 +60,11 @@ function ReportSection({
 }) {
   return (
     <section className="flex flex-col gap-6">
-      <div className="flex items-center gap-2 border-b border-surface-border pb-4">
+      <div className="flex items-center gap-2 border-b border-surface-border pb-4 mb-2">
         <Icon size={18} className="text-primary opacity-80" />
         <h2 className="text-lg font-bold text-text-primary">{title}</h2>
       </div>
-      <div className="flex flex-col gap-6">{children}</div>
+      <div className="flex flex-col gap-8">{children}</div>
     </section>
   );
 }
@@ -326,7 +326,7 @@ function ReportsPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-10 p-8 font-sans bg-surface-base min-h-full">
+    <div className="flex flex-col gap-10">
       {/* ── Page header ───────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
@@ -521,7 +521,7 @@ function ReportsPage() {
                 </div>
 
                 {/* Segment breakdown list */}
-                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-surface-border">
+                <div className="flex flex-col gap-2 mt-4 pt-4 px-1 border-t border-surface-border">
                   {costBreakdown.map((item) => {
                     const pct = financials.totalCosts > 0 ? Math.round((item.value / financials.totalCosts) * 100) : 0;
                     return (

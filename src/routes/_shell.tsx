@@ -21,7 +21,9 @@ export const Route = createFileRoute('/_shell')({
       if (token) {
         const decoded = parseJwt(token)
         if (decoded && decoded.role) {
-          role = decoded.role as Role
+          if (!decoded.exp || decoded.exp * 1000 > Date.now()) {
+            role = decoded.role as Role
+          }
         }
       }
     }

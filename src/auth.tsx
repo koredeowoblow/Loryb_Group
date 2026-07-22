@@ -12,32 +12,40 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function parseJwt(token: string) {
   try {
-    const base64Url = token.split('.')[1]
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+    const base64Url = token.split('.')[1];
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    while (base64.length % 4) {
+      base64 += '=';
+    }
     const jsonPayload = decodeURIComponent(
       window.atob(base64)
         .split('')
         .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
         .join('')
-    )
-    return JSON.parse(jsonPayload)
+    );
+    return JSON.parse(jsonPayload);
   } catch (e) {
-    return null
+    return null;
   }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<Role | null>(() => {
-    const token = localStorage.getItem('loryb_token')
+    const token = localStorage.getItem('loryb_token');
     if (token) {
-      const decoded = parseJwt(token)
+      const decoded = parseJwt(token);
       if (decoded && decoded.role) {
-        return decoded.role as Role
+        // Check if token is expired (exp is in seconds)
+        if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+          localStorage.removeItem('loryb_token');
+          return null;
+        }
+        return decoded.role as Role;
       }
-      localStorage.removeItem('loryb_token')
+      localStorage.removeItem('loryb_token');
     }
-    return null
-  })
+    return null;
+  });
 
   useEffect(() => {
     const handleUnauthorized = () => {

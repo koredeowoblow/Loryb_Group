@@ -202,9 +202,9 @@ function CEOOverviewPage() {
                 Recent Gate Activity
               </p>
               <div className="flex flex-col divide-y divide-surface-border">
-                {visitorLog.slice(0, 3).map((v: any) => (
+                {visitorLog.slice(0, 3).map((v: any, i: number) => (
                   <div
-                    key={v.id}
+                    key={v.id || v._id || `visitor-${i}`}
                     className="flex justify-between items-center py-2"
                   >
                     <span className="text-sm text-text-primary">
@@ -213,9 +213,9 @@ function CEOOverviewPage() {
                     <span className="text-xs text-text-muted">{v.timeIn}</span>
                   </div>
                 ))}
-                {dispatchRecord.slice(0, 2).map((d: any) => (
+                {dispatchRecord.slice(0, 2).map((d: any, i: number) => (
                   <div
-                    key={d.id}
+                    key={d.id || d._id || `dispatch-${i}`}
                     className="flex justify-between items-center py-2"
                   >
                     <span className="text-sm text-text-primary">

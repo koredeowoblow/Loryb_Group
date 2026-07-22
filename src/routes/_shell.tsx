@@ -266,7 +266,47 @@ function Sidebar({ role, logout, isOpen, setIsOpen }: { role: Role | null; logou
         <ul className="flex flex-col px-3 gap-4">
           {navItems.map(item => {
             const Icon = item.icon
-            const isExpanded = expanded[item.to]
+            const isNonAdmin = role !== 'CEO' && role !== 'Admin'
+            const isExpanded = isNonAdmin ? true : expanded[item.to]
+
+            // For department-specific roles, flatten the navigation group
+            if (isNonAdmin) {
+              return (
+                <li key={item.to} className="flex flex-col gap-1 mb-4">
+                  <div className="flex items-center gap-2 px-3 py-2 text-white/40 mb-1">
+                    <Icon size={14} strokeWidth={2.5} />
+                    <span className="text-[11px] font-extrabold uppercase tracking-widest">{item.label}</span>
+                  </div>
+                  <ul className="flex flex-col gap-1">
+                    {item.subItems.map((sub: any) => {
+                      if (sub.roles && !sub.roles.includes(role)) return null
+                      const isActive = currentPath === sub.to
+                      return (
+                        <li key={sub.to} className="relative">
+                          <Link
+                            to={sub.to}
+                            onClick={() => setIsOpen(false)}
+                            className={clsx(
+                              'relative flex min-h-[40px] w-full items-center px-3 py-2 rounded-md text-[14px] transition-colors',
+                              isActive
+                                ? 'bg-white/10 text-white font-bold shadow-sm'
+                                : 'text-white/60 hover:bg-white/5 hover:text-white font-medium',
+                            )}
+                          >
+                            {isActive && (
+                              <span className="absolute left-0 top-1/2 -translate-y-1/2 h-3/5 w-1 bg-accent rounded-r-md" />
+                            )}
+                            <span className="block truncate tracking-wide">
+                              {sub.label}
+                            </span>
+                          </Link>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </li>
+              )
+            }
 
             return (
               <li key={item.to} className="flex flex-col gap-1">

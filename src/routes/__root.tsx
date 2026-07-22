@@ -1,4 +1,5 @@
 import { createRootRouteWithContext, Outlet, Link, useRouterState } from '@tanstack/react-router'
+import { QueryClient } from '@tanstack/react-query'
 
 function NotFound() {
   return (
@@ -24,6 +25,7 @@ import { useAuth } from '../auth'
 
 interface MyRouterContext {
   auth: ReturnType<typeof useAuth>
+  queryClient: QueryClient
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({

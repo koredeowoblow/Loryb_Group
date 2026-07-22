@@ -126,6 +126,16 @@ export default {
         primary: 'rgb(var(--color-primary) / 0.3)',
         danger:  'rgb(var(--color-status-danger) / 0.3)',
       },
+      keyframes: {
+        'logo-fill': {
+          '0%': { clipPath: 'inset(100% 0 0 0)' },
+          '50%': { clipPath: 'inset(0 0 0 0)' },
+          '100%': { clipPath: 'inset(0 0 100% 0)' },
+        }
+      },
+      animation: {
+        'logo-fill': 'logo-fill 2s ease-in-out infinite',
+      }
     },
   },
   plugins: [],

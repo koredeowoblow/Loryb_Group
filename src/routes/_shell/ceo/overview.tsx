@@ -82,7 +82,9 @@ function SnapshotCard({
           {linkLabel} <ChevronRight size={13} />
         </Link>
       </div>
-      <div className="p-4 flex-1 flex flex-col min-w-0 overflow-hidden">{children}</div>
+      <div className="p-4 flex-1 flex flex-col min-w-0 overflow-hidden">
+        {children}
+      </div>
     </div>
   );
 }
@@ -90,49 +92,61 @@ function SnapshotCard({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 function CEOOverviewPage() {
+  const STALE = 5 * 60 * 1000; // 5 minutes
   const { data: sales = [] } = useQuery({
     queryKey: ["sales"],
     queryFn: salesApi.list,
+    staleTime: STALE,
   });
   const { data: expenses = [] } = useQuery({
     queryKey: ["expenses"],
     queryFn: expensesApi.list,
+    staleTime: STALE,
   });
   const { data: trucks = [] } = useQuery({
     queryKey: ["trucks"],
     queryFn: trucksApi.list,
+    staleTime: STALE,
   });
   const { data: grn = [] } = useQuery({
     queryKey: ["grn"],
     queryFn: grnApi.list,
+    staleTime: STALE,
   });
   const { data: suppliers = [] } = useQuery({
     queryKey: ["suppliers"],
     queryFn: suppliersApi.list,
+    staleTime: STALE,
   });
   const { data: dispatchRecord = [] } = useQuery({
     queryKey: ["dispatchRecord"],
     queryFn: dispatchRecordApi.list,
+    staleTime: STALE,
   });
   const { data: visitorLog = [] } = useQuery({
     queryKey: ["visitorLog"],
     queryFn: visitorLogApi.list,
+    staleTime: STALE,
   });
   const { data: inventoryAlerts = [] } = useQuery({
     queryKey: ["inventoryAlerts"],
     queryFn: inventoryAlertsApi.list,
+    staleTime: STALE,
   });
   const { data: trips = [] } = useQuery({
     queryKey: ["trips"],
     queryFn: tripsApi.list,
+    staleTime: STALE,
   });
   const { data: supplierPayments = [] } = useQuery({
     queryKey: ["supplierPayments"],
     queryFn: supplierPaymentsApi.list,
+    staleTime: STALE,
   });
   const { data: invoices = [] } = useQuery({
     queryKey: ["invoices"],
     queryFn: invoicesApi.list,
+    staleTime: STALE,
   });
 
   // ── Derived values ──────────────────────────────────────────────────────────
@@ -142,18 +156,20 @@ function CEOOverviewPage() {
 
   const fleetTransit = trucks.filter((t) => t.status === "in-transit").length;
   const fleetIdle = trucks.filter((t) => t.status === "idle").length;
-  const fleetMaintenance = trucks.filter((t) => t.status === "maintenance").length;
+  const fleetMaintenance = trucks.filter(
+    (t) => t.status === "maintenance",
+  ).length;
 
   // Count suppliers that arrived today
   const todayStr = new Date().toISOString().slice(0, 10);
   const todayIntakes = suppliers.filter((s: any) => {
-    const d = s.date ?? s.createdAt ?? '';
+    const d = s.date ?? s.createdAt ?? "";
     return String(d).slice(0, 10) === todayStr;
   }).length;
 
   const activeVisitors = visitorLog.filter((v) => !v.timeOut).length;
   const lowStockCount = inventoryAlerts.filter(
-    (a) => a.status === "low" || a.status === "critical"
+    (a) => a.status === "low" || a.status === "critical",
   ).length;
 
   // Trips completed this week vs last week
@@ -178,7 +194,7 @@ function CEOOverviewPage() {
 
   const outstandingPayables = supplierPayments.reduce(
     (a, p) => a + Math.max(0, (p.amountOwed ?? 0) - (p.amountPaid ?? 0)),
-    0
+    0,
   );
   const outstandingReceivables = invoices
     .filter((i) => i.status !== "paid")
@@ -191,15 +207,27 @@ function CEOOverviewPage() {
       .filter((g: any) => g.grainType === type)
       .reduce((a: number, g: any) => a + (g.netWeight ?? 0), 0);
   const stockData = [
-    { name: "Maize",     value: grnByType("Maize"),     fill: CHART_COLORS.maize },
-    { name: "Sorghum",   value: grnByType("Sorghum"),   fill: CHART_COLORS.sorghum },
-    { name: "SoyaBeans", value: grnByType("SoyaBeans"), fill: CHART_COLORS.soyabeans },
+    { name: "Maize", value: grnByType("Maize"), fill: CHART_COLORS.maize },
+    {
+      name: "Sorghum",
+      value: grnByType("Sorghum"),
+      fill: CHART_COLORS.sorghum,
+    },
+    {
+      name: "SoyaBeans",
+      value: grnByType("SoyaBeans"),
+      fill: CHART_COLORS.soyabeans,
+    },
   ];
 
   const fleetData = [
-    { name: "In-Transit",  value: fleetTransit,     fill: CHART_COLORS.inTransit },
-    { name: "Idle",        value: fleetIdle,         fill: CHART_COLORS.idle },
-    { name: "Maintenance", value: fleetMaintenance,  fill: CHART_COLORS.maintenance },
+    { name: "In-Transit", value: fleetTransit, fill: CHART_COLORS.inTransit },
+    { name: "Idle", value: fleetIdle, fill: CHART_COLORS.idle },
+    {
+      name: "Maintenance",
+      value: fleetMaintenance,
+      fill: CHART_COLORS.maintenance,
+    },
   ];
 
   // Weekly revenue/expenses trend — last 4 weeks
@@ -208,12 +236,18 @@ function CEOOverviewPage() {
     wkStart.setDate(wkStart.getDate() - weeksAgo * 7);
     const wkEnd = new Date(wkStart);
     wkEnd.setDate(wkStart.getDate() + 7);
-    const label = weeksAgo === 0 ? 'This Wk' : `Wk -${weeksAgo}`;
+    const label = weeksAgo === 0 ? "This Wk" : `Wk -${weeksAgo}`;
     const rev = sales
-      .filter((s: any) => { const d = new Date(s.date ?? s.createdAt ?? 0); return d >= wkStart && d < wkEnd; })
+      .filter((s: any) => {
+        const d = new Date(s.date ?? s.createdAt ?? 0);
+        return d >= wkStart && d < wkEnd;
+      })
       .reduce((a: number, s: any) => a + (s.amount ?? 0), 0);
     const exp = expenses
-      .filter((e: any) => { const d = new Date(e.date ?? e.createdAt ?? 0); return d >= wkStart && d < wkEnd; })
+      .filter((e: any) => {
+        const d = new Date(e.date ?? e.createdAt ?? 0);
+        return d >= wkStart && d < wkEnd;
+      })
       .reduce((a: number, e: any) => a + (e.amount ?? 0), 0);
     return { date: label, revenue: rev, expenses: exp };
   });
@@ -450,13 +484,16 @@ function CEOOverviewPage() {
                   <span className="text-2xl font-bold text-text-primary">
                     {completedThisWeek}
                   </span>
-                  <span className={clsx(
-                    'inline-flex items-center text-xs font-semibold px-1.5 py-0.5 rounded-sm',
-                    tripDelta >= 0
-                      ? 'text-status-success bg-status-success/10'
-                      : 'text-status-danger bg-status-danger/10'
-                  )}>
-                    {tripDelta >= 0 ? '↑' : '↓'} {Math.abs(tripDelta)} vs last wk
+                  <span
+                    className={clsx(
+                      "inline-flex items-center text-xs font-semibold px-1.5 py-0.5 rounded-sm",
+                      tripDelta >= 0
+                        ? "text-status-success bg-status-success/10"
+                        : "text-status-danger bg-status-danger/10",
+                    )}
+                  >
+                    {tripDelta >= 0 ? "↑" : "↓"} {Math.abs(tripDelta)} vs last
+                    wk
                   </span>
                 </div>
               </div>

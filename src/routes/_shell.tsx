@@ -100,13 +100,13 @@ const ALL_NAV = [
       { label: 'Gate Log',          to: '/security/gate-log'          },
       { label: 'Visitor Log',       to: '/security/visitor-log'       },
       { label: 'Motorcycle Log',    to: '/security/motorcycle-log'    },
-      { label: 'Staff Movement',    to: '/security/staff-movement'    },
+      { label: 'Staff Logs',        to: '/security/staff-movement'    },
       { label: 'Staff Attendance',  to: '/security/staff-attendance'  },
       { label: 'Attendance Scanner',to: '/security/attendance-scanner'},
       { label: 'Dispatch',          to: '/security/dispatch'          },
-      { label: 'Item Bought',       to: '/security/item-bought'       },
-      { label: 'Labourers Log',     to: '/security/labourers-log'     },
-      { label: 'Light Token',       to: '/security/light-token'       },
+      { label: 'Purchases',         to: '/security/item-bought'       },
+      { label: 'Labourer Log',      to: '/security/labourers-log'     },
+      { label: 'Power Tokens',      to: '/security/light-token'       },
       { label: 'Materials Handoff', to: '/security/materials-handoff' },
       { label: 'Suppliers',         to: '/security/suppliers'         },
     ],
@@ -117,7 +117,7 @@ const ALL_NAV = [
     subItems: [
       { label: 'Stock Overview',      to: '/warehouse/stock-overview' },
       { label: 'Production',          to: '/warehouse/production'     },
-      { label: 'Goods Received Note', to: '/warehouse/grn'           },
+      { label: 'GRNs',                to: '/warehouse/grn'            },
       { label: 'Bin Card',            to: '/warehouse/bin-card'       },
       { label: 'Alerts',              to: '/warehouse/alerts'         },
     ],
@@ -232,27 +232,28 @@ function Sidebar({ role, logout, isOpen, setIsOpen }: { role: Role | null; logou
     <aside
       ref={asideRef}
       tabIndex={-1}
+      style={{ backgroundColor: 'rgb(var(--color-primary-dark))', color: 'white' }}
       className={clsx(
-      'bg-surface-raised border-r border-surface-border flex flex-col z-30',
-      'overflow-y-auto transition-transform duration-300',
+      'border-r border-white/10 flex flex-col z-30 shadow-xl',
+      'transition-transform duration-300',
       'fixed md:static inset-y-0 left-0 w-64',
       isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
     )}>
       {/* Logo row */}
-      <div className="h-16 flex items-center gap-3 px-4 border-b border-surface-border shrink-0 overflow-hidden">
-        <div className="w-8 h-8 shrink-0 overflow-hidden rounded-sm flex items-center justify-center">
-          <img src="/logo.png" alt="" aria-hidden="true" className="h-8 w-auto object-cover object-left" />
+      <div className="h-16 flex items-center gap-3 px-4 border-b border-white/10 shrink-0 overflow-hidden">
+        <div className="w-8 h-8 shrink-0 overflow-hidden rounded-sm flex items-center justify-center bg-white/10 p-1">
+          <img src="/logo.png" alt="" aria-hidden="true" className="h-full w-auto object-contain brightness-0 invert" />
         </div>
         <div className="flex flex-col justify-center">
-          <span className="text-base font-bold text-text-primary leading-tight tracking-tight">
+          <span className="text-base font-bold text-white leading-tight tracking-tight">
             LORYB GROUP
           </span>
-          <span className="text-xs font-semibold text-text-muted uppercase tracking-wider leading-none">
-            Of Companies
+          <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest leading-none mt-0.5">
+            Command Centre
           </span>
         </div>
         <button
-          className="md:hidden ml-auto min-w-[44px] min-h-[44px] inline-flex items-center justify-center p-2 rounded-sm text-text-secondary hover:text-primary hover:bg-surface-active transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          className="md:hidden ml-auto min-w-[44px] min-h-[44px] inline-flex items-center justify-center p-2 rounded-sm text-white/60 hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           onClick={() => setIsOpen(false)}
           aria-label="Close sidebar"
         >
@@ -261,8 +262,8 @@ function Sidebar({ role, logout, isOpen, setIsOpen }: { role: Role | null; logou
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-4 overflow-y-auto" aria-label="Main navigation">
-        <ul className="flex flex-col px-3 gap-6">
+      <nav className="flex-1 py-6 overflow-y-auto" aria-label="Main navigation">
+        <ul className="flex flex-col px-3 gap-4">
           {navItems.map(item => {
             const Icon = item.icon
             const isExpanded = expanded[item.to]
@@ -274,46 +275,59 @@ function Sidebar({ role, logout, isOpen, setIsOpen }: { role: Role | null; logou
                   onClick={() => setExpanded(prev => ({ ...prev, [item.to]: !prev[item.to] }))}
                   aria-expanded={isExpanded}
                   className={clsx(
-                    'flex w-full min-h-[44px] items-center justify-between px-3 py-[10px] rounded-sm',
-                    'text-base font-bold transition-colors group text-text-secondary hover:bg-surface-active hover:text-text-primary',
+                    'flex w-full min-h-[44px] items-center justify-between px-3 py-[10px] rounded-md',
+                    'text-sm font-bold transition-colors group text-white/70 hover:bg-white/5 hover:text-white',
+                    isExpanded && 'text-white'
                   )}
                 >
                   <span className="flex items-center gap-3">
                     <Icon
                       size={18}
                       strokeWidth={2}
-                      className="opacity-60 transition-transform group-hover:scale-105 group-hover:opacity-100"
+                      className={clsx(
+                        "transition-all group-hover:scale-105 group-hover:text-white",
+                        isExpanded ? "text-accent opacity-100" : "text-white/60"
+                      )}
                     />
-                    {item.label}
+                    <span className="tracking-wide uppercase text-xs">{item.label}</span>
                   </span>
                   {isExpanded
-                    ? <ChevronDown size={14} className="opacity-40" />
-                    : <ChevronRight size={14} className="opacity-40" />
+                    ? <ChevronDown size={14} className="opacity-50" />
+                    : <ChevronRight size={14} className="opacity-50" />
                   }
                 </button>
 
                 {/* Sub-items */}
                 {isExpanded && (
-                  <ul className="flex flex-col gap-0.5">
+                  <ul className="flex flex-col gap-[2px] mt-1 relative pb-1">
+                    {/* Vertical connecting line aligned with parent icon center */}
+                    <div className="absolute left-[21px] top-0 bottom-4 w-px bg-white/10" />
+                    
                     {item.subItems.map((sub: any) => {
                       if (sub.roles && !sub.roles.includes(role)) return null
                       const isActive = currentPath === sub.to
                       return (
-                        <li key={sub.to} className="relative">
+                        <li key={sub.to} className="relative pl-[40px] pr-3">
+                          {/* Horizontal connector tick */}
+                          <div className={clsx(
+                            "absolute left-[21px] top-1/2 -translate-y-1/2 w-3 h-px",
+                            isActive ? "bg-accent" : "bg-white/10"
+                          )} />
+                          
                           <Link
                             to={sub.to}
                             onClick={() => setIsOpen(false)}
                             className={clsx(
-                              'relative flex min-h-[44px] w-full items-center py-[10px] rounded-sm text-base transition-colors',
+                              'relative flex min-h-[36px] w-full items-center px-3 py-1.5 rounded-md text-[13px] transition-colors',
                               isActive
-                                ? 'bg-surface-active text-text-primary font-semibold'
-                                : 'text-text-secondary hover:bg-surface-active hover:text-text-primary',
+                                ? 'bg-white/10 text-white font-bold shadow-sm'
+                                : 'text-white/60 hover:bg-white/5 hover:text-white font-medium',
                             )}
                           >
                             {isActive && (
-                              <span className="absolute left-0 top-0 bottom-0 w-1 bg-accent rounded-r-sm" />
+                              <span className="absolute left-0 top-1/2 -translate-y-1/2 h-3/5 w-[3px] bg-accent rounded-r-md" />
                             )}
-                            <span className="block pl-[42px] pr-3">
+                            <span className="block truncate tracking-wide">
                               {sub.label}
                             </span>
                           </Link>
@@ -329,17 +343,25 @@ function Sidebar({ role, logout, isOpen, setIsOpen }: { role: Role | null; logou
       </nav>
 
       {/* Footer: user + logout */}
-      <div className="px-3 py-3 border-t border-surface-border flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="status-dot status-dot-success" />
-          <span className="text-sm font-medium text-text-secondary">{role}</span>
+      <div className="px-4 py-4 border-t border-white/10 flex items-center justify-between shrink-0 bg-black/10">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="w-8 h-8 rounded-full bg-accent text-primary-dark flex items-center justify-center font-bold text-sm shadow-md">
+              {role ? role.charAt(0).toUpperCase() : 'U'}
+            </div>
+            <span className="status-dot status-dot-success absolute -bottom-0.5 -right-0.5 border-2 border-[rgb(var(--color-primary-dark))] shadow-sm" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-white leading-tight">{role}</span>
+            <span className="text-[10px] text-white/50 uppercase tracking-wider font-semibold">Active Session</span>
+          </div>
         </div>
         <button
           onClick={() => {
             logout()
             navigate({ to: '/login' as any })
           }}
-          className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center p-2 rounded-sm text-text-muted hover:text-status-danger hover:bg-status-danger/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-status-danger/50"
+          className="min-w-[40px] min-h-[40px] inline-flex items-center justify-center p-2 rounded-md text-white/50 hover:text-white hover:bg-status-danger/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent shadow-sm"
           title="Sign out"
           aria-label="Sign out"
         >

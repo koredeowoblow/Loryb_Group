@@ -71,28 +71,28 @@ export function ChartTooltip({ active, payload, label, formatValue }: ChartToolt
   return (
     <div
       style={{
-        background: 'rgb(255 255 255)',
-        border: '1px solid rgb(224 228 237)',
+        background: 'rgb(var(--color-surface-overlay))',
+        border: '1px solid rgb(var(--color-surface-border))',
         borderRadius: '6px',
-        boxShadow: '0 4px 8px -2px rgb(15 19 32 / 0.10)',
+        boxShadow: 'var(--shadow-md)',
         padding: '10px 14px',
         minWidth: 140,
       }}
     >
       {label !== undefined && (
-        <p style={{ fontSize: 12, fontWeight: 600, color: '#1E1F34', marginBottom: 6 }}>
+        <p style={{ fontSize: 12, fontWeight: 600, color: 'rgb(var(--color-text-primary))', marginBottom: 6 }}>
           {label}
         </p>
       )}
       {payload.map((entry, i) => {
-        const color = entry.color ?? entry.fill ?? '#6C7993'
+        const color = entry.color ?? entry.fill ?? 'rgb(var(--color-text-muted))'
         const raw = entry.value ?? 0
         const display = formatValue ? formatValue(raw) : typeof raw === 'number' ? raw.toLocaleString() : raw
         return (
           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: i > 0 ? 4 : 0 }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
-            <span style={{ fontSize: 12, color: '#6C7993', flex: 1 }}>{entry.name ?? entry.dataKey}</span>
-            <span style={{ fontSize: 12, fontWeight: 600, color: '#1E1F34' }}>{display}</span>
+            <span style={{ fontSize: 12, color: 'rgb(var(--color-text-muted))', flex: 1 }}>{entry.name ?? entry.dataKey}</span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: 'rgb(var(--color-text-primary))' }}>{display}</span>
           </div>
         )
       })}

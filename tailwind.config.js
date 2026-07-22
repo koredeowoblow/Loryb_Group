@@ -19,7 +19,8 @@ export default {
     },
     // ─── FONT FAMILY ─────────────────────────────────────────────────────────
     fontFamily: {
-      sans: ['"NairaFallback"', '"Inter"', 'system-ui', 'sans-serif'],
+      sans:   ['"NairaFallback"', '"Inter"', 'system-ui', 'sans-serif'],
+      header: ['"Montserrat"', '"NairaFallback"', '"Inter"', 'system-ui', 'sans-serif'],
     },
     // ─── FONT SIZE ───────────────────────────────────────────────────────────
     // Named scale tied to product roles, not arbitrary sizes.

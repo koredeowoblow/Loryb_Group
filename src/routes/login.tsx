@@ -35,14 +35,14 @@ function AuthInput({
     <div className="flex flex-col gap-2">
       <label
         htmlFor={id}
-        className="text-xs font-semibold uppercase tracking-wider text-text-secondary"
+        className="text-xs font-bold uppercase tracking-widest text-text-secondary"
       >
         {label}
       </label>
       <div className="relative">
         <Icon
           size={18}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none"
         />
         <input
           id={id}
@@ -54,11 +54,12 @@ function AuthInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="
-            w-full pl-[44px] pr-4 py-3 text-sm
-            bg-surface-raised border border-surface-border rounded-sm
+            w-full pl-[48px] pr-4 py-4 text-base font-medium
+            bg-transparent border-2 border-surface-border rounded-md
             text-text-primary placeholder:text-text-muted
-            transition-colors
-            focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary
+            transition-all duration-200
+            focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary
+            hover:border-text-muted
           "
         />
       </div>
@@ -81,7 +82,7 @@ function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError("Please enter both email and password");
+      setError("Please enter both your email address and password.");
       return;
     }
     setLoading(true);
@@ -93,12 +94,11 @@ function LoginPage() {
       setRole(role);
       setToastMessage(`Welcome back! Sign-in successful.`);
       
-      // Delay redirect by 1200ms so they see the success toast clearly
       setTimeout(() => {
         navigate({ to: getRoleRedirect(role) as any });
       }, 1200);
     } catch (err: any) {
-      setError(err.message || "Invalid email or password");
+      setError("We couldn't verify those credentials. Please check your email and password and try again.");
       setLoading(false);
     }
   };
@@ -107,77 +107,66 @@ function LoginPage() {
     <div className="min-h-screen flex font-sans bg-surface-base">
       {/* ── Left brand panel (lg+ only) ─────────────────────────────────── */}
       <div
-        className="hidden lg:flex lg:w-[42%] xl:w-[38%] flex-col justify-between p-12 relative overflow-hidden shrink-0"
+        className="hidden lg:flex lg:w-[48%] xl:w-[45%] flex-col justify-between p-16 relative overflow-hidden shrink-0"
         style={{ background: "rgb(var(--color-primary))" }}
         aria-hidden="true"
       >
-        {/* Diagonal stripe texture — pure CSS, no image asset */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              -45deg,
-              #fff 0,
-              #fff 1px,
-              transparent 0,
-              transparent 50%
-            )`,
-            backgroundSize: "24px 24px",
-          }}
-        />
+        {/* Abstract geometric background to replace the generic stripe */}
+        <div className="absolute inset-0 opacity-[0.15]">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-white blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[80%] h-[80%] rounded-full bg-white blur-[150px]" />
+        </div>
 
         {/* Top: logo + wordmark */}
-        <div className="relative z-10 flex items-center gap-3">
+        <div className="relative z-10 flex items-center gap-4 animate-stagger-1">
           <img
             src="/logo.png"
             alt=""
             aria-hidden="true"
-            className="h-10 w-auto object-contain brightness-0 invert"
+            className="h-12 w-auto object-contain brightness-0 invert"
           />
-          <span className="text-white text-lg font-bold tracking-tight">
+          <span className="text-white text-xl font-bold tracking-tight">
             Loryb Group
           </span>
         </div>
 
-        {/* Middle: tagline */}
-        <div className="relative z-10">
-          <p className="text-white/90 text-2xl font-bold leading-snug max-w-xs">
+        {/* Middle: tagline — dramatically scaled up */}
+        <div className="relative z-10 animate-stagger-2">
+          <h1 className="text-white text-5xl xl:text-6xl font-extrabold leading-[1.1] tracking-tight max-w-lg mb-6">
             Integrated operations.
             <br />
-            One platform.
-          </p>
-          <p className="text-white/80 text-sm mt-3 max-w-xs leading-relaxed">
-            Warehouse · Logistics · Finance · Security managed from a single
-            command centre.
+            <span className="text-white/70">One platform.</span>
+          </h1>
+          <p className="text-white/80 text-lg max-w-md leading-relaxed font-medium">
+            Warehouse, Logistics, Finance, and Security — commanded from a single pane of glass.
           </p>
         </div>
 
         {/* Bottom: accent gold bar */}
-        <div className="relative z-10">
+        <div className="relative z-10 animate-stagger-3">
           <div
-            className="h-1 w-16 rounded-full mb-4"
+            className="h-2 w-24 rounded-full mb-6"
             style={{ background: "rgb(var(--color-accent))" }}
           />
-          <p className="text-white/70 text-xs">
+          <p className="text-white/70 text-sm font-semibold tracking-wide uppercase">
             © {new Date().getFullYear()} Loryb Group of Companies
           </p>
         </div>
       </div>
 
       {/* ── Right form panel ────────────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 min-h-screen">
-        <div className="w-full max-w-md">
-
-          {/* Mobile-only brand mark — text-based, no image dependency */}
-          <div className="flex lg:hidden items-center gap-2 mb-8">
+      <div className="flex-1 flex flex-col justify-center px-8 sm:px-12 py-12 min-h-screen relative">
+        <div className="w-full max-w-md mx-auto">
+          {/* Mobile-only brand mark */}
+          <div className="flex lg:hidden items-center gap-3 mb-12 animate-stagger-1">
             <img
               src="/logo.png"
               alt=""
-              className="h-8 w-auto object-contain"
+              className="h-10 w-auto object-contain"
               onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
             />
             <span
-              className="text-lg font-bold tracking-tight"
+              className="text-2xl font-bold tracking-tight"
               style={{ color: 'rgb(var(--color-primary))' }}
             >
               Loryb Group
@@ -185,37 +174,31 @@ function LoginPage() {
           </div>
 
           {/* Heading */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold tracking-tight text-text-primary">
+          <div className="mb-10 animate-stagger-1">
+            <h2 className="text-3xl font-extrabold tracking-tight text-text-primary">
               Welcome back
-            </h1>
-            <p className="text-sm text-text-secondary mt-1">
-              Sign in to the Loryb Ops Platform
+            </h2>
+            <p className="text-base font-medium text-text-secondary mt-2">
+              Sign in to access the command centre.
             </p>
           </div>
 
-          {/* Form card with 4px left accent border */}
-          <div
-            className="bg-surface-raised rounded-md shadow-md border border-surface-border overflow-hidden"
-            style={{
-              borderLeftWidth: '4px',
-              borderLeftColor: 'rgb(var(--color-primary))',
-            }}
-          >
-            <div className="px-8 py-8 flex flex-col gap-8">
-              {/* Error banner */}
-              {error && (
-                <div className="alert alert-danger">
-                  <AlertCircle size={14} className="shrink-0" />
-                  <span>{error}</span>
-                </div>
-              )}
+          {/* Removed the generic card border, letting the form breathe */}
+          <div className="flex flex-col gap-8">
+            {/* Error banner */}
+            {error && (
+              <div className="alert alert-danger px-4 py-4 animate-stagger-1 border-l-4 border-l-status-danger rounded-r-md">
+                <AlertCircle size={18} className="shrink-0" />
+                <span className="font-medium text-sm leading-snug">{error}</span>
+              </div>
+            )}
 
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col gap-6"
-                noValidate
-              >
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-6"
+              noValidate
+            >
+              <div className="animate-stagger-2">
                 <AuthInput
                   id="email"
                   type="email"
@@ -227,7 +210,9 @@ function LoginPage() {
                   autoComplete="email"
                   disabled={loading}
                 />
+              </div>
 
+              <div className="animate-stagger-3">
                 <AuthInput
                   id="password"
                   type="password"
@@ -239,165 +224,124 @@ function LoginPage() {
                   autoComplete="current-password"
                   disabled={loading}
                 />
+              </div>
 
-                {/* Remember me + forgot — same link style */}
-                <div className="flex items-center justify-between gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                      id="remember-me"
-                      type="checkbox"
-                      disabled={loading}
-                      className="h-3.5 w-3.5 rounded-sm accent-primary"
-                    />
-                    <span className="text-xs text-text-secondary">
-                      Remember me
-                    </span>
-                  </label>
-                  <Link
-                    to="/forgot-password"
-                    className="text-xs font-semibold text-primary hover:text-primary-hover transition-colors"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
+              <div className="flex items-center justify-between gap-4 mt-2 animate-stagger-4">
+                <label className="flex items-center gap-3 cursor-pointer select-none group">
+                  <input
+                    id="remember-me"
+                    type="checkbox"
+                    disabled={loading}
+                    className="h-4 w-4 rounded-sm accent-primary cursor-pointer"
+                  />
+                  <span className="text-sm font-semibold text-text-secondary group-hover:text-text-primary transition-colors">
+                    Remember me
+                  </span>
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-sm font-bold text-primary hover:text-primary-hover transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
 
+              <div className="animate-stagger-4 mt-4">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn btn-primary w-full py-[14px] mt-2 justify-center font-semibold tracking-wide disabled:opacity-60"
+                  className="btn btn-primary w-full py-4 text-base justify-center font-bold tracking-wide disabled:opacity-60 shadow-lg hover:shadow-xl"
                 >
                   {loading ? (
-                    <span className="flex items-center gap-2">
-                      <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Signing in…
+                    <span className="flex items-center gap-3">
+                      <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Authenticating…
                     </span>
                   ) : (
-                    "Sign in"
+                    "Sign in to Dashboard"
                   )}
                 </button>
-              </form>
+              </div>
+            </form>
 
-              {toastMessage && (
-                <div className="fixed bottom-6 right-6 z-50 bg-[#10b981] text-white px-4 py-3 rounded shadow-lg flex items-center gap-2 border border-emerald-500/20 animate-bounce">
-                  <CheckCircle size={18} className="text-white shrink-0 animate-pulse" />
-                  <span className="font-semibold text-sm">{toastMessage}</span>
-                </div>
-              )}
+            {toastMessage && (
+              <div className="fixed bottom-6 right-6 z-50 bg-[#10b981] text-white px-6 py-4 rounded-md shadow-2xl flex items-center gap-3 border border-emerald-500/20 animate-bounce">
+                <CheckCircle size={20} className="text-white shrink-0 animate-pulse" />
+                <span className="font-bold text-sm tracking-wide">{toastMessage}</span>
+              </div>
+            )}
 
-              {/* ── Demo accounts — inside card, below divider ─────────── */}
-              {USE_MOCK_DATA && (
-                <div className="border-t border-surface-border -mx-8 px-8 pt-6">
-                  <button
-                    onClick={() => setShowHint((h) => !h)}
-                    className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-muted hover:text-text-secondary transition-colors"
-                  >
-                    <span>Demo accounts</span>
-                    {showHint ? (
-                      <ChevronUp size={13} />
-                    ) : (
-                      <ChevronDown size={13} />
-                    )}
-                  </button>
-
-                  {showHint && (
-                    <div className="mt-3 -mx-6 overflow-x-auto">
-                      <table className="w-full text-xs">
-                        <thead>
-                          <tr className="bg-surface-active text-left">
-                            <th className="px-4 py-2 font-semibold text-text-secondary">
-                              Role
-                            </th>
-                            <th className="px-4 py-2 font-semibold text-text-secondary">
-                              Email
-                            </th>
-                            <th className="px-4 py-2 font-semibold text-text-secondary">
-                              Password
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-surface-border">
-                          {[
-                            ["CEO", "ceo@lorybgroup.com", "Ceo@12345"],
-                            ["Admin", "admin@lorybgroup.com", "Admin@12345"],
-                            [
-                              "Security",
-                              "security@lorybgroup.com",
-                              "Security@123",
-                            ],
-                            [
-                              "Warehouse",
-                              "warehouse@lorybgroup.com",
-                              "Warehouse@123",
-                            ],
-                            [
-                              "Logistics",
-                              "logistics@lorybgroup.com",
-                              "Logistics@123",
-                            ],
-                            [
-                              "Finance",
-                              "finance@lorybgroup.com",
-                              "Finance@123",
-                            ],
-                          ].map(([role, emailVal, pass]) => (
-                            <tr
-                              key={role}
-                              className="hover:bg-surface-active transition-colors"
-                            >
-                              <td className="px-4 py-2 font-medium text-text-primary">
-                                {role}
-                              </td>
-                              <td
-                                className="px-4 py-2 text-text-secondary cursor-pointer hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
-                                role="button"
-                                tabIndex={0}
-                                onClick={() => setEmail(emailVal)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    setEmail(emailVal);
-                                  }
-                                }}
-                                title="Click to fill email"
-                              >
-                                {emailVal}
-                              </td>
-                              <td
-                                className="px-4 py-2 font-mono text-text-secondary cursor-pointer hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
-                                role="button"
-                                tabIndex={0}
-                                onClick={() => setPassword(pass)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    setPassword(pass);
-                                  }
-                                }}
-                                title="Click to fill password"
-                              >
-                                {pass}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+            {/* ── Demo accounts ─────────── */}
+            {USE_MOCK_DATA && (
+              <div className="mt-8 pt-8 border-t-2 border-surface-border animate-stagger-5">
+                <button
+                  onClick={() => setShowHint((h) => !h)}
+                  className="w-full flex items-center justify-between text-sm font-bold uppercase tracking-widest text-text-muted hover:text-text-primary transition-colors group"
+                >
+                  <span>Quick Sign-in (Demo)</span>
+                  {showHint ? (
+                    <ChevronUp size={16} className="group-hover:translate-y-[-2px] transition-transform" />
+                  ) : (
+                    <ChevronDown size={16} className="group-hover:translate-y-[2px] transition-transform" />
                   )}
-                </div>
-              )}
-            </div>
-          </div>
+                </button>
 
-          {/* Footer — same link style as Forgot password */}
-          <p className="text-center text-xs text-text-muted mt-6">
-            Don't have an account?{" "}
-            <Link
-              to="/signup"
-              className="font-semibold text-primary hover:text-primary-hover transition-colors"
-            >
-              Request access
-            </Link>
-          </p>
+                {showHint && (
+                  <div className="mt-6 overflow-x-auto rounded-md border border-surface-border bg-surface-raised shadow-sm">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-surface-active text-left border-b border-surface-border">
+                          <th className="px-5 py-3 font-bold text-text-secondary uppercase tracking-wider text-xs">
+                            Role
+                          </th>
+                          <th className="px-5 py-3 font-bold text-text-secondary uppercase tracking-wider text-xs">
+                            Email
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-surface-border">
+                        {[
+                          ["CEO", "ceo@lorybgroup.com", "Ceo@12345"],
+                          ["Admin", "admin@lorybgroup.com", "Admin@12345"],
+                          ["Security", "security@lorybgroup.com", "Security@123"],
+                          ["Warehouse", "warehouse@lorybgroup.com", "Warehouse@123"],
+                          ["Logistics", "logistics@lorybgroup.com", "Logistics@123"],
+                          ["Finance", "finance@lorybgroup.com", "Finance@123"],
+                        ].map(([role, emailVal, pass]) => (
+                          <tr
+                            key={role}
+                            className="hover:bg-surface-active transition-colors cursor-pointer"
+                            onClick={() => {
+                              setEmail(emailVal);
+                              setPassword(pass);
+                            }}
+                          >
+                            <td className="px-5 py-3 font-bold text-text-primary">
+                              {role}
+                            </td>
+                            <td className="px-5 py-3 font-mono text-text-secondary">
+                              {emailVal}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Footer */}
+            <p className="text-center text-sm font-medium text-text-muted mt-8 animate-stagger-5">
+              Need access?{" "}
+              <Link
+                to="/signup"
+                className="font-bold text-primary hover:text-primary-hover transition-colors underline underline-offset-4"
+              >
+                Request an account
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

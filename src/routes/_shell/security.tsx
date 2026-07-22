@@ -1,5 +1,4 @@
-import { createFileRoute, Outlet, Link, useRouterState } from '@tanstack/react-router'
-import clsx from 'clsx'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_shell/security')({
   component: SecurityLayout,

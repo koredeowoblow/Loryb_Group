@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
+              if (id.includes('recharts')) return; // let recharts be dynamically split
               return 'vendor';
             }
           }

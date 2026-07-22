@@ -153,7 +153,11 @@ const ShellWarehouseStockOverviewRoute =
     id: '/stock-overview',
     path: '/stock-overview',
     getParentRoute: () => ShellWarehouseRoute,
-  } as any)
+  } as any).lazy(() =>
+    import('./routes/_shell/warehouse/stock-overview.lazy').then(
+      (d) => d.Route,
+    ),
+  )
 const ShellWarehouseProductionRoute =
   ShellWarehouseProductionRouteImport.update({
     id: '/production',
@@ -266,7 +270,9 @@ const ShellSecurityGateLogRoute = ShellSecurityGateLogRouteImport.update({
   id: '/gate-log',
   path: '/gate-log',
   getParentRoute: () => ShellSecurityRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/_shell/security/gate-log.lazy').then((d) => d.Route),
+)
 const ShellSecurityDispatchRoute = ShellSecurityDispatchRouteImport.update({
   id: '/dispatch',
   path: '/dispatch',
@@ -298,7 +304,9 @@ const ShellLogisticsFleetRoute = ShellLogisticsFleetRouteImport.update({
   id: '/fleet',
   path: '/fleet',
   getParentRoute: () => ShellLogisticsRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/_shell/logistics/fleet.lazy').then((d) => d.Route),
+)
 const ShellLogisticsDriversRoute = ShellLogisticsDriversRouteImport.update({
   id: '/drivers',
   path: '/drivers',

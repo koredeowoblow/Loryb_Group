@@ -69,18 +69,9 @@ export function ChartTooltip({ active, payload, label, formatValue }: ChartToolt
   if (!active || !payload || payload.length === 0) return null
 
   return (
-    <div
-      style={{
-        background: 'rgb(var(--color-surface-overlay))',
-        border: '1px solid rgb(var(--color-surface-border))',
-        borderRadius: '6px',
-        boxShadow: 'var(--shadow-md)',
-        padding: '10px 14px',
-        minWidth: 140,
-      }}
-    >
+    <div className="bg-surface-overlay border border-surface-border rounded-md shadow-md py-2.5 px-3.5 min-w-[140px]">
       {label !== undefined && (
-        <p style={{ fontSize: 12, fontWeight: 600, color: 'rgb(var(--color-text-primary))', marginBottom: 6 }}>
+        <p className="text-xs font-semibold text-text-primary mb-1.5">
           {label}
         </p>
       )}
@@ -89,10 +80,10 @@ export function ChartTooltip({ active, payload, label, formatValue }: ChartToolt
         const raw = entry.value ?? 0
         const display = formatValue ? formatValue(raw) : typeof raw === 'number' ? raw.toLocaleString() : raw
         return (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: i > 0 ? 4 : 0 }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
-            <span style={{ fontSize: 12, color: 'rgb(var(--color-text-muted))', flex: 1 }}>{entry.name ?? entry.dataKey}</span>
-            <span style={{ fontSize: 12, fontWeight: 600, color: 'rgb(var(--color-text-primary))' }}>{display}</span>
+          <div key={i} className={`flex items-center gap-2 ${i > 0 ? 'mt-1' : ''}`}>
+            <span className="w-2 h-2 rounded-full shrink-0" style={{ background: color }} />
+            <span className="text-xs text-text-muted flex-1">{entry.name ?? entry.dataKey}</span>
+            <span className="text-xs font-semibold text-text-primary">{display}</span>
           </div>
         )
       })}

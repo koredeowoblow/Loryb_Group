@@ -14,7 +14,7 @@ import { FormField } from '../../../components/ui/FormField'
 import { SelectField } from '../../../components/ui/SelectField'
 import { Button } from '../../../components/ui/Button'
 import { Truck as TruckIcon, MapPin, Navigation, Clock, Activity } from 'lucide-react'
-import { CHART_COLORS } from '../../../components/ui/ChartWrapper'
+import { CHART_COLORS, ChartTooltip } from '../../../components/ui/ChartWrapper'
 
 export const Route = createFileRoute('/_shell/logistics/fleet')({
   component: FleetPage,
@@ -155,19 +155,7 @@ function FleetPage() {
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-surface border border-surface-border shadow-lg rounded p-2 px-3">
-                            <div className="text-xs font-bold text-text-secondary uppercase mb-1">{payload[0].name}</div>
-                            <div className="text-sm font-bold" style={{ color: payload[0].payload.fill }}>{payload[0].value} Trucks</div>
-                          </div>
-                        )
-                      }
-                      return null
-                    }}
-                  />
+                  <Tooltip content={<ChartTooltip formatValue={(v: any) => `${v} Trucks`} />} />
                 </PieChart>
               </ResponsiveContainer>
             </div>

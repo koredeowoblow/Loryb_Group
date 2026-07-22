@@ -141,7 +141,6 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    DARK MODE
 ═══════════════════════════════════════════════════════════════════════════ */
-.dark,
 @media (prefers-color-scheme: dark) {
   :root {
     /* Brand Navy & Primary Adjustments for Dark Surface Contrast */

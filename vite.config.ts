@@ -7,12 +7,24 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
   return {
-    plugins: [TanStackRouterVite({ target: 'react', autoCodeSplitting: true }), react()],
+    plugins: [TanStackRouterVite({ target: 'react' }), react()],
     server: {
       proxy: {
         '/api': {
           target: env.VITE_BACKEND_URL || 'http://localhost:5000',
           changeOrigin: true,
+        }
+      }
+    },
+    build: {
+      chunkSizeWarningLimit: 1200,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return 'vendor';
+            }
+          }
         }
       }
     }

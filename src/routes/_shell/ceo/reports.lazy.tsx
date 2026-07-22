@@ -361,24 +361,12 @@ function ReportsPage() {
       </div>
 
       {/* ── AI Executive Summary ──────────────────────────────────────────── */}
-      <div
-        className="card p-6 flex gap-4 items-start border-l-4"
-        style={{ borderLeftColor: `rgb(var(--color-status-info))` }}
-      >
-        <div
-          className="mt-0.5 shrink-0 w-7 h-7 rounded-sm flex items-center justify-center"
-          style={{ background: `rgb(var(--color-status-info-bg))` }}
-        >
-          <TrendingUp
-            size={14}
-            style={{ color: `rgb(var(--color-status-info))` }}
-          />
+      <div className="card p-6 flex gap-4 items-start border-l-4 border-l-status-info">
+        <div className="mt-0.5 shrink-0 w-7 h-7 rounded-sm flex items-center justify-center bg-status-info-bg">
+          <TrendingUp size={14} className="text-status-info" />
         </div>
         <div>
-          <p
-            className="text-xs font-semibold uppercase tracking-wide mb-3"
-            style={{ color: `rgb(var(--color-status-info))` }}
-          >
+          <p className="text-xs font-semibold uppercase tracking-wide mb-3 text-status-info">
             AI Executive Summary
           </p>
           <p className="text-sm text-text-secondary leading-relaxed">

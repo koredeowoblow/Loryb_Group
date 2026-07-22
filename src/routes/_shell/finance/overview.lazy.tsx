@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { sales as salesApi, expenses as expensesApi, payroll as payrollApi, supplierPayments as supplierPaymentsApi } from '../../../api/finance'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, AreaChart, Area, Legend } from 'recharts'
 import { DollarSign, TrendingUp, Wallet, Receipt, CreditCard, Banknote } from 'lucide-react'
-import { CHART_COLORS } from '../../../components/ui/ChartWrapper'
+import { CHART_COLORS, ChartTooltip, chartGridProps } from '../../../components/ui/ChartWrapper'
 
 import { PageSkeleton } from '../../../components/ui/Skeleton'
 
@@ -140,8 +140,8 @@ function FinancialOverviewPage() {
                  </defs>
                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} tickFormatter={(val) => `₦${val/1000000}M`} />
-                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                 <Tooltip cursor={{ stroke: '#E5E7EB' }} contentStyle={{ borderRadius: 8, fontWeight: 'bold', border: 'none', boxShadow: 'var(--shadow-md)' }} formatter={(val: any) => `₦${Number(val).toLocaleString()}`} />
+                 <CartesianGrid {...chartGridProps} />
+                 <Tooltip cursor={{ stroke: 'rgb(var(--color-surface-border))' }} content={<ChartTooltip formatValue={(val: any) => `₦${Number(val).toLocaleString()}`} />} />
                  <Legend iconType="circle" wrapperStyle={{ fontSize: 12, fontWeight: 600, paddingTop: 10 }} />
                  <Area type="monotone" name="Revenue" dataKey="revenue" stroke={CHART_COLORS.success} fillOpacity={1} fill="url(#colorRev)" />
                  <Area type="monotone" name="Expenses" dataKey="expenses" stroke={CHART_COLORS.danger} fillOpacity={1} fill="url(#colorExp)" />
@@ -158,22 +158,12 @@ function FinancialOverviewPage() {
           <div className="flex-1 w-full min-h-0">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={cashflowData} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                  <CartesianGrid {...chartGridProps} />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 600, fill: '#6B7280' }} dy={10} angle={-45} textAnchor="end" />
                   <YAxis hide />
                   <Tooltip 
                     cursor={{ fill: 'transparent' }}
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-surface border border-surface-border shadow-lg rounded p-2 px-3">
-                            <div className="text-xs font-bold text-text-secondary uppercase mb-1">{payload[0].payload.name}</div>
-                            <div className="text-sm font-bold" style={{ color: payload[0].payload.fill }}>₦{Number(payload[0].value).toLocaleString()}</div>
-                          </div>
-                        )
-                      }
-                      return null
-                    }}
+                    content={<ChartTooltip formatValue={(val: any) => `₦${Number(val).toLocaleString()}`} />}
                   />
                   <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={60}>
                     {cashflowData.map((entry, index) => (

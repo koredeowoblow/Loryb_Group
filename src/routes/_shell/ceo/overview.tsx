@@ -409,7 +409,7 @@ function CEOOverviewPage() {
               />
               <Tooltip
                 content={<ChartTooltip />}
-                cursor={{ fill: "rgb(241 243 248 / 0.8)" }}
+                cursor={{ fill: "rgb(var(--color-surface-active))" }}
               />
               <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
                 {stockData.map((entry, i) => (
@@ -535,7 +535,7 @@ function CEOOverviewPage() {
               <YAxis hide />
               <Tooltip
                 content={<ChartTooltip formatValue={(v) => fmt(Number(v))} />}
-                cursor={{ stroke: "rgb(224 228 237)", strokeWidth: 1 }}
+                cursor={{ stroke: "rgb(var(--color-surface-border))", strokeWidth: 1 }}
               />
               <Line
                 type="monotone"

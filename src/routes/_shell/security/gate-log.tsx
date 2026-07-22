@@ -90,7 +90,7 @@ function GateLogDashboard() {
                 <CartesianGrid {...chartGridProps} />
                 <XAxis dataKey="day" {...chartAxisProps} />
                 <YAxis {...chartAxisProps} />
-                <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgb(241 243 248 / 0.6)' }} />
+                <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgb(var(--color-surface-active))' }} />
                 <Bar dataKey="intake"   name="Intake"   fill={CHART_COLORS.primary} radius={[4, 4, 0, 0]} maxBarSize={36} />
                 <Bar dataKey="dispatch" name="Dispatch" fill={CHART_COLORS.success} radius={[4, 4, 0, 0]} maxBarSize={36} />
               </BarChart>

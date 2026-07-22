@@ -36,7 +36,7 @@ function ForgotPasswordPage() {
 
         {/* Brand mark */}
         <div className="flex flex-col items-center gap-3">
-          <img src="/logo.png" alt="Loryb Group of Companies" className="h-12 w-auto object-contain" />
+          <img src="/logo.png" alt="Loryb Group" className="h-12 w-auto object-contain" />
           <div className="text-center">
             <h1 className="text-xl font-bold tracking-tight text-text-primary">Reset password</h1>
             <p className="text-sm text-text-secondary mt-0.5">

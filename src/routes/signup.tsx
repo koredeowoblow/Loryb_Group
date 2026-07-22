@@ -60,8 +60,7 @@ function SignupPage() {
     <div className="min-h-screen flex font-sans bg-surface-base">
       {/* ── Left brand panel (lg+ only) ─────────────────────────────────── */}
       <div
-        className="hidden lg:flex lg:w-[48%] xl:w-[45%] flex-col justify-between p-16 relative overflow-hidden shrink-0"
-        style={{ background: "rgb(var(--color-primary))" }}
+        className="hidden lg:flex lg:w-[48%] xl:w-[45%] flex-col justify-between p-16 relative overflow-hidden shrink-0 bg-primary"
         aria-hidden="true"
       >
         {/* Abstract geometric background */}
@@ -97,10 +96,7 @@ function SignupPage() {
 
         {/* Bottom: accent gold bar */}
         <div className="relative z-10 animate-stagger-3">
-          <div
-            className="h-2 w-24 rounded-full mb-6"
-            style={{ background: "rgb(var(--color-accent))" }}
-          />
+          <div className="h-2 w-24 rounded-full mb-6 bg-accent" />
           <p className="text-white/70 text-sm font-semibold tracking-wide uppercase">
             © {new Date().getFullYear()} Loryb Group of Companies
           </p>
@@ -112,7 +108,7 @@ function SignupPage() {
         <div className="w-full max-w-md mx-auto">
           {/* Mobile-only brand mark */}
           <div className="flex lg:hidden items-center gap-3 mb-12 animate-stagger-1">
-            <img src="/logo.png" alt="Loryb Group" className="h-10 w-auto object-contain" />
+            <img src="/logo.png" alt="" aria-hidden="true" className="h-10 w-auto object-contain" />
             <span className="text-2xl font-bold tracking-tight text-primary">
               Loryb Group
             </span>

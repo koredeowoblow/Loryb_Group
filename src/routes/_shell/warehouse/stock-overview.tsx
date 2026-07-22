@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { binCard as binCardApi, grn as grnApi, inventoryAlerts } from '../../../api/warehouse'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { Warehouse, AlertTriangle, ArrowDownToLine, Activity } from 'lucide-react'
-import { CHART_COLORS } from '../../../components/ui/ChartWrapper'
+import { CHART_COLORS, ChartTooltip, chartGridProps } from '../../../components/ui/ChartWrapper'
 
 import { PageSkeleton } from '../../../components/ui/Skeleton'
 
@@ -117,10 +117,10 @@ function StockOverviewPage() {
           <div className="p-4 w-full">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={trendData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                <CartesianGrid {...chartGridProps} />
                 <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
-                <Tooltip cursor={{ stroke: '#E5E7EB' }} contentStyle={{ borderRadius: 4, fontWeight: 'bold' }} />
+                <Tooltip cursor={{ stroke: 'rgb(var(--color-surface-border))' }} content={<ChartTooltip />} />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: 12, fontWeight: 600, paddingTop: 10 }} />
                 <Line name="Stock In (GRN)" type="monotone" dataKey="in" stroke={CHART_COLORS.primary} strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
                 <Line name="Stock Out (Dispatch)" type="monotone" dataKey="out" stroke={CHART_COLORS.warning} strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />

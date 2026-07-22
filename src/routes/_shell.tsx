@@ -6,7 +6,8 @@ import {
   Menu, X, Sun, Moon,
 } from 'lucide-react'
 import clsx from 'clsx'
-import { useAuth, Role, parseJwt } from '../auth'
+import { useAuth, Role } from '../auth'
+import { parseJwt } from '../lib/jwt'
 import { AUTH_BYPASS_PATHS, ADMIN_RESTRICTED_PATHS, getRoleRedirect } from '../lib/rbac'
 import { PageSkeleton } from '../components/ui/Skeleton'
 
@@ -234,8 +235,8 @@ function Sidebar({ role, logout, isOpen, setIsOpen }: { role: Role | null; logou
     <aside
       ref={asideRef}
       tabIndex={-1}
-      style={{ backgroundColor: 'rgb(var(--color-primary-dark))', color: 'white' }}
       className={clsx(
+      'bg-primary-dark text-white',
       'border-r border-white/10 flex flex-col z-30 shadow-xl',
       'transition-transform duration-300',
       'fixed md:static inset-y-0 left-0 w-64',

@@ -35,3 +35,7 @@ export const waybills = {
   update: (id: string, data: Partial<Types.Waybill>) => handleApiCall<Types.Waybill>(`/api/v1/logistics/waybills/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id: string) => handleApiCall<any>(`/api/v1/logistics/waybills/${id}`, { method: 'DELETE' })
 };
+
+export const logisticsOverview = {
+  getSnapshot: () => handleApiCall<any>('/api/v1/logistics/overview/snapshot')
+};

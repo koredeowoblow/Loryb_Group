@@ -28,3 +28,7 @@ export const stocks = {
   update: (id: string, data: Partial<Types.Stock>) => handleApiCall<Types.Stock>(`/api/v1/warehouse/stocks/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id: string) => handleApiCall<any>(`/api/v1/warehouse/stocks/${id}`, { method: 'DELETE' })
 };
+
+export const warehouseOverview = {
+  getSnapshot: () => handleApiCall<any>('/api/v1/warehouse/overview/snapshot')
+};

@@ -2,7 +2,7 @@ import { validateFormWithZod } from '../../../lib/zodValidator'
 import { useState } from 'react'
 import { createLazyFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { trucks, trips as tripsApi } from '../../../api/logistics'
+import { trucks, logisticsOverview } from '../../../api/logistics'
 import { Truck } from '../../../types'
 import { DataTable, Column } from '../../../components/ui/DataTable'
 import { Badge } from '../../../components/ui/Badge'
@@ -44,16 +44,20 @@ function FleetPage() {
     queryFn: trucks.list,
   })
 
-  const { data: trips } = useQuery({
-    queryKey: ['trips'],
-    queryFn: tripsApi.list,
+  const { data: snapshot } = useQuery({
+    queryKey: ['logisticsSnapshot'],
+    queryFn: logisticsOverview.getSnapshot,
   })
 
-  const activeTrucks = data?.filter(t => t.status === 'in-transit').length || 0
-  const maintenanceTrucks = data?.filter(t => t.status === 'maintenance').length || 0
-  const totalCapacity = data?.reduce((acc, t) => acc + t.capacity, 0) || 0
-  const activeTripsList = trips?.filter(t => t.status === 'in-transit') || []
-  const activeTripsCount = activeTripsList.length
+  const {
+    activeTrucks = 0,
+    maintenanceTrucks = 0,
+    idleTrucks = 0,
+    totalCapacity = 0,
+    activeTrips = []
+  } = snapshot || {}
+
+  const activeTripsCount = activeTrips.length
 
   const mutation = useMutation({
     mutationFn: (payload: Omit<Truck, 'id'>) => trucks.create(payload),
@@ -138,7 +142,7 @@ function FleetPage() {
                 <PieChart>
                   <Pie
                     data={[
-                      { name: 'Idle', value: data?.filter(t => t.status === 'idle').length || 0, fill: CHART_COLORS.success },
+                      { name: 'Idle', value: idleTrucks, fill: CHART_COLORS.success },
                       { name: 'In Transit', value: activeTrucks, fill: CHART_COLORS.info },
                       { name: 'Maintenance', value: maintenanceTrucks, fill: CHART_COLORS.warning }
                     ]}
@@ -148,7 +152,7 @@ function FleetPage() {
                     dataKey="value"
                   >
                     {[
-                      { name: 'Idle', value: data?.filter(t => t.status === 'idle').length || 0, fill: CHART_COLORS.success },
+                      { name: 'Idle', value: idleTrucks, fill: CHART_COLORS.success },
                       { name: 'In Transit', value: activeTrucks, fill: CHART_COLORS.info },
                       { name: 'Maintenance', value: maintenanceTrucks, fill: CHART_COLORS.warning }
                     ].map((entry, index) => (
@@ -167,7 +171,7 @@ function FleetPage() {
                <h3 className="font-header font-bold uppercase tracking-wide text-sm">Active Trips Tracking</h3>
             </div>
             <div className="flex-1 overflow-y-auto">
-               {activeTripsList.length > 0 ? activeTripsList.map(trip => (
+               {activeTrips.length > 0 ? activeTrips.map((trip: any) => (
                  <div key={trip.id} className="p-4 border-b border-surface-border hover:bg-surface-active transition-colors">
                    <div className="flex justify-between items-start mb-2">
                      <span className="font-bold text-primary">{trip.truckNo}</span>

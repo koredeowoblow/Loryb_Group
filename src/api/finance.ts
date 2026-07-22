@@ -35,3 +35,7 @@ export const sales = {
   update: (id: string, data: Partial<Types.Sale>) => handleApiCall<Types.Sale>(`/api/v1/finance/sales/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id: string) => handleApiCall<any>(`/api/v1/finance/sales/${id}`, { method: 'DELETE' })
 };
+
+export const financeOverview = {
+  getSnapshot: () => handleApiCall<any>('/api/v1/finance/overview/snapshot')
+};

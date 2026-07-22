@@ -119,3 +119,7 @@ export const production = {
   update: (id: string, data: Partial<Types.Production>) => handleApiCall<Types.Production>(`/api/v1/production/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id: string) => handleApiCall<any>(`/api/v1/production/${id}`, { method: 'DELETE' })
 };
+
+export const ceo = {
+  getSnapshot: () => handleApiCall<any>('/api/v1/ceo/snapshot')
+};

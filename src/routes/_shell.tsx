@@ -9,8 +9,7 @@ import clsx from 'clsx'
 import { useAuth, Role } from '../auth'
 import { parseJwt } from '../lib/jwt'
 import { AUTH_BYPASS_PATHS, ADMIN_RESTRICTED_PATHS, getRoleRedirect } from '../lib/rbac'
-import { PageSkeleton } from '../components/ui/Skeleton'
-
+import { GlobalLoader } from '../components/ui/GlobalLoader'
 export const Route = createFileRoute('/_shell')({
   component: ShellLayout,
   beforeLoad: ({ context, location }) => {
@@ -65,7 +64,7 @@ function ShellLayout() {
 
         {/* Content */}
         <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
-          <Suspense fallback={<PageSkeleton />}>
+          <Suspense fallback={<GlobalLoader />}>
             <div key={router.location.pathname} className="page-enter">
               <Outlet />
             </div>

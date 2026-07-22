@@ -6,38 +6,10 @@ export const Route = createFileRoute('/_shell/security')({
 })
 
 function SecurityLayout() {
-  const router = useRouterState()
-  const currentPath = router.location.pathname
-
-  const tabs = [
-    { label: 'Gate Log', to: '/security/gate-log' },
-    { label: 'Suppliers', to: '/security/suppliers' },
-    { label: 'Dispatch', to: '/security/dispatch' },
-    { label: 'Logs', to: '/security/logs' },
-  ]
-
   return (
     <div className="flex flex-col h-full">
-      <div className="mb-6 border-b border-surface-border">
-        <nav className="-mb-px flex space-x-8">
-          {tabs.map((tab) => {
-            const isActive = currentPath.startsWith(tab.to)
-            return (
-              <Link
-                key={tab.to}
-                to={tab.to}
-                className={clsx(
-                  'whitespace-nowrap pb-4 px-1 border-b-2 font-bold font-header uppercase tracking-wider text-xs transition-colors',
-                  isActive
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-text-muted hover:text-text-primary hover:border-surface-border'
-                )}
-              >
-                {tab.label}
-              </Link>
-            )
-          })}
-        </nav>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-text-primary">Security Operations</h2>
       </div>
       <div className="flex-1 overflow-auto">
         <Outlet />

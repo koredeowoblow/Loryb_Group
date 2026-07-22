@@ -1,5 +1,5 @@
 import { createRootRouteWithContext, Outlet, Link, useRouterState } from '@tanstack/react-router'
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, useIsFetching } from '@tanstack/react-query'
 
 function NotFound() {
   return (
@@ -22,6 +22,7 @@ function NotFound() {
 }
 
 import { useAuth } from '../auth'
+import { GlobalLoader } from '../components/ui/GlobalLoader'
 
 interface MyRouterContext {
   auth: ReturnType<typeof useAuth>
@@ -31,15 +32,12 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => {
     const router = useRouterState()
-    const isLoading = router.status === 'pending' || router.isLoading
+    const isFetching = useIsFetching()
+    const isLoading = router.status === 'pending' || router.isLoading || isFetching > 0
 
     return (
       <>
-        {isLoading && (
-          <div className="progress-bar-track !fixed !top-0 !left-0 !right-0 !h-1 !z-[9999]">
-            <div className="progress-bar-fill" />
-          </div>
-        )}
+        {isLoading && <GlobalLoader />}
         <Outlet />
       </>
     )

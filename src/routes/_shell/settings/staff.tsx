@@ -36,6 +36,7 @@ function StaffPage() {
       const res = await branches.list();
       return Array.isArray(res) ? res : (res as any).data || [];
     },
+    enabled: isModalOpen
   })
 
   const { data, isLoading } = useQuery({
@@ -71,7 +72,7 @@ function StaffPage() {
     { key: 'name', header: 'Name', sortable: true },
     { key: 'role', header: 'Role' },
     { key: 'phone', header: 'Phone' },
-    { key: 'branchId', header: 'Branch', render: (row) => branchesData.find((b:any) => b.id === row.branchId)?.name || 'N/A' },
+    { key: 'branchId', header: 'Branch', render: (row: any) => row.branchName || 'N/A' },
   ]
 
   return (

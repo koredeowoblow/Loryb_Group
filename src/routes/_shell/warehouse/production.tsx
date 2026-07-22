@@ -32,8 +32,16 @@ function ProductionPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
-  const { data: branchesData = [] } = useQuery({ queryKey: ['branches'], queryFn: async () => { const res = await branches.list(); return Array.isArray(res) ? res : (res as any).data || [] } })
-  const { data: staffData = [] } = useQuery({ queryKey: ['staff'], queryFn: async () => { const res = await staff.list(); return Array.isArray(res) ? res : (res as any).data || [] } })
+  const { data: branchesData = [] } = useQuery({ 
+    queryKey: ['branches'], 
+    queryFn: async () => { const res = await branches.list(); return Array.isArray(res) ? res : (res as any).data || [] },
+    enabled: isModalOpen
+  })
+  const { data: staffData = [] } = useQuery({ 
+    queryKey: ['staff'], 
+    queryFn: async () => { const res = await staff.list(); return Array.isArray(res) ? res : (res as any).data || [] },
+    enabled: isModalOpen
+  })
   
   const { data, isLoading } = useQuery({
     queryKey: ['production'],
@@ -64,8 +72,8 @@ function ProductionPage() {
   const columns: Column<Production>[] = [
     { key: 'metricType', header: 'Metric', sortable: true },
     { key: 'value', header: 'Value', sortable: true, render: (row) => <span className="font-semibold">{row.value}</span> },
-    { key: 'branchId', header: 'Branch', render: (row) => branchesData.find((b:any) => b.id === row.branchId)?.name || 'N/A' },
-    { key: 'staffId', header: 'Staff', render: (row) => staffData.find((s:any) => s.id === row.staffId)?.name || 'N/A' },
+    { key: 'branchId', header: 'Branch', render: (row: any) => row.branchName || 'N/A' },
+    { key: 'staffId', header: 'Staff', render: (row: any) => row.staffName || 'N/A' },
     { key: 'recordedAt', header: 'Recorded At', sortable: true, render: (row) => new Date(row.recordedAt).toLocaleString() },
   ]
 

@@ -1,6 +1,6 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { binCard as binCardApi, grn as grnApi, inventoryAlerts } from '../../../api/warehouse'
+import { warehouseOverview } from '../../../api/warehouse'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { Warehouse, AlertTriangle, ArrowDownToLine, Activity } from 'lucide-react'
 import { CHART_COLORS, ChartTooltip, chartGridProps } from '../../../components/ui/ChartWrapper'
@@ -12,38 +12,22 @@ export const Route = createLazyFileRoute('/_shell/warehouse/stock-overview')({
 })
 
 function StockOverviewPage() {
-  const { data: binCards = [], isLoading: isLoadingBinCards } = useQuery({ queryKey: ['binCards'], queryFn: binCardApi.list })
-  const { data: grn = [], isLoading: isLoadingGrn } = useQuery({ queryKey: ['grn'], queryFn: grnApi.list })
-  const { data: alerts = [], isLoading: isLoadingAlerts } = useQuery({ queryKey: ['alerts'], queryFn: inventoryAlerts.list })
+  const { data: snapshot, isLoading } = useQuery({ queryKey: ['warehouseSnapshot'], queryFn: warehouseOverview.getSnapshot })
 
-  if (isLoadingBinCards || isLoadingGrn || isLoadingAlerts) {
+  if (isLoading) {
     return <PageSkeleton />
   }
 
-  const totalMaize = binCards.filter(b => b.grainType === 'Maize').reduce((acc, b) => acc + (b.qtyIn ?? 0) - (b.qtyOut ?? 0), 0)
-  const totalSorghum = binCards.filter(b => b.grainType === 'Sorghum').reduce((acc, b) => acc + (b.qtyIn ?? 0) - (b.qtyOut ?? 0), 0)
-  const totalSoya = binCards.filter(b => b.grainType === 'SoyaBeans').reduce((acc, b) => acc + (b.qtyIn ?? 0) - (b.qtyOut ?? 0), 0)
-  
-  const activeAlerts = alerts.filter(a => a.status !== 'ok')
+  const {
+    totalMaize = 0,
+    totalSorghum = 0,
+    totalSoya = 0,
+    activeAlerts = [],
+    trendData = [],
+    recentGrn = []
+  } = snapshot || {}
 
   const capacity = { Maize: 100000, Sorghum: 50000, SoyaBeans: 50000 }
-
-  // 7-day movement trend from real GRN and bin-card records
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-  const today = new Date()
-  const trendData = Array.from({ length: 7 }, (_, i) => {
-    const target = new Date(today)
-    target.setDate(today.getDate() - (6 - i))
-    const targetStr = target.toISOString().slice(0, 10)
-    const dayLabel = dayNames[target.getDay()]
-    const dayIn = grn
-      .filter((g: any) => String(g.date ?? g.createdAt ?? '').slice(0, 10) === targetStr)
-      .reduce((a: number, g: any) => a + (g.netWeight ?? 0), 0)
-    const dayOut = binCards
-      .filter((b: any) => String(b.date ?? b.createdAt ?? '').slice(0, 10) === targetStr)
-      .reduce((a: number, b: any) => a + (b.qtyOut ?? 0), 0)
-    return { day: dayLabel, in: dayIn, out: dayOut }
-  })
 
   return (
     <div className="space-y-6">
@@ -62,7 +46,7 @@ function StockOverviewPage() {
             <AlertTriangle size={18} /> Active Stock Alerts
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {activeAlerts.map(alert => (
+            {activeAlerts.map((alert: any) => (
               <div key={alert.id} className="bg-surface p-3 rounded border border-status-error/20 shadow-sm flex flex-col hover:border-status-error/50 transition-all">
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-bold text-text-primary">{alert.grainType}</span>
@@ -136,15 +120,15 @@ function StockOverviewPage() {
             <h3 className="font-header font-bold uppercase tracking-wide text-sm">Recent Intake (GRN)</h3>
           </div>
           <div className="p-0 flex-1 overflow-y-auto flex-1 min-h-0">
-            {grn.length > 0 ? grn.slice(0, 6).map((g: any, i) => (
+            {recentGrn.length > 0 ? recentGrn.map((g: any, i: number) => (
               <div key={`grn-${i}`} className="p-4 border-b border-surface-border hover:bg-surface-active transition-colors flex justify-between items-center">
                 <div>
                   <div className="text-sm font-bold text-text-primary">{g.grainType}</div>
                   <div className="text-xs text-text-secondary font-medium mt-0.5">{g.date}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-bold text-status-success-dark">+{g.netWeight.toLocaleString()} kg</div>
-                  <div className="text-xs text-text-muted mt-0.5">{g.noOfBagsReceived} bags</div>
+                  <div className="text-sm font-bold text-status-success-dark">+{g.netWeight?.toLocaleString() || 0} kg</div>
+                  <div className="text-xs text-text-muted mt-0.5">{g.noOfBagsReceived || 0} bags</div>
                 </div>
               </div>
             )) : (

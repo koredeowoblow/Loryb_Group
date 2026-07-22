@@ -71,7 +71,7 @@ function FinancialOverviewPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="panel p-5 hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-5 hover:-translate-y-1 hover:shadow-md transition-all">
           <div className="flex justify-between items-center mb-2">
             <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted">Net Cashflow</div>
             <TrendingUp size={16} className="text-status-success-dark" />
@@ -89,7 +89,7 @@ function FinancialOverviewPage() {
           </div>
         </div>
 
-        <div className="panel p-5 hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-5 hover:-translate-y-1 hover:shadow-md transition-all">
           <div className="flex justify-between items-center mb-2">
             <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted">Total Revenue</div>
             <Wallet size={16} className="text-status-success-dark" />
@@ -98,7 +98,7 @@ function FinancialOverviewPage() {
           <div className="text-xs text-text-secondary mt-2">Inbound Sales Revenue</div>
         </div>
 
-        <div className="panel p-5 hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-5 hover:-translate-y-1 hover:shadow-md transition-all">
           <div className="flex justify-between items-center mb-2">
             <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted">Total Expenditures</div>
             <Receipt size={16} className="text-status-danger-dark" />
@@ -107,7 +107,7 @@ function FinancialOverviewPage() {
           <div className="text-xs text-text-secondary mt-2">Combined Outbound Costs</div>
         </div>
 
-        <div className="panel p-5 bg-surface-muted/30 hover:border-primary/30 hover:shadow-md transition-all">
+        <div className="panel p-5 bg-surface-muted/30 hover:-translate-y-1 hover:shadow-md transition-all">
           <div className="flex justify-between items-center mb-2">
             <div className="text-xs font-bold font-header uppercase tracking-wider text-text-muted">Outstanding Payables</div>
             <CreditCard size={16} className="text-status-warning" />
@@ -120,8 +120,8 @@ function FinancialOverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* 6 Month Trend */}
-        <div className="bg-surface panel-table lg:col-span-2 flex flex-col h-80 hover:border-primary/30 transition-all">
-          <div className="p-4 border-b border-surface-border flex items-center gap-2 text-primary">
+        <div className="bg-surface panel-table lg:col-span-2 flex flex-col h-80 hover:-translate-y-1 hover:shadow-md transition-all">
+          <div className="p-4 border-b border-surface-border/50 flex items-center gap-2 text-primary">
             <TrendingUp size={18} />
             <h3 className="font-header font-bold uppercase tracking-wide text-sm">Revenue vs Expenses (6 Months)</h3>
           </div>
@@ -141,7 +141,7 @@ function FinancialOverviewPage() {
                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} tickFormatter={(val) => `₦${val/1000000}M`} />
                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                 <Tooltip cursor={{ stroke: '#E5E7EB' }} contentStyle={{ borderRadius: 4, fontWeight: 'bold' }} formatter={(val: any) => `₦${Number(val).toLocaleString()}`} />
+                 <Tooltip cursor={{ stroke: '#E5E7EB' }} contentStyle={{ borderRadius: 8, fontWeight: 'bold', border: 'none', boxShadow: 'var(--shadow-md)' }} formatter={(val: any) => `₦${Number(val).toLocaleString()}`} />
                  <Legend iconType="circle" wrapperStyle={{ fontSize: 12, fontWeight: 600, paddingTop: 10 }} />
                  <Area type="monotone" name="Revenue" dataKey="revenue" stroke={CHART_COLORS.success} fillOpacity={1} fill="url(#colorRev)" />
                  <Area type="monotone" name="Expenses" dataKey="expenses" stroke={CHART_COLORS.danger} fillOpacity={1} fill="url(#colorExp)" />
@@ -151,7 +151,7 @@ function FinancialOverviewPage() {
         </div>
 
         {/* Cashflow Breakdown Bar Chart */}
-        <div className="panel p-4 h-80 flex flex-col hover:border-primary/30 transition-all">
+        <div className="panel p-4 h-80 flex flex-col hover:-translate-y-1 hover:shadow-md transition-all">
           <div className="text-sm uppercase tracking-wider font-bold text-text-secondary mb-4 font-header border-b border-surface-border pb-2 flex items-center gap-2">
             <Activity size={16} /> Fund Allocation Breakdown
           </div>
@@ -187,7 +187,7 @@ function FinancialOverviewPage() {
 
       </div>
 
-      <div className="panel p-4 flex flex-col hover:border-primary/30 transition-all">
+      <div className="panel p-4 flex flex-col hover:-translate-y-1 hover:shadow-md transition-all">
         <div className="text-sm uppercase tracking-wider font-bold text-text-secondary mb-4 font-header border-b border-surface-border pb-2">Recent Supplier Payments</div>
         <div className="flex-1 overflow-y-auto pr-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {!supplierPayments || supplierPayments.length === 0 ? (

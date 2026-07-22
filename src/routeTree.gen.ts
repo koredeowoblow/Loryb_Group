@@ -59,7 +59,7 @@ import { Route as ShellFinanceSupplierPaymentsRouteImport } from './routes/_shel
 import { Route as ShellFinanceSalesRouteImport } from './routes/_shell/finance/sales'
 import { Route as ShellFinancePayrollRouteImport } from './routes/_shell/finance/payroll'
 import { Route as ShellFinanceOverviewRouteImport } from './routes/_shell/finance/overview'
-import { Route as ShellFinanceInvoicingRouteImport } from './routes/_shell/finance/invoicing'
+import { Route as ShellFinanceInvoicesRouteImport } from './routes/_shell/finance/invoices'
 import { Route as ShellFinanceExpensesRouteImport } from './routes/_shell/finance/expenses'
 import { Route as ShellCeoReportsRouteImport } from './routes/_shell/ceo/reports'
 import { Route as ShellCeoOverviewRouteImport } from './routes/_shell/ceo/overview'
@@ -327,9 +327,9 @@ const ShellFinanceOverviewRoute = ShellFinanceOverviewRouteImport.update({
 } as any).lazy(() =>
   import('./routes/_shell/finance/overview.lazy').then((d) => d.Route),
 )
-const ShellFinanceInvoicingRoute = ShellFinanceInvoicingRouteImport.update({
-  id: '/invoicing',
-  path: '/invoicing',
+const ShellFinanceInvoicesRoute = ShellFinanceInvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
   getParentRoute: () => ShellFinanceRoute,
 } as any)
 const ShellFinanceExpensesRoute = ShellFinanceExpensesRouteImport.update({
@@ -366,7 +366,7 @@ export interface FileRoutesByFullPath {
   '/ceo/overview': typeof ShellCeoOverviewRoute
   '/ceo/reports': typeof ShellCeoReportsRoute
   '/finance/expenses': typeof ShellFinanceExpensesRoute
-  '/finance/invoicing': typeof ShellFinanceInvoicingRoute
+  '/finance/invoices': typeof ShellFinanceInvoicesRoute
   '/finance/overview': typeof ShellFinanceOverviewRoute
   '/finance/payroll': typeof ShellFinancePayrollRoute
   '/finance/sales': typeof ShellFinanceSalesRoute
@@ -417,7 +417,7 @@ export interface FileRoutesByTo {
   '/ceo/overview': typeof ShellCeoOverviewRoute
   '/ceo/reports': typeof ShellCeoReportsRoute
   '/finance/expenses': typeof ShellFinanceExpensesRoute
-  '/finance/invoicing': typeof ShellFinanceInvoicingRoute
+  '/finance/invoices': typeof ShellFinanceInvoicesRoute
   '/finance/overview': typeof ShellFinanceOverviewRoute
   '/finance/payroll': typeof ShellFinancePayrollRoute
   '/finance/sales': typeof ShellFinanceSalesRoute
@@ -474,7 +474,7 @@ export interface FileRoutesById {
   '/_shell/ceo/overview': typeof ShellCeoOverviewRoute
   '/_shell/ceo/reports': typeof ShellCeoReportsRoute
   '/_shell/finance/expenses': typeof ShellFinanceExpensesRoute
-  '/_shell/finance/invoicing': typeof ShellFinanceInvoicingRoute
+  '/_shell/finance/invoices': typeof ShellFinanceInvoicesRoute
   '/_shell/finance/overview': typeof ShellFinanceOverviewRoute
   '/_shell/finance/payroll': typeof ShellFinancePayrollRoute
   '/_shell/finance/sales': typeof ShellFinanceSalesRoute
@@ -531,7 +531,7 @@ export interface FileRouteTypes {
     | '/ceo/overview'
     | '/ceo/reports'
     | '/finance/expenses'
-    | '/finance/invoicing'
+    | '/finance/invoices'
     | '/finance/overview'
     | '/finance/payroll'
     | '/finance/sales'
@@ -582,7 +582,7 @@ export interface FileRouteTypes {
     | '/ceo/overview'
     | '/ceo/reports'
     | '/finance/expenses'
-    | '/finance/invoicing'
+    | '/finance/invoices'
     | '/finance/overview'
     | '/finance/payroll'
     | '/finance/sales'
@@ -638,7 +638,7 @@ export interface FileRouteTypes {
     | '/_shell/ceo/overview'
     | '/_shell/ceo/reports'
     | '/_shell/finance/expenses'
-    | '/_shell/finance/invoicing'
+    | '/_shell/finance/invoices'
     | '/_shell/finance/overview'
     | '/_shell/finance/payroll'
     | '/_shell/finance/sales'
@@ -1039,11 +1039,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellFinanceOverviewRouteImport
       parentRoute: typeof ShellFinanceRoute
     }
-    '/_shell/finance/invoicing': {
-      id: '/_shell/finance/invoicing'
-      path: '/invoicing'
-      fullPath: '/finance/invoicing'
-      preLoaderRoute: typeof ShellFinanceInvoicingRouteImport
+    '/_shell/finance/invoices': {
+      id: '/_shell/finance/invoices'
+      path: '/invoices'
+      fullPath: '/finance/invoices'
+      preLoaderRoute: typeof ShellFinanceInvoicesRouteImport
       parentRoute: typeof ShellFinanceRoute
     }
     '/_shell/finance/expenses': {
@@ -1072,7 +1072,7 @@ declare module '@tanstack/react-router' {
 
 interface ShellFinanceRouteChildren {
   ShellFinanceExpensesRoute: typeof ShellFinanceExpensesRoute
-  ShellFinanceInvoicingRoute: typeof ShellFinanceInvoicingRoute
+  ShellFinanceInvoicesRoute: typeof ShellFinanceInvoicesRoute
   ShellFinanceOverviewRoute: typeof ShellFinanceOverviewRoute
   ShellFinancePayrollRoute: typeof ShellFinancePayrollRoute
   ShellFinanceSalesRoute: typeof ShellFinanceSalesRoute
@@ -1082,7 +1082,7 @@ interface ShellFinanceRouteChildren {
 
 const ShellFinanceRouteChildren: ShellFinanceRouteChildren = {
   ShellFinanceExpensesRoute: ShellFinanceExpensesRoute,
-  ShellFinanceInvoicingRoute: ShellFinanceInvoicingRoute,
+  ShellFinanceInvoicesRoute: ShellFinanceInvoicesRoute,
   ShellFinanceOverviewRoute: ShellFinanceOverviewRoute,
   ShellFinancePayrollRoute: ShellFinancePayrollRoute,
   ShellFinanceSalesRoute: ShellFinanceSalesRoute,

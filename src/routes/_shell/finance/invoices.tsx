@@ -16,7 +16,7 @@ import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
 import { Select } from '../../../components/ui/Select'
 
-export const Route = createFileRoute('/_shell/finance/invoicing')({
+export const Route = createFileRoute('/_shell/finance/invoices')({
   component: InvoicesPage,
 })
 

@@ -2,21 +2,7 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    // ─── SPACING (8px base, strict — use numeric keys) ───────────────────────
-    // Intentionally kept minimal. Only these values are allowed.
-    // Map: 1=4px, 2=8px, 3=12px, 4=16px, 6=24px, 8=32px, 12=48px, 16=64px
-    spacing: {
-      px: '1px',
-      0:  '0px',
-      1:  '4px',   // fine detail
-      2:  '8px',   // tight padding
-      3:  '12px',  // compact
-      4:  '16px',  // standard
-      6:  '24px',  // relaxed
-      8:  '32px',  // section gap
-      12: '48px',  // large section
-      16: '64px',  // page-level padding
-    },
+    // Removed strict spacing scale to restore Tailwind's default spacing, fixing broken p-5, h-80, w-32 classes.
     // ─── FONT FAMILY ─────────────────────────────────────────────────────────
     fontFamily: {
       sans:   ['"NairaFallback"', '"Inter"', 'system-ui', 'sans-serif'],
@@ -121,9 +107,9 @@ export default {
       // ONE scale. Nothing uses rounded-none or rounded-full except avatars.
       borderRadius: {
         none: '0px',
-        sm:   '6px',   // inputs, badges, tags
-        md:   '10px',  // cards, dropdown panels
-        lg:   '14px',  // modals, drawers, large sheets
+        sm:   '8px',   // inputs, badges, tags
+        md:   '16px',  // cards, dropdown panels
+        lg:   '24px',  // modals, drawers, large sheets
         full: '9999px',// avatars only
       },
       // ─── BOX SHADOW ──────────────────────────────────────────────────────

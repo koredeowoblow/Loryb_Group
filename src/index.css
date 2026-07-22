@@ -130,12 +130,12 @@
    * md  → cards (the primary elevation in this product)
    * lg  → modals, dropdowns
    */
-  --shadow-sm: 0 1px 3px 0 rgb(15 19 32 / 0.06),
-               0 1px 2px -1px rgb(15 19 32 / 0.04);
-  --shadow-md: 0 4px 8px -2px rgb(15 19 32 / 0.08),
-               0 2px 4px -2px rgb(15 19 32 / 0.05);
-  --shadow-lg: 0 12px 24px -6px rgb(15 19 32 / 0.12),
-               0 4px 8px -4px rgb(15 19 32 / 0.06);
+  --shadow-sm: 0 2px 4px 0 rgb(15 19 32 / 0.04),
+               0 1px 2px -1px rgb(15 19 32 / 0.02);
+  --shadow-md: 0 8px 16px -4px rgb(15 19 32 / 0.06),
+               0 4px 6px -2px rgb(15 19 32 / 0.03);
+  --shadow-lg: 0 20px 25px -5px rgb(15 19 32 / 0.1),
+               0 10px 10px -5px rgb(15 19 32 / 0.04);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -233,23 +233,21 @@
 
   /* ── CARD ────────────────────────────────────────────────────────────────
    * The canonical card class. All cards use this — no exceptions.
-   * Border: 1px hairline at low opacity. NO border-2.
+   * No hard borders to keep the UI soft and premium.
    */
   .card {
-    @apply bg-surface-raised rounded-md shadow-md border border-surface-border;
+    @apply bg-surface-raised rounded-md shadow-md;
   }
   .card-hover {
-    @apply transition-all duration-200 hover:shadow-lg;
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
   }
 
   /* ── PANEL ───────────────────────────────────────────────────────────────
    * Flat container used for summary strips / filter bars above tables.
-   * Intentionally flatter than .card (no shadow, no radius) to read as a
-   * toolbar band rather than a floating card.
    */
   .panel {
     background-color: rgb(var(--color-surface-raised));
-    border: 1px solid rgb(var(--color-surface-border));
+    @apply rounded-md shadow-sm;
   }
 
   /* ── PANEL-TABLE ──────────────────────────────────────────────────────────
@@ -259,8 +257,8 @@
    */
   .panel-table {
     background-color: rgb(var(--color-surface-raised));
-    border: 1px solid rgb(var(--color-surface-border));
     overflow: hidden;
+    @apply rounded-md shadow-sm;
   }
 
 

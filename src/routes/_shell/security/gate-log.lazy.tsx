@@ -125,6 +125,12 @@ function GateLogDashboard() {
                   </div>
                 ))
               : <>
+                  {data?.visitors.length === 0 && data?.dispatch.length === 0 && (
+                    <div className="p-8 flex flex-col items-center justify-center text-center gap-3 h-full">
+                      <Clock size={36} className="text-surface-border opacity-50" />
+                      <p className="text-text-muted text-sm font-medium">No recent gate activity.</p>
+                    </div>
+                  )}
                   {data?.visitors.slice(0, 4).map((v: any, i) => (
                     <div key={`v-${i}`} className="px-4 py-3 hover:bg-surface-active transition-colors flex justify-between items-center">
                       <div>
@@ -132,7 +138,7 @@ function GateLogDashboard() {
                         <div className="text-xs text-text-muted">{v.purpose}</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xs text-text-muted mb-1">{v.timeIn}</div>
+                        <div className="text-xs text-text-muted mb-1">{String(v.timeIn ?? v.createdAt).slice(11, 16) || 'N/A'}</div>
                         <Badge status={v.timeOut ? 'inactive' : 'active'} />
                       </div>
                     </div>

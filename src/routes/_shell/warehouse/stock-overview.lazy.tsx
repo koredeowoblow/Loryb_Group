@@ -148,7 +148,10 @@ function StockOverviewPage() {
                 </div>
               </div>
             )) : (
-              <div className="p-6 text-center text-text-muted text-sm">No recent intakes.</div>
+              <div className="p-6 text-center text-text-muted text-sm flex flex-col items-center justify-center gap-2 h-full">
+                <Warehouse size={32} className="text-surface-border opacity-50 mb-2" />
+                <p>No recent intakes.</p>
+              </div>
             )}
           </div>
         </div>

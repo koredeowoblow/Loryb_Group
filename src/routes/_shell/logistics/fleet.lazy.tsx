@@ -204,6 +204,7 @@ function FleetPage() {
             rowKey="id"
             isLoading={isLoading}
             emptyMessage="No trucks registered in the fleet."
+            emptyIcon={<TruckIcon size={48} />}
             className="h-full border-2 border-surface-border hover:border-primary/30 transition-all rounded-none shadow-none"
           />
         </div>

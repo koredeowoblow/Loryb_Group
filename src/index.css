@@ -21,8 +21,9 @@
 @config "../tailwind.config.js";
 
 @font-face {
-  font-family: 'NairaFallback';
-  src: local('Segoe UI'), local('Arial'), local('Helvetica'), local('sans-serif');
+  font-family: "NairaFallback";
+  src:
+    local("Segoe UI"), local("Arial"), local("Helvetica"), local("sans-serif");
   unicode-range: U+20A6;
 }
 
@@ -30,17 +31,16 @@
    LIGHT MODE (default)
 ═══════════════════════════════════════════════════════════════════════════ */
 :root {
-
   /* ── BRAND: Navy ──────────────────────────────────────────────────────────
    * Derived from Loryb Group logo.
    * Primary: hsl(221, 100%, 24%) → rgb(0, 43, 121)
    * Rationale: Deep navy reads as authority/logistics without feeling
    * generic. High enough contrast against white (WCAG AAA on white).
    */
-  --color-primary:       0 43 121;    /* hsl(221,100%,24%) */
-  --color-primary-hover: 0 32 92;     /* 8% darker for press states */
-  --color-primary-light: 51 102 187;  /* 20% lighter — for tints/icons */
-  --color-primary-dark:  0 28 78;     /* deepest navy — active sidebar */
+  --color-primary: 0 43 121; /* hsl(221,100%,24%) */
+  --color-primary-hover: 0 32 92; /* 8% darker for press states */
+  --color-primary-light: 51 102 187; /* 20% lighter — for tints/icons */
+  --color-primary-dark: 0 28 78; /* deepest navy — active sidebar */
 
   /* ── BRAND: Gold ──────────────────────────────────────────────────────────
    * Derived from Loryb Group logo accent.
@@ -48,40 +48,40 @@
    * NOTE: Gold is brand-only. Status warning is deliberately offset to
    * hsl(32, 95%, 44%) so they are perceptually distinct.
    */
-  --color-accent:        255 193 7;   /* hsl(45,100%,51%) */
-  --color-accent-hover:  217 164 6;   /* 15% darker */
-  --color-accent-light:  255 220 90;  /* 25% lighter tint */
+  --color-accent: 255 193 7; /* hsl(45,100%,51%) */
+  --color-accent-hover: 217 164 6; /* 15% darker */
+  --color-accent-light: 255 220 90; /* 25% lighter tint */
 
   /* ── GRAYS: 9-step neutral scale ─────────────────────────────────────────
    * Slightly blue-tinted (hue ~220) to complement the navy brand.
    * Not pure gray — pure grays look dirty next to saturated navy.
    */
-  --color-gray-50:  248 249 252;   /* page canvas */
-  --color-gray-100: 241 243 248;   /* subtle tint rows / sidebar bg */
-  --color-gray-200: 224 228 237;   /* borders, dividers */
-  --color-gray-300: 200 207 221;   /* disabled inputs */
-  --color-gray-400: 152 162 183;   /* placeholder text */
-  --color-gray-500: 108 121 147;   /* secondary text */
-  --color-gray-600: 74 86 108;     /* body text */
-  --color-gray-700: 52 61 80;      /* strong text */
-  --color-gray-800: 30 36 52;      /* headings */
-  --color-gray-900: 15 19 32;      /* near-black text */
+  --color-gray-50: 248 249 252; /* page canvas */
+  --color-gray-100: 241 243 248; /* subtle tint rows / sidebar bg */
+  --color-gray-200: 224 228 237; /* borders, dividers */
+  --color-gray-300: 200 207 221; /* disabled inputs */
+  --color-gray-400: 152 162 183; /* placeholder text */
+  --color-gray-500: 108 121 147; /* secondary text */
+  --color-gray-600: 74 86 108; /* body text */
+  --color-gray-700: 52 61 80; /* strong text */
+  --color-gray-800: 30 36 52; /* headings */
+  --color-gray-900: 15 19 32; /* near-black text */
 
   /* ── SURFACES: 3-level elevation ─────────────────────────────────────────
    * base → raised → overlay. Each step is visually distinct via bg + shadow.
    * Borders are 1px hairlines (low opacity), never 2px hard lines.
    */
-  --color-surface-base:    248 249 252;   /* page background (gray-50 tinted) */
-  --color-surface-raised:  255 255 255;   /* cards, sidebars (pure white) */
-  --color-surface-overlay: 255 255 255;   /* modals, dropdowns */
-  --color-surface-border:  224 228 237;   /* gray-200 — 1px hairline only */
-  --color-surface-active:  241 243 248;   /* hovered/selected rows, gray-100 */
+  --color-surface-base: 248 249 252; /* page background (gray-50 tinted) */
+  --color-surface-raised: 255 255 255; /* cards, sidebars (pure white) */
+  --color-surface-overlay: 255 255 255; /* modals, dropdowns */
+  --color-surface-border: 224 228 237; /* gray-200 — 1px hairline only */
+  --color-surface-active: 241 243 248; /* hovered/selected rows, gray-100 */
 
   /* ── TEXT ─────────────────────────────────────────────────────────────────*/
-  --color-text-primary:   15 19 32;      /* gray-900 */
-  --color-text-secondary: 74 86 108;     /* gray-600 */
-  --color-text-muted:     152 162 183;   /* gray-400 */
-  --color-text-inverse:   255 255 255;   /* white — on dark backgrounds */
+  --color-text-primary: 15 19 32; /* gray-900 */
+  --color-text-secondary: 74 86 108; /* gray-600 */
+  --color-text-muted: 152 162 183; /* gray-400 */
+  --color-text-inverse: 255 255 255; /* white — on dark backgrounds */
 
   /* ── STATUS / SEMANTIC COLORS ─────────────────────────────────────────────
    * Rule: NO status color may share a hue family with the brand colors.
@@ -100,29 +100,29 @@
    */
 
   /* success — emerald */
-  --color-status-success:        22 163 74;    /* hsl(142,76%,36%) */
-  --color-status-success-bg:     240 253 244;  /* very light mint */
-  --color-status-success-border: 134 239 172;  /* light mint border */
+  --color-status-success: 22 163 74; /* hsl(142,76%,36%) */
+  --color-status-success-bg: 240 253 244; /* very light mint */
+  --color-status-success-border: 134 239 172; /* light mint border */
 
   /* warning — amber-orange (NOT gold) */
-  --color-status-warning:        217 119 6;    /* hsl(32,95%,44%) */
-  --color-status-warning-bg:     255 251 235;  /* light amber */
-  --color-status-warning-border: 252 211 77;   /* amber border */
+  --color-status-warning: 217 119 6; /* hsl(32,95%,44%) */
+  --color-status-warning-bg: 255 251 235; /* light amber */
+  --color-status-warning-border: 252 211 77; /* amber border */
 
   /* danger — red */
-  --color-status-danger:         220 38 38;    /* hsl(0,72%,51%) */
-  --color-status-danger-bg:      254 242 242;  /* light red */
-  --color-status-danger-border:  252 165 165;  /* rose border */
+  --color-status-danger: 220 38 38; /* hsl(0,72%,51%) */
+  --color-status-danger-bg: 254 242 242; /* light red */
+  --color-status-danger-border: 252 165 165; /* rose border */
 
   /* info — violet/periwinkle (distinct from navy) */
-  --color-status-info:           109 40 217;   /* hsl(262,72%,50%) */
-  --color-status-info-bg:        245 243 255;  /* lavender tint */
-  --color-status-info-border:    196 181 253;  /* light violet border */
+  --color-status-info: 109 40 217; /* hsl(262,72%,50%) */
+  --color-status-info-bg: 245 243 255; /* lavender tint */
+  --color-status-info-border: 196 181 253; /* light violet border */
 
   /* neutral — for draft / inactive / unknown */
-  --color-status-neutral:        108 121 147;  /* gray-500 */
-  --color-status-neutral-bg:     241 243 248;  /* gray-100 */
-  --color-status-neutral-border: 200 207 221;  /* gray-300 */
+  --color-status-neutral: 108 121 147; /* gray-500 */
+  --color-status-neutral-bg: 241 243 248; /* gray-100 */
+  --color-status-neutral-border: 200 207 221; /* gray-300 */
 
   /* ── SHADOWS ─────────────────────────────────────────────────────────────
    * 3 levels. Light mode uses standard drop shadows.
@@ -130,92 +130,100 @@
    * md  → cards (the primary elevation in this product)
    * lg  → modals, dropdowns
    */
-  --shadow-sm: 0 2px 4px 0 rgb(15 19 32 / 0.04),
-               0 1px 2px -1px rgb(15 19 32 / 0.02);
-  --shadow-md: 0 8px 16px -4px rgb(15 19 32 / 0.06),
-               0 4px 6px -2px rgb(15 19 32 / 0.03);
-  --shadow-lg: 0 20px 25px -5px rgb(15 19 32 / 0.1),
-               0 10px 10px -5px rgb(15 19 32 / 0.04);
+  --shadow-sm:
+    0 2px 4px 0 rgb(15 19 32 / 0.04), 0 1px 2px -1px rgb(15 19 32 / 0.02);
+  --shadow-md:
+    0 8px 16px -4px rgb(15 19 32 / 0.06), 0 4px 6px -2px rgb(15 19 32 / 0.03);
+  --shadow-lg:
+    0 20px 25px -5px rgb(15 19 32 / 0.1), 0 10px 10px -5px rgb(15 19 32 / 0.04);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    DARK MODE
 ═══════════════════════════════════════════════════════════════════════════ */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Brand Navy & Primary Adjustments for Dark Surface Contrast */
-    --color-primary:       51 102 187;   /* lighter blue for high contrast on dark */
-    --color-primary-hover: 75 125 210;
-    --color-primary-light: 100 150 230;
-    --color-primary-dark:  30 70 150;
+:root.dark {
+  /* Brand Navy & Primary Adjustments for Dark Surface Contrast */
+  --color-primary: 51 102 187; /* lighter blue for high contrast on dark */
+  --color-primary-hover: 75 125 210;
+  --color-primary-light: 100 150 230;
+  --color-primary-dark: 30 70 150;
 
-    /* Grays scale inverted for dark mode */
-    --color-gray-50:  15 19 32;     /* page canvas dark */
-    --color-gray-100: 24 30 48;     /* subtle tint / sidebar bg */
-    --color-gray-200: 38 46 70;     /* borders, dividers */
-    --color-gray-300: 60 72 104;    /* disabled inputs */
-    --color-gray-400: 108 121 147;  /* placeholder text */
-    --color-gray-500: 152 162 183;  /* secondary text */
-    --color-gray-600: 200 207 221;  /* body text */
-    --color-gray-700: 224 228 237;  /* strong text */
-    --color-gray-800: 241 243 248;  /* headings */
-    --color-gray-900: 248 249 252;  /* near-white text */
+  /* Grays scale inverted for dark mode */
+  --color-gray-50: 15 19 32; /* page canvas dark */
+  --color-gray-100: 24 30 48; /* subtle tint / sidebar bg */
+  --color-gray-200: 38 46 70; /* borders, dividers */
+  --color-gray-300: 60 72 104; /* disabled inputs */
+  --color-gray-400: 108 121 147; /* placeholder text */
+  --color-gray-500: 152 162 183; /* secondary text */
+  --color-gray-600: 200 207 221; /* body text */
+  --color-gray-700: 224 228 237; /* strong text */
+  --color-gray-800: 241 243 248; /* headings */
+  --color-gray-900: 248 249 252; /* near-white text */
 
-    /* Dark Surfaces */
-    --color-surface-base:    15 19 32;    /* deep dark page background */
-    --color-surface-raised:  24 30 48;    /* elevated dark card surface */
-    --color-surface-overlay: 30 38 60;    /* dark modal surface */
-    --color-surface-border:  44 54 82;    /* 1px subtle dark hairline border */
-    --color-surface-active:  34 42 66;    /* hovered/selected row dark */
+  /* Dark Surfaces */
+  --color-surface-base: 15 19 32; /* deep dark page background */
+  --color-surface-raised: 24 30 48; /* elevated dark card surface */
+  --color-surface-overlay: 30 38 60; /* dark modal surface */
+  --color-surface-border: 44 54 82; /* 1px subtle dark hairline border */
+  --color-surface-active: 34 42 66; /* hovered/selected row dark */
 
-    /* Text */
-    --color-text-primary:   248 249 252;
-    --color-text-secondary: 180 190 215;
-    --color-text-muted:     120 135 165;
-    --color-text-inverse:   15 19 32;
+  /* Text */
+  --color-text-primary: 248 249 252;
+  --color-text-secondary: 180 190 215;
+  --color-text-muted: 120 135 165;
+  --color-text-inverse: 15 19 32;
 
-    /* Dark Status Containers */
-    --color-status-success-bg:     15 40 25;
-    --color-status-success-border: 22 100 50;
+  /* Dark Status Containers */
+  --color-status-success-bg: 15 40 25;
+  --color-status-success-border: 22 100 50;
 
-    --color-status-warning-bg:     45 30 10;
-    --color-status-warning-border: 140 80 15;
+  --color-status-warning-bg: 45 30 10;
+  --color-status-warning-border: 140 80 15;
 
-    --color-status-danger-bg:      45 15 15;
-    --color-status-danger-border:  150 40 40;
+  --color-status-danger-bg: 45 15 15;
+  --color-status-danger-border: 150 40 40;
 
-    --color-status-info-bg:        30 20 55;
-    --color-status-info-border:    90 50 160;
+  --color-status-info-bg: 30 20 55;
+  --color-status-info-border: 90 50 160;
 
-    --color-status-neutral-bg:     28 35 52;
-    --color-status-neutral-border: 60 72 104;
+  --color-status-neutral-bg: 28 35 52;
+  --color-status-neutral-border: 60 72 104;
 
-    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4);
-    --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
-    --shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);
-  }
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    BASE LAYER
 ═══════════════════════════════════════════════════════════════════════════ */
 @layer base {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     border-color: rgb(var(--color-surface-border));
   }
 
   body {
     @apply bg-surface-base text-text-primary antialiased font-sans text-base;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   /* Typography scale — semantic, not size-based */
-  h1 { @apply text-xl font-bold tracking-tight text-text-primary; }
-  h2 { @apply text-lg font-semibold tracking-tight text-text-primary; }
-  h3 { @apply text-md font-semibold text-text-primary; }
-  h4 { @apply text-base font-semibold text-text-primary; }
+  h1 {
+    @apply text-xl font-bold tracking-tight text-text-primary;
+  }
+  h2 {
+    @apply text-lg font-semibold tracking-tight text-text-primary;
+  }
+  h3 {
+    @apply text-md font-semibold text-text-primary;
+  }
+  h4 {
+    @apply text-base font-semibold text-text-primary;
+  }
 
   /* Focus ring — applied globally, matches brand */
   :focus-visible {
@@ -224,12 +232,10 @@
   }
 }
 
-
 /* ═══════════════════════════════════════════════════════════════════════════
    COMPONENT LAYER — shared utility classes derived from tokens
 ═══════════════════════════════════════════════════════════════════════════ */
 @layer components {
-
   /* ── CARD ────────────────────────────────────────────────────────────────
    * The canonical card class. All cards use this — no exceptions.
    * No hard borders to keep the UI soft and premium.
@@ -259,7 +265,6 @@
     overflow: hidden;
     @apply rounded-md shadow-sm;
   }
-
 
   /* ── BADGE ───────────────────────────────────────────────────────────────
    * Badge source of truth. Consumed by every status indicator:
@@ -339,13 +344,24 @@
    * Used in Fleet legend, sidebar user indicator, and table rows.
    * Single source: all status dots pull from status- variables.
    */
-  .status-dot { @apply w-2 h-2 rounded-full flex-shrink-0; }
-  .status-dot-success { background-color: rgb(var(--color-status-success)); }
-  .status-dot-warning { background-color: rgb(var(--color-status-warning)); }
-  .status-dot-danger  { background-color: rgb(var(--color-status-danger)); }
-  .status-dot-info    { background-color: rgb(var(--color-status-info)); }
-  .status-dot-neutral { background-color: rgb(var(--color-status-neutral)); }
-
+  .status-dot {
+    @apply w-2 h-2 rounded-full flex-shrink-0;
+  }
+  .status-dot-success {
+    background-color: rgb(var(--color-status-success));
+  }
+  .status-dot-warning {
+    background-color: rgb(var(--color-status-warning));
+  }
+  .status-dot-danger {
+    background-color: rgb(var(--color-status-danger));
+  }
+  .status-dot-info {
+    background-color: rgb(var(--color-status-info));
+  }
+  .status-dot-neutral {
+    background-color: rgb(var(--color-status-neutral));
+  }
 
   /* ── TABLE BASE ──────────────────────────────────────────────────────────*/
   .table-base {
@@ -367,7 +383,6 @@
     @apply border-0;
   }
 }
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PAGE TRANSITIONS
@@ -403,9 +418,15 @@
    that conveys real progress rather than a blinking rectangle.
 */
 @keyframes progress-sweep {
-  0%   { transform: translateX(-100%); }
-  60%  { transform: translateX(0%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  60% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .progress-bar-track {
@@ -436,9 +457,18 @@
   }
 }
 
-.animate-stagger-1 { animation: slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
-.animate-stagger-2 { animation: slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
-.animate-stagger-3 { animation: slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both; }
-.animate-stagger-4 { animation: slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both; }
-.animate-stagger-5 { animation: slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both; }
-
+.animate-stagger-1 {
+  animation: slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+.animate-stagger-2 {
+  animation: slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+.animate-stagger-3 {
+  animation: slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+.animate-stagger-4 {
+  animation: slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+.animate-stagger-5 {
+  animation: slide-up-fade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
